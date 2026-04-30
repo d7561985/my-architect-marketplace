@@ -1,0 +1,17 @@
+{
+  "name": "my-architect",
+  "version": "1.0.0",
+  "description": "Skill + auto-configured MCP server for working with the My Architect backlog from Claude Code.",
+  "homepage": "https://my-architect.app",
+  "license": "MIT",
+  "mcpServers": {
+    "my-architect": {
+      "command": "npx",
+      "args": ["-y", "@my-architect/mcp@latest"],
+      "env": {
+        "MCP_API_KEY": "${MCP_API_KEY}",
+        "MA_API_URL": "https://my-architect.app"
+      }
+    }
+  }
+}

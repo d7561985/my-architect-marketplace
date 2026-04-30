@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-marketplace.json",
+  "name": "my-architect-marketplace",
+  "description": "Official Claude Code plugin marketplace for My Architect — visual architecture diagrams with AI integration via MCP.",
+  "owner": {
+    "name": "d7561985",
+    "email": "d7561985@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "my-architect",
+      "source": "./plugins/my-architect",
+      "description": "Skill + auto-configured MCP server for working with the My Architect backlog from Claude Code. Tracks deferred items, caveats, and known issues as my_architect nodes; encodes the proactive tracking + ask-when-ambiguous decision rubric."
+    }
+  ]
+}
