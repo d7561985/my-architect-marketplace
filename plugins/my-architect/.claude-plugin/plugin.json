@@ -1,9 +1,14 @@
 {
   "name": "my-architect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Skill + auto-configured MCP server for working with the My Architect backlog from Claude Code.",
   "homepage": "https://my-architect.app",
   "license": "MIT",
+  "author": {
+    "name": "Dzmitry Harupa",
+    "email": "d7561985@gmail.com",
+    "url": "https://github.com/d7561985"
+  },
   "mcpServers": {
     "my-architect": {
       "command": "npx",

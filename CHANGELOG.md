@@ -4,6 +4,14 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] — 2026-05-03
+
+### Added
+- `author` field in `plugin.json` (name, email, url) — silences the "No author information provided" warning from `claude plugin tag` and provides attribution metadata for the plugin registry.
+
+### Changed
+- No functional or behavioural changes. Skill content, MCP config, and decision rubric are unchanged from 1.0.0.
+
 ## [1.0.0] — 2026-04-29
 
 ### Added
