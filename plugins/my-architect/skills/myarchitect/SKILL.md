@@ -96,6 +96,34 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 
 6. **Опционально: requirement.** Если у дефера есть hard testable criterion — `add_requirement` с `type: "FR"` (поведение), `"NFR"` (SLO/качество), `"SAR"` (arch constraint) или `"CON"` (hard constraint).
 
+## Workflow C — Authoring docs as source of truth
+
+Когда у фичи/эпика остаётся только микро-дескрипшен + пара требований — это уровень «assumption». Привязанные к ноде md-документы превращают её в полноценный источник истины (для агентов и для человека в UI). Доступно через `@my-architect/mcp` ≥ 1.4.0.
+
+### Когда писать док
+
+- На ноде есть нетривиальная логика, которой нет места ни в title, ни в коротком description.
+- Закрываешь эпик/фичу и есть «как именно мы это решили» / ADR-материал.
+- Заказчик спрашивает «что именно делает <фича>?» — ответ должен жить в репо, не в чате.
+
+### Workflow
+
+1. **На старте задачи** — после `start_task` глянуть `get_node({pid, nodeId}).docIds` и прочитать каждый док через `get_doc({pid, docId})`. Это исток правды о фиче; не догадываться по title.
+
+2. **Авторинг** — `create_doc({pid, title, content, nodeId})`. Маркдаун; ведущий `# Title` добавляется автоматически, если его нет. Без `nodeId` — проектный док (PRODUCT, ARCHITECTURE и т.п.). Под одной нодой можно много доков.
+
+3. **Правка** — `update_doc({pid, docId, content})` (заменяет содержимое целиком; title берётся из ведущего `# Heading`).
+
+4. **Перед `complete_task`** — `validate_project({pid})`. Возвращает `{valid, issues[]}`; для каждого issue — `type`, `severity` (error|warning), `nodeId`, `message`. Чинить **минимум** все `dangling-doc-ref` / `dangling-diagram-ref` до закрытия таски. `hierarchy-cycle` / `dangling-parent` — errors, всегда блокируют.
+
+5. **Удаление** — `delete_doc({pid, docId, nodeId})`. `nodeId` обязателен если док привязан к ноде (иначе остаётся в `node.docIds` как dangling). Irreversible.
+
+### Don't (доки)
+
+- **Не дублировать description**. Description — «о чём нода в одну строку», док — «как именно». Если описание влезает в description — не плоди файл.
+- **Не писать док без `nodeId`** для фичи/эпика — он повиснет в проекте, и `validate_project` не поймает его как осиротевший.
+- **Не игнорировать issues валидатора** перед `complete_task` — это не косметика, это битые ссылки в источнике истины.
+
 ## Decision rubric
 
 | Lane | Сигналы | Действие |
@@ -146,4 +174,4 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.0 (2026-04-29). Bump при изменении rubric или setup-логики.
+**Version:** 1.1 (2026-05-29). Bump: added Workflow C (doc authoring + `validate_project`). Requires `@my-architect/mcp` ≥ 1.4.0.
