@@ -1,16 +1,17 @@
 ---
 name: myarchitect
-description: Use when surfacing or closing work in a project that uses the my_architect MCP server — deferred items, known issues, caveats, "to be tested when X", just-shipped features with follow-ups, scope questions about the backlog. Encodes the proactive tracking rule + ask-when-ambiguous decision rubric. Triggers on words like "deferred", "отложил", "caveat", "known issue", "не подключено", "not yet wired", "could improve later", "is this tracked?", "мы это не потеряем?", "what's next?", or after any commit that closes a feature.
+description: Use when surfacing, working, or closing work in a project that uses the my_architect MCP server — deferred items, known issues, caveats, "to be tested when X", just-shipped features with follow-ups, scope questions about the backlog. Also when starting or implementing a tracked feature (start_task, "беру/реализую <фичу>"), forming a node tree from scratch ("как сформировать ноды", "опиши фичу"), or keeping a feature's doc/node current while working. Encodes the living-source-of-truth + proactive tracking rules + ask-when-ambiguous decision rubric. Triggers on words like "deferred", "отложил", "caveat", "known issue", "не подключено", "not yet wired", "could improve later", "is this tracked?", "мы это не потеряем?", "what's next?", or after any commit that closes a feature.
 ---
 
 # myarchitect — proactive backlog tracker
 
-Кодифицирует две вещи поверх любого проекта, использующего MCP-сервер `my_architect`:
+Кодифицирует три вещи поверх любого проекта, использующего MCP-сервер `my_architect`:
 
-1. Любой surfaced gap (deferred / caveat / known issue / "to be tested when") становится my_architect-нодой **до конца текущего хода**.
-2. Когда приоритет/release спорный — **остановиться и спросить**, не выдумывать.
+1. **Архитектор — живой источник истины, а не журнал постфактум.** Берёшь задачу — сперва читаешь ноду и её доки, ведёшь работу против них и держишь их в актуальном состоянии, пока работаешь (не только на старте и финише).
+2. Любой surfaced gap (deferred / caveat / known issue / "to be tested when") становится my_architect-нодой **до конца текущего хода**.
+3. Когда приоритет/release спорный — **остановиться и спросить**, не выдумывать.
 
-Skill универсальный: project ID, эпики, релизы и конвенции тайтлов читаются из текущего проекта, а не захардкожены.
+Skill универсальный: project ID, эпики, релизы, уровни иерархии и конвенции тайтлов читаются из текущего проекта, а не захардкожены.
 
 ## Setup — определить project ID (один раз за разговор)
 
@@ -43,7 +44,13 @@ Skill универсальный: project ID, эпики, релизы и кон
 - Упомянул будущий триггер («at scale», «when paid users arrive», «next tier»).
 - Починил случайный баг по дороге, не зафайлив его.
 
-**Когда НЕ загружать.** Ассистент в середине имплементации фичи и ни одно из выше не сработало — skill не для самой работы, а для backlog touchpoints.
+**Берёшься за работу по трекаемой ноде** (during-work):
+
+- Начинаешь задачу/фичу, у которой есть нода в my_architect (`start_task`, «беру <feature>», «реализую <node>»).
+- По ходу работы поменялось понимание фичи — доку/ноду надо синхронизировать с реальностью.
+- Создаёшь новую фичу/эпик с нуля — нужно правильно сформировать дерево нод.
+
+**Когда НЕ загружать.** Чисто разговорный ход или тривиальная правка, не связанная ни с одной трекаемой нодой.
 
 ## Always-first
 
@@ -52,6 +59,35 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 ```
 
 Один вызов даёт `meta + hierarchy + backlog + diagrams + stats`. Кешировать ментально на остаток хода — не перевызывать пока не было create/update.
+
+## Forming nodes — the hierarchy model
+
+Уровни и их имена читать live из `get_project_context` (`project.levelNames`, `project.releases`) — НЕ хардкодить. Типовой agile-стек уровней и тест на правильную гранулярность:
+
+| Уровень | Что это | Тест гранулярности |
+|---|---|---|
+| **Epic** | крупный исход / направление | объединяет несколько фич; сам не «делается» за один заход |
+| **Feature** | отгружаемая способность | одна внятная приёмка; влезает в релиз |
+| **Story** | пользовательский срез фичи | «как `<роль>` я `<действие>`, чтобы `<ценность>`» |
+| **Task** | атомарный шаг разработки | один коммит/PR; закрывается одним человеком |
+
+**Хорошая нода:**
+
+- **Title** — исход через глагол/результат, не процесс. ✅ `Expose document tools via MCP` ❌ `работа над доками`.
+- **Description** — лидируй фактом по шаблону (см. «Description template»): что это · **Why** · **How/acceptance** · **Source**. Title = «о чём в строку», doc = «как именно» (Workflow C).
+- **Parent** — правильный эпик из live-структуры. **Release** — проставлен.
+- **Один уровень granularity на ноду.** Если в приёмке «и…, и…, и…» — это дерево, а не одна нода.
+
+**Создавать деревом, не по одной.** `build_hierarchy` строит весь подграф за вызов:
+
+```
+mcp__my-architect__build_hierarchy({
+  pid, parentId: "<epic-id>",
+  tree: [{ title, type, description, children: [{ title, type, description }] }]
+})
+```
+
+Сформировал дерево фичи ДО кода → работа идёт против явной структуры, а не «в голове».
 
 ## Workflow A — Closing a feature
 
@@ -124,6 +160,18 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 - **Не писать док без `nodeId`** для фичи/эпика — он повиснет в проекте, и `validate_project` не поймает его как осиротевший.
 - **Не игнорировать issues валидатора** перед `complete_task` — это не косметика, это битые ссылки в источнике истины.
 
+## Workflow D — Working a task against the architect (живой источник истины)
+
+Архитектор — то, против чего ведёшь работу и что держишь актуальным, а не запись постфактум.
+
+1. **Перед кодом** — `get_node({pid, nodeId})` + прочитать каждый док из `docIds` (`get_doc`). Истина о фиче — в доке, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове.
+
+2. **По ходу** — всплыло реальное под-разбиение → сформировать дочерние ноды (`build_hierarchy`, см. «Forming nodes»). Не давай скоупу жить только в твоей голове.
+
+3. **Понимание изменилось** — `update_doc` сразу, не «потом». Дока описывает то, что фича делает СЕЙЧАС, а не первую догадку. Нода/дока, которые врут, хуже их отсутствия.
+
+4. **Закрытие** — `validate_project` (почини dangling-ref) → `complete_task` с summary. К этому моменту дока и статус ноды совпадают с реальностью.
+
 ## Decision rubric
 
 | Lane | Сигналы | Действие |
@@ -158,6 +206,7 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 - **Ask twice** — если rubric говорит «no ask», не спрашивать. Пользователь ценит проактивность на routine.
 - **Хардкодить эпики / релизы / конвенции** в самом skill — читать live из `get_project_context` и local `CLAUDE.md`. Skill универсальный, проектные данные живут в проекте.
 - **Restate local `CLAUDE.md`** — он всегда в контексте, дублировать в skill = дрейф. Reference, don't duplicate.
+- **Не оставлять ноду/доку устаревшей.** Разошлась работа с тем, что записано — синхронизировать в том же ходу (`update_doc` / `update_node`) или пометить `status: "blocked"` с причиной. Молчаливый дрейф источника истины — худшее из зол.
 
 ## On `plan_release` vs `bulk_update_nodes`
 
@@ -174,4 +223,4 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.1 (2026-05-29). Bump: added Workflow C (doc authoring + `validate_project`). Requires `@my-architect/mcp` ≥ 1.4.0.
+**Version:** 1.2 (2026-06-05). Bump: «Forming nodes» (hierarchy model) + Workflow D (working a task as a living source of truth); scope reframed to include during-work use, not only backlog touchpoints. Requires `@my-architect/mcp` ≥ 1.4.0.
