@@ -4,6 +4,17 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.4.0] — 2026-06-07
+
+### Changed
+- **Forming nodes** title rule sharpened to RFC-013: *name the entity (noun/outcome), not the work (verb/steps/acceptance/scope)*, with the real ❌→✅ rewrite. Adds lint awareness — `build_hierarchy` / `update_node` now **reject** step/scope/acceptance titles (arrow-pipelines, `+`-lists, `a/b/c`/`×` matrices, comma-lists, impl-in-parens, >10 words; `(RFC-NNN)` + single-arrow allowed), so the skill tells the agent to name it right the first time.
+
+### Added
+- **Reclassification guidance**: when a node is mis-typed or mis-placed, use `move_node` (re-parent, levels/type reconcile, cycle/depth guards) or `set_node_type` (relabel in place, refs preserved) instead of `delete_node` + recreate. Notes that `validate_project` surfaces ladder inversions (epic under a story).
+
+### Compatibility
+- Requires `@my-architect/mcp` ≥ 1.5.0 for `move_node` / `set_node_type` and the creation-time title lint.
+
 ## [1.3.0] — 2026-06-07
 
 ### Added

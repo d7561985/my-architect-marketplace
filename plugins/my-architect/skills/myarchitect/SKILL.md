@@ -73,7 +73,8 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 
 **Хорошая нода:**
 
-- **Title** — исход через глагол/результат, не процесс. ✅ `Expose document tools via MCP` ❌ `работа над доками`.
+- **Title — имя СУЩНОСТИ, не работы.** Существительное/исход — «что существует, когда готово», а не глагол/шаги/приёмка/перечень. ✅ `Render diagrams from DSL` · `SVG export` ❌ `Frontend: GET .dsl → parse → render (no position persistence)` · `Expose document tools + validate_project via MCP`.
+  - **Линт отклонит смелый тайтл** при `build_hierarchy`/`update_node` (RFC-013): стрелки-пайплайны `→…→`, `+`-перечни, матрицы `a/b/c` / `×`, запятые-списки, impl/приёмка в скобках, >10 слов. `(RFC-NNN)` и одиночная стрелка-трансформ — ок. Пиши имя сразу правильно; детали — в description / requirements / дочерние ноды.
 - **Description** — лидируй фактом по шаблону (см. «Description template»): что это · **Why** · **How/acceptance** · **Source**. Title = «о чём в строку», doc = «как именно» (Workflow C).
 - **Parent** — правильный эпик из live-структуры. **Release** — проставлен.
 - **Один уровень granularity на ноду.** Если в приёмке «и…, и…, и…» — это дерево, а не одна нода.
@@ -88,6 +89,13 @@ mcp__my-architect__build_hierarchy({
 ```
 
 Сформировал дерево фичи ДО кода → работа идёт против явной структуры, а не «в голове».
+
+**Ошибся типом или местом — ИСПРАВЛЯЙ, не пересоздавай** (RFC-013). Понял по ходу, что «story» на самом деле epic, или нода висит под не тем родителем:
+
+- `move_node({ pid, nodeId, newParentId })` — перенести поддерево (уровни и тип реконсилятся каскадно; циклы и превышение глубины отклоняются).
+- `set_node_type({ pid, nodeId, type })` — переклассифицировать на месте (id, slug, доки, дети, рефы сохраняются; идемпотентно).
+
+НЕ `delete_node` + создать заново — потеряешь id, доки и историю. `validate_project` подсветит ladder-инверсии (epic под story) — чини их этими туллами.
 
 ## Workflow A — Closing a feature
 
@@ -223,4 +231,4 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.2 (2026-06-05). Bump: «Forming nodes» (hierarchy model) + Workflow D (working a task as a living source of truth); scope reframed to include during-work use, not only backlog touchpoints. Requires `@my-architect/mcp` ≥ 1.4.0.
+**Version:** 1.4 (2026-06-07). Bump: RFC-013 naming + reclassification — "name the entity, not the work" title rule + lint awareness (`build_hierarchy`/`update_node` reject step/scope/acceptance titles), and `move_node` / `set_node_type` to fix mis-typed/mis-placed nodes instead of delete+recreate. (1.3 added slash commands.) Requires `@my-architect/mcp` ≥ 1.5.0 for `move_node`/`set_node_type` + the lint.
