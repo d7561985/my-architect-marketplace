@@ -11,7 +11,7 @@ Install once and you get:
 ## Prerequisites
 
 1. A My Architect account at [my-architect.app](https://my-architect.app).
-2. An API token from **Settings → Connect Agent**.
+2. An API token from the **API Keys** page (user menu → API Keys).
 3. Claude Code (CLI or IDE extension).
 4. Node.js ≥ 20 (for the bundled MCP server).
 
@@ -84,7 +84,7 @@ When a new plugin version is released:
 
 | Env var | Required | Default | What it controls |
 |---|---|---|---|
-| `MCP_API_KEY` | yes (production) | — | Your API token from Settings → Connect Agent |
+| `MCP_API_KEY` | yes (production) | — | Your API token from the API Keys page |
 | `MA_API_URL` | no | `https://my-architect.app` | Backend URL — override only for local development |
 
 To override `MA_API_URL` (e.g. local dev against `http://localhost:3100`), edit your project's `.mcp.json` after installation, or add an env line to your shell rc file.

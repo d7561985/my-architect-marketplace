@@ -4,6 +4,11 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.4.1] — 2026-06-10
+
+### Fixed
+- README: token location updated to the new app UI — **API Keys** page (user menu → API Keys) replaces the old *Settings → Connect Agent* path. The app now also features a **Claude Skills** tab (first, recommended) on that page with the exact `/plugin marketplace add` + `/plugin install` commands from this README. Doc-only release; skill and plugin config unchanged.
+
 ## [1.4.0] — 2026-06-07
 
 ### Changed
