@@ -19,7 +19,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 
 1. **Local `CLAUDE.md` проекта.** Поискать литеральный паттерн `pid:\s*["']([\w-]+)["']` рядом с упоминанием `my_architect` или `my-architect`. Это естественный маркер — туллы обычно цитируются с `pid` явно (пример: `mcp__my-architect__get_project_context({pid: "<id>"})`).
 2. **`mcp__my-architect__list_projects({})`.** Если ровно один проект — он и есть. Если несколько — **спросить пользователя**, в каком работаем сейчас. Не угадывать.
-3. **Ноль проектов.** Предложить `mcp__my-architect__scaffold_project({...})`, но НЕ выполнять без подтверждения (создание проекта — scope decision, не routine).
+3. **Ноль проектов.** Предложить `mcp__my-architect__scaffold_project({...})`, но НЕ выполнять без подтверждения (создание проекта — scope decision, не routine). При scaffold — выбрать **preset** (`agile|safe|simple|custom`): он фиксирует схему уровней на весь проект, поменять потом нетривиально. Не дефолтить в `agile` молча, если проект явно не agile.
 
 Запомнить выбранный `pid` на остаток разговора. Не перепроверять каждый ход.
 
@@ -62,7 +62,16 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 
 ## Forming nodes — the hierarchy model
 
-Уровни и их имена читать live из `get_project_context` (`project.levelNames`, `project.releases`) — НЕ хардкодить. Типовой agile-стек уровней и тест на правильную гранулярность:
+Уровни, их имена и **глубину** читать live из `get_project_context` (`project.levelNames`) — НЕ хардкодить. Схема **фиксируется при ините** проекта пресетом (`scaffold_project({preset})`); тип ноды выводится из позиции уровня (`levelNameToType(levelNames, level)`):
+
+| Preset | Уровни (сверху вниз) |
+|---|---|
+| `agile` (default) | Epic → Feature → Story → Task |
+| `safe` | Initiative → Epic → Feature → Story (лист — Story, **Task'а нет**) |
+| `simple` | Category → Item |
+| `custom` | свои `levelNames` |
+
+Тесты гранулярности ниже даны на примере `agile`. Для другого пресета **переноси те же тесты** на реальные `levelNames` проекта (в `safe` лист — Story, не Task; в `simple` всего два уровня). **Не заводи уровень, которого нет в схеме.**
 
 | Уровень | Что это | Тест гранулярности |
 |---|---|---|
@@ -97,7 +106,59 @@ mcp__my-architect__build_hierarchy({
 
 НЕ `delete_node` + создать заново — потеряешь id, доки и историю. `validate_project` подсветит ladder-инверсии (epic под story) — чини их этими туллами.
 
-## Workflow A — Closing a feature
+## Feature lifecycle — the map
+
+Жизненный цикл фичи, по порядку. Буквы воркфлоу исторические (на них ссылаются слэш-команды) — последовательность задаёт **эта карта, не алфавит**:
+
+1. **Create → Workflow Z** — описать фичу: дерево нод + upfront-требования + (опц.) дока + релиз.
+2. **Work → Workflow D** — взять задачу, вести против ноды/доки, держать их актуальными.
+3. **Close → Workflow A** — закрыть с summary, просканировать долги.
+4. **File deferred → Workflow B** — каждый всплывший долг становится нодой.
+- **Docs → Workflow C** — сквозной: источник истины, вплетается в Z (создание) и D (работа).
+
+Authoring **ведёт** цикл — фичу формируешь ДО кода, а не дописываешь ноды постфактум.
+
+## Workflow Z — Authoring a feature from scratch (CREATE)
+
+Превращает prose-описание в спецированную фичу-ноду **до кода**. Это вход в цикл; не путать с Workflow B (тот — про долги уже existing/закрытой работы).
+
+1. **Prose → spec.** Из описания вытащи: что существует, когда готово (исход); для какой роли; чем меряется приёмка; какие hard-ограничения. Не ясно — спроси (rubric ниже), не выдумывай.
+
+2. **Сформировать дерево** — `build_hierarchy` (см. «Forming nodes»): одна нода верхнего **shippable**-уровня + по дочерней ноде на каждый независимый срез приёмки. Имена уровней бери из схемы проекта (`agile`: feature + stories; `safe`: лист — story, **Task'а нет**; `simple`: category + items). Атомарный (commit/PR) уровень — только если он есть в схеме и срез очевидно многокоммитный; иначе заводишь лениво на работе (Workflow D, шаг 2). **Не выдумывай уровень вне `levelNames`.**
+
+3. **Upfront-требования** (не «потом»). У фичи с тестируемой приёмкой — `add_requirement` сразу на feature-ноду:
+   - `FR` — поведение («что система делает»);
+   - `NFR` — качество/SLO («как быстро/надёжно»);
+   - `SAR` — архитектурное ограничение («что трогаем/не трогаем, где живёт»);
+   - `CON` — hard-ограничение («чего нельзя»).
+
+   Требования — **часть описания фичи**, а не довесок к долгам. Проверь ответ (созданные ID).
+
+4. **Дока, если логика нетривиальна** — `create_doc({nodeId})` (Workflow C). Лидируй фактом, добавь **Source** (чат-ход/спека), чтобы на доку можно было опираться позже. Влезает в description — не плоди файл.
+
+5. **Релиз + приоритет.** 2+ ноды — `bulk_update_nodes` (атомарно, проверь `successful`/`failed`). Релиз спорный → rubric (**STOP & ask**).
+
+6. **Проверить результат, не «записал молча».** `validate_project` → чисто; перечисли созданные ID (фича / стори / требования / док). Только после этого фича «заведена».
+
+**Когда дробить:**
+
+- *Feature → stories*: приёмка распадается на независимые «и…, и…», несколько ролей/флоу, или не влезает в один заход.
+- *Story → tasks*: больше одного коммита/PR, или разные компоненты (backend / frontend / tests).
+- *По умолчанию*: feature + stories заводишь сразу; tasks — лениво на работе, кроме явно многокоммитных стори.
+
+## Workflow D — Working a task against the architect (WORK · живой источник истины)
+
+Архитектор — то, против чего ведёшь работу и что держишь актуальным, а не запись постфактум.
+
+1. **Перед кодом** — `get_node({pid, nodeId})` + прочитать каждый док из `docIds` (`get_doc`) **и** `get_requirements({pid, nodeId, inherited: true})` (приёмка). Истина о фиче — в доке/требованиях, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове.
+
+2. **По ходу** — всплыло реальное под-разбиение → сформировать дочерние ноды (`build_hierarchy`, см. «Forming nodes»). Не давай скоупу жить только в твоей голове.
+
+3. **Понимание изменилось** — `update_doc` сразу, не «потом». Дока описывает то, что фича делает СЕЙЧАС, а не первую догадку. Нода/дока, которые врут, хуже их отсутствия.
+
+4. **Закрытие** — `validate_project` (почини dangling-ref) → `complete_task` с summary (Workflow A). К этому моменту дока и статус ноды совпадают с реальностью.
+
+## Workflow A — Closing a feature (CLOSE)
 
 1. **Закрыть с summary:**
    ```
@@ -168,18 +229,6 @@ mcp__my-architect__build_hierarchy({
 - **Не писать док без `nodeId`** для фичи/эпика — он повиснет в проекте, и `validate_project` не поймает его как осиротевший.
 - **Не игнорировать issues валидатора** перед `complete_task` — это не косметика, это битые ссылки в источнике истины.
 
-## Workflow D — Working a task against the architect (живой источник истины)
-
-Архитектор — то, против чего ведёшь работу и что держишь актуальным, а не запись постфактум.
-
-1. **Перед кодом** — `get_node({pid, nodeId})` + прочитать каждый док из `docIds` (`get_doc`). Истина о фиче — в доке, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове.
-
-2. **По ходу** — всплыло реальное под-разбиение → сформировать дочерние ноды (`build_hierarchy`, см. «Forming nodes»). Не давай скоупу жить только в твоей голове.
-
-3. **Понимание изменилось** — `update_doc` сразу, не «потом». Дока описывает то, что фича делает СЕЙЧАС, а не первую догадку. Нода/дока, которые врут, хуже их отсутствия.
-
-4. **Закрытие** — `validate_project` (почини dangling-ref) → `complete_task` с summary. К этому моменту дока и статус ноды совпадают с реальностью.
-
 ## Decision rubric
 
 | Lane | Сигналы | Действие |
@@ -231,4 +280,4 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.4 (2026-06-07). Bump: RFC-013 naming + reclassification — "name the entity, not the work" title rule + lint awareness (`build_hierarchy`/`update_node` reject step/scope/acceptance titles), and `move_node` / `set_node_type` to fix mis-typed/mis-placed nodes instead of delete+recreate. (1.3 added slash commands.) Requires `@my-architect/mcp` ≥ 1.5.0 for `move_node`/`set_node_type` + the lint.
+**Version:** 1.5 (2026-06-16). Bump: feature lifecycle — new **Workflow Z (author a feature from scratch)** + a "Feature lifecycle" map, with requirements & docs promoted to upfront authoring steps and a story/task breakdown heuristic; **Workflow D** reordered into the WORK slot and now reads `get_requirements` before code. Authoring now **leads** the cycle (was closure-first); workflow letters kept stable so the slash commands stay wired. Forming-nodes / Workflow Z / Setup now read the project's **preset** level scheme (`agile`/`safe`/`simple`/`custom`) live instead of hardcoding agile — verified against product source. (1.4 added RFC-013 naming + reclassification.) Requires `@my-architect/mcp` ≥ 1.5.0 for `move_node`/`set_node_type` + the lint.

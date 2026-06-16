@@ -4,6 +4,19 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.0] — 2026-06-16
+
+### Added
+- Skill **Workflow Z — Authoring a feature from scratch (CREATE)**: the missing front of the lifecycle — prose → `build_hierarchy` tree (feature + stories, tasks lazily) → **upfront requirements** (`add_requirement` FR/NFR/SAR/CON, no longer a deferred-only afterthought) → optional node doc (Workflow C) → release via `bulk_update_nodes` → `validate_project` + echo created IDs. Includes a story/task **breakdown heuristic** (when a feature needs stories, when a story needs tasks).
+- Skill **"Feature lifecycle — the map"**: orders the workflows as Create (Z) → Work (D) → Close (A) → File deferred (B), with Docs (C) woven through. Authoring now **leads** the skill instead of closure.
+- **Preset-aware hierarchy**: Forming-nodes, Workflow Z, and Setup now read the project's level scheme (fixed at init by the `scaffold_project` preset — `agile` Epic→Feature→Story→Task, `safe` Initiative→Epic→Feature→Story, `simple` Category→Item, or `custom`) instead of assuming the agile stack. Granularity tests carry across presets, and the skill won't invent a level absent from `levelNames` (e.g. SAFe has no Task). Verified against product source.
+
+### Changed
+- **Workflow D** moved into the WORK slot (after Z, before A) and now reads `get_requirements({inherited:true})` alongside the node docs before coding. Workflow **letters kept stable** (A/B/C/D) so the `/next`, `/doc`, `/progress`, `/reconcile` commands stay wired; the map — not the alphabet — defines the sequence.
+
+### Compatibility
+- No new MCP tools required. Still requires `@my-architect/mcp` ≥ 1.5.0 (for `move_node`/`set_node_type` + the title lint introduced in plugin 1.4.0).
+
 ## [1.4.1] — 2026-06-10
 
 ### Fixed
