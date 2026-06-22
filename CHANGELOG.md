@@ -4,6 +4,14 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.7.0] — 2026-06-22
+
+### Changed
+- **Progressive-disclosure refactor of the `myarchitect` skill** (story-062): `SKILL.md` is now a lean ~100-line core (3 principles + setup ladder + always-first + the feature-lifecycle map as a *router* + decision rubric + Don't guardrails). The detailed procedures moved into `references/` and load on demand: `references/workflows.md` (full Workflow Z/D/A/B/C bodies + Description template + the `plan_release` note) and `references/forming-nodes.md` (preset/level model, granularity tests, title lint, `build_hierarchy`, `move_node`/`set_node_type`). Behaviour and the workflow letters (A/B/C/D/Z) are unchanged — the slash commands stay wired and the map tells the agent which reference to open at each step. All behavioural content preserved (verified token-by-token); regression-checked with trigger + behavioural evals (`evals/`).
+
+### Compatibility
+- No behavioural or API change — `description` (the trigger) is byte-identical. Same `@my-architect/mcp` requirements as 1.6.0.
+
 ## [1.6.0] — 2026-06-22
 
 ### Added

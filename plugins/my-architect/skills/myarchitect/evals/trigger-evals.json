@@ -1,0 +1,26 @@
+{
+  "skill_name": "myarchitect",
+  "note": "Trigger evals: should/should-not. should-not are near-misses (share keywords/domain but need a different tool).",
+  "evals": [
+    { "id": 1, "should_trigger": true, "query": "ok I just merged the auth refactor but the rate-limit retry path isn't wired up yet and there's a caveat about the false-positive rate — make sure we don't lose that" },
+    { "id": 2, "should_trigger": true, "query": "опиши фичу: экспорт диаграмм в SVG с сохранением позиций нод, надо завести её в архитекторе перед тем как кодить" },
+    { "id": 3, "should_trigger": true, "query": "is the C4 context diagram work actually tracked anywhere or did we just talk about it in chat?" },
+    { "id": 4, "should_trigger": true, "query": "беру story-045, реализую C4 context diagram — с чего начать, что там в ноде?" },
+    { "id": 5, "should_trigger": true, "query": "we shipped v1.6.0, the plugin agents are all done. what's left in the backlog for this release?" },
+    { "id": 6, "should_trigger": true, "query": "I fixed a random null-deref bug while doing the cascade work and didn't file it anywhere" },
+    { "id": 7, "should_trigger": true, "query": "как сформировать ноды для новой фичи про realtime collaboration — это epic или feature, и какие дочерние?" },
+    { "id": 8, "should_trigger": true, "query": "closing the diagram-export feature now, here's the commit sha — a couple things are out of scope for v1 though" },
+    { "id": 9, "should_trigger": true, "query": "мы это не потеряем? я отложил тесты для safe-preset до появления реального проекта на нём" },
+    { "id": 10, "should_trigger": true, "query": "this feature is basically done but I want the known limitation about position-persistence recorded before I forget it" },
+    { "id": 11, "should_trigger": false, "query": "draw me a C4 context diagram for our payment system — System, Person, ExternalSystem boxes with labelled relationship edges" },
+    { "id": 12, "should_trigger": false, "query": "what's the actual difference between an epic and a feature in agile, conceptually?" },
+    { "id": 13, "should_trigger": false, "query": "refactor this validate_project function to be O(n) instead of O(n^2), here's the code" },
+    { "id": 14, "should_trigger": false, "query": "review my PR for the status cascade change — are there any bugs in the rollup logic?" },
+    { "id": 15, "should_trigger": false, "query": "what's next on my calendar today? I think I have a standup at 10" },
+    { "id": 16, "should_trigger": false, "query": "set up a Jira board for our sprint and create these 5 tickets with story points" },
+    { "id": 17, "should_trigger": false, "query": "explain how MCP servers are configured in Claude Code plugins" },
+    { "id": 18, "should_trigger": false, "query": "the deferred tax payment deadline is next week — can you remind me what the amount was?" },
+    { "id": 19, "should_trigger": false, "query": "write the SQL to find all users who haven't logged in for the last 30 days" },
+    { "id": 20, "should_trigger": false, "query": "document the architecture of our microservices in a plain markdown file in the repo root" }
+  ]
+}
