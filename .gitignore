@@ -6,3 +6,6 @@ node_modules/
 .idea/
 .vscode/
 *.swp
+
+# skill-creator eval workspace (dev artifact, not shipped)
+myarchitect-workspace/
