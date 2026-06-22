@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "mcp__plugin_my-architect_my-architect__complete_task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'my_architect: a task was just closed. Run the Workflow A scan-for-gaps pass NOW: re-read the commit body AND the current chat turn, flag every \"deferred / caveat / known issue / not yet wired / to be tested when / could improve later / out of scope / manual probes pending\" item, and dispatch the debt-scanner for each (Workflow B). Then give the end-of-turn summary: for each flagged item state either \"already tracked in <node-id>\" or \"new node <node-id> created under epic <epic-id>\".'"
+          }
+        ]
+      }
+    ]
+  }
+}

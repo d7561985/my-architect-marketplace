@@ -118,6 +118,8 @@ mcp__my-architect__build_hierarchy({
 
 Authoring **ведёт** цикл — фичу формируешь ДО кода, а не дописываешь ноды постфактум.
 
+**Ship = sync (нет отложенного статуса).** Любой user-visible релиз — коммит, который отгружает фичу, или тегнутая версия — в ТОМ ЖЕ ходу двигает соответствующую ноду в её done/next-статус (`complete_task` или `update_node({status})`). Закрыть код и обновить архитектора — один шаг, не два: «отгрузил сейчас, статус проставлю потом» создаёт ровно тот дрейф, который этот skill предотвращает. Если отгрузка не привязана ни к одной ноде — это сигнал, что фича не была заведена (Workflow Z), а не разрешение пропустить синк.
+
 ## Workflow Z — Authoring a feature from scratch (CREATE)
 
 Превращает prose-описание в спецированную фичу-ноду **до кода**. Это вход в цикл; не путать с Workflow B (тот — про долги уже existing/закрытой работы).
@@ -125,6 +127,8 @@ Authoring **ведёт** цикл — фичу формируешь ДО код�
 1. **Prose → spec.** Из описания вытащи: что существует, когда готово (исход); для какой роли; чем меряется приёмка; какие hard-ограничения. Не ясно — спроси (rubric ниже), не выдумывай.
 
 2. **Сформировать дерево** — `build_hierarchy` (см. «Forming nodes»): одна нода верхнего **shippable**-уровня + по дочерней ноде на каждый независимый срез приёмки. Имена уровней бери из схемы проекта (`agile`: feature + stories; `safe`: лист — story, **Task'а нет**; `simple`: category + items). Атомарный (commit/PR) уровень — только если он есть в схеме и срез очевидно многокоммитный; иначе заводишь лениво на работе (Workflow D, шаг 2). **Не выдумывай уровень вне `levelNames`.**
+
+   **Shippable-нода НИКОГДА не заводится одиночной childless-нодой.** У неё всегда минимум один дочерний срез по `levelNames` проекта (`agile`: хотя бы одна story; `safe`: хотя бы одна story; `simple`: хотя бы один item). Бездетная shippable-нода — это drift smell: либо приёмка не разложена на срезы, либо нода на самом деле атомарная и заведена не на том уровне. Если срез реально один — он всё равно становится явной дочерней нодой, а не схлопывается в родителя. Cross-ref: `validate_project` теперь warning'ом подсвечивает **status-rollup-lag** (родитель завис позади своих done/in-progress детей) — childless shippable-нода и rollup-lag это две стороны одного дрейфа статуса.
 
 3. **Upfront-требования** (не «потом»). У фичи с тестируемой приёмкой — `add_requirement` сразу на feature-ноду:
    - `FR` — поведение («что система делает»);
@@ -264,6 +268,7 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 - **Хардкодить эпики / релизы / конвенции** в самом skill — читать live из `get_project_context` и local `CLAUDE.md`. Skill универсальный, проектные данные живут в проекте.
 - **Restate local `CLAUDE.md`** — он всегда в контексте, дублировать в skill = дрейф. Reference, don't duplicate.
 - **Не оставлять ноду/доку устаревшей.** Разошлась работа с тем, что записано — синхронизировать в том же ходу (`update_doc` / `update_node`) или пометить `status: "blocked"` с причиной. Молчаливый дрейф источника истины — худшее из зол.
+- **Не отгружать без синка статуса (ship = sync).** Любой user-visible релиз — коммит, отгружающий фичу, или тегнутая версия — в ТОМ ЖЕ ходу двигает соответствующую ноду в done/next-статус (`complete_task` / `update_node({status})`). Закрыть код и обновить архитектора — один шаг, никакого «статус проставлю позже». Отложенный синк = гарантированный дрейф; `validate_project` поймает его как status-rollup-lag, но ловить уже поздно.
 
 ## On `plan_release` vs `bulk_update_nodes`
 
@@ -280,4 +285,4 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.5 (2026-06-16). Bump: feature lifecycle — new **Workflow Z (author a feature from scratch)** + a "Feature lifecycle" map, with requirements & docs promoted to upfront authoring steps and a story/task breakdown heuristic; **Workflow D** reordered into the WORK slot and now reads `get_requirements` before code. Authoring now **leads** the cycle (was closure-first); workflow letters kept stable so the slash commands stay wired. Forming-nodes / Workflow Z / Setup now read the project's **preset** level scheme (`agile`/`safe`/`simple`/`custom`) live instead of hardcoding agile — verified against product source. (1.4 added RFC-013 naming + reclassification.) Requires `@my-architect/mcp` ≥ 1.5.0 for `move_node`/`set_node_type` + the lint.
+**Version:** 1.6 (2026-06-22). Bump: drift-prevention guidance (story-067) — a **ship = sync** rule (any user-visible release — a feature-shipping commit or a tagged version — moves the matching node to its done/next status in the SAME turn; closing code and updating the architect are one step) added to the Feature-lifecycle map and the Don't section; **Workflow Z step 2** hardened so a shippable-level feature is never authored as one childless node (always ≥1 child slice per the project's `levelNames` — a childless shippable node is a drift smell), cross-referencing the new `validate_project` **status-rollup-lag** warning (parent stuck behind done/in-progress children). (1.5 added Workflow Z + the feature-lifecycle map + preset-aware level schemes; 1.4 added RFC-013 naming + reclassification.) Requires `@my-architect/mcp` ≥ 1.5.0 for `move_node`/`set_node_type` + the lint.

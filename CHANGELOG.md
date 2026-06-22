@@ -4,6 +4,20 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.6.0] — 2026-06-22
+
+### Added
+- **/my-architect:feature** command — the CREATE entry point of the lifecycle. A thin wrapper over Workflow Z: dispatches the new feature-author agent to turn prose into a proposed `build_hierarchy` tree + upfront requirements + optional doc, presents it, and writes only after you confirm (propose-then-confirm gate), then `validate_project` + echoes the created IDs.
+- **Four plugin agents** (`agents/`, auto-discovered, each runs in its own context): **feature-author** (Workflow Z — the engine behind `/feature`), **reconciler** (verify draft nodes against the codebase and close what shipped, only with evidence), **debt-scanner** (Workflow A scan-for-gaps + Workflow B — file each surfaced deferred/caveat/known-issue, de-duped), **progress-auditor** (read-only status audit with drift flags; uses `disallowedTools` to stay read-only).
+- **Debt-scan hook** (`hooks/hooks.json`): a single `PostToolUse` hook matched to the `complete_task` MCP tool (`mcp__plugin_my-architect_my-architect__complete_task`) that, on feature close, reminds Claude to run the scan-for-gaps pass and dispatch the debt-scanner. Exactly one hook, scoped to one tool — nothing fires on unrelated turns.
+- Skill **drift-prevention guidance**: a **ship = sync** rule (any user-visible release — a feature-shipping commit or a tagged version — moves the matching node to its done/next status in the SAME turn) added to the lifecycle map and the Don't section; Workflow Z step 2 hardened so a shippable feature is never authored as one childless node (always ≥1 child slice per the project's `levelNames`), cross-referencing the new `validate_project` **status-rollup-lag** warning.
+
+### Changed
+- README: documents the commands, agents, and hook; clarifies that there is no marketplace-author auto-update toggle (auto-update is a per-user setting; the manual `/plugin update` path is reliable, and the MCP server always runs `@latest`).
+
+### Compatibility
+- No new MCP tools required. The `status-rollup-lag` warning is server-side (live on my-architect.app); the `delete_node` fix ships in `@my-architect/mcp` ≥ 1.5.1. Still requires `@my-architect/mcp` ≥ 1.5.0 for `move_node`/`set_node_type` + the title lint.
+
 ## [1.5.0] — 2026-06-16
 
 ### Added

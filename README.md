@@ -54,12 +54,22 @@ You should see `my-architect` listed and connected. The skill `myarchitect` beco
 plugins/my-architect/
 ├── .claude-plugin/
 │   └── plugin.json     # MCP server config + plugin metadata
+├── commands/           # slash commands (auto-discovered)
+├── agents/             # subagents (auto-discovered)
+├── hooks/
+│   └── hooks.json      # PostToolUse debt-scan reminder on complete_task
 └── skills/
     └── myarchitect/
-        └── SKILL.md    # Proactive backlog tracker skill
+        └── SKILL.md    # Proactive backlog tracker skill (source of truth)
 ```
 
 **MCP server (auto-configured):** `npx -y @my-architect/mcp@latest` with `MCP_API_KEY` from your shell env and `MA_API_URL=https://my-architect.app`.
+
+**Commands** (type `/my-architect:<name>`): **feature** (author a feature from scratch — propose a node tree, then write nodes + requirements + doc), **next** (pull + work the next task), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped).
+
+**Agents** (dispatched by the commands/skill, run in their own context): **feature-author** (prose → spec'd feature node, the engine behind `/feature`), **reconciler** (verify drafts against code, close what shipped — with evidence), **debt-scanner** (scan a closed feature + commit + chat for deferred/caveat/known-issue items and file them), **progress-auditor** (read-only status audit with drift flags).
+
+**Hook:** a single `PostToolUse` hook on the `complete_task` MCP tool — when a feature is closed it reminds Claude to run the debt-scan pass. Scoped to that one tool; nothing fires on unrelated turns.
 
 **Skill `myarchitect`:** triggers when you (or Claude) say "deferred", "known issue", "caveat", "not yet wired", "to be tested when…", "could improve later", or after closing a feature. Encodes the workflow:
 - Always start with `get_project_context` to load live state.
@@ -71,12 +81,14 @@ plugins/my-architect/
 
 ## Updating
 
-When a new plugin version is released:
+When a new plugin version is released, pull it manually:
 
 ```
 /plugin marketplace update my-architect-marketplace
 /plugin update my-architect
 ```
+
+There is **no marketplace-side auto-update toggle** — a plugin author cannot force auto-update on for you. Whether a marketplace auto-refreshes is a per-user Claude Code setting, so the two commands above are the reliable path. The MCP server itself always self-updates: it is launched as `@my-architect/mcp@latest`, so each new Claude Code session picks up the newest server build without any action.
 
 ---
 
@@ -107,7 +119,7 @@ The skill description triggers on specific phrases (deferred, known issue, cavea
 ## Compatibility
 
 - Claude Code 2.0+
-- `@my-architect/mcp` ≥ 1.2.1
+- `@my-architect/mcp` ≥ 1.5.0
 
 ---
 
