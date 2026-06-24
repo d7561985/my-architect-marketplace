@@ -4,6 +4,14 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.8.0] — 2026-06-24
+
+### Added
+- **Feature-altitude guidance** in the `myarchitect` skill (story-074): a new **Altitude** section in `references/forming-nodes.md` teaches feature-as-**building-block** — the thinnest independently-shippable slice with an observable result (may cut across services), not a code-layer task. Adds the **merge-test** and **demo-test** (run pre-flight before `build_hierarchy`), result-not-artifact title grammar, "implementation + `file:line` → acceptance/doc, not child nodes" (anchors become impl-notes, never lost), cross-cutting≠feature, order = dependencies + releases, and a granularity-budget smell. A lean pointer from the core lifecycle map. Complements — does not replace — the RFC-013 formulation lint: that catches *how a node is named*, this catches *how high it is sliced*.
+
+### Compatibility
+- Skill-text only; no MCP/API change. The matching server-side title-lint extension (flagging artifact/task titles) ships separately.
+
 ## [1.7.0] — 2026-06-22
 
 ### Changed
