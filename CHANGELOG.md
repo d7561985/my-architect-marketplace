@@ -4,6 +4,17 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.9.0] — 2026-06-25
+
+### Added
+- **HTML-wireframe recommendation** in the `myarchitect` skill (`references/forming-nodes.md`, Altitude section): when a building block needs a UI wireframe or a conceptual block-diagram, **prefer** authoring it as a self-contained ```html fragment (inline CSS, no external scripts) in the node's doc — My Architect renders it as a live preview in an isolated `sandbox` iframe next to Documents, at higher fidelity than ASCII art, and keeps the artifact attached to the block. This is where the "how" lives for design. ASCII/`box`/`mermaid` stay for quick sketches and relationship graphs; conceptual screen layouts go to HTML. Motivated by the MM-test post-mortem (the "Layers" wireframe had to be drawn in low-fidelity ASCII).
+
+### Changed
+- **Altitude lint is now live, as a warning.** `build_hierarchy` / `update_node` return non-blocking `altitude_warnings` when a title leads with a code-artifact noun (Коллекция/Поле/Endpoint/Hook/Migration/…) or a task verb (добавить/создать/прокинуть/add/create/wire/…) — the title names an artifact or a step, not a building-block outcome. It complements the RFC-013 *formulation* lint (which hard-rejects): formulation catches *how a node is named*, altitude catches *how high it is sliced*. Re-name to the observable result; the artifact stays in the description. Requires `@my-architect/mcp` ≥ 1.5.2.
+
+### Compatibility
+- Skill-text + MCP-client change. The wireframe rendering ships in the My Architect app (sandboxed iframe for ```html blocks and node docs); the `altitude_warnings` ship in `@my-architect/mcp` ≥ 1.5.2.
+
 ## [1.8.0] — 2026-06-24
 
 ### Added
