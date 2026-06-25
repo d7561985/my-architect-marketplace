@@ -4,6 +4,16 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.10.0] — 2026-06-25
+
+### Added
+- **Verify-before-elevate guidance** (story-078) in `references/forming-nodes.md` + a `Don't` in `SKILL.md`: a node that asserts an integration ("X reads via Y", "calls service Z") must be verified against the code BEFORE creation. Unverified → a `draft` with a `VERIFY:` marker, not a confident block — a fabricated integration in the tree is worse than its absence (it steers work wrong). Altitude is about value; this is about truth — both checked pre-`build_hierarchy`.
+- **Design-doc location guidance** (story-079) in `SKILL.md` "Composes with": when the architect is the project workspace, final design docs live ON nodes via `create_doc` (Workflow C), not in a local `docs/superpowers/specs/` — `brainstorming` yields, so the source of truth is not split between repo and nodes. Notes `update_doc` `find`/`replace`/`section` for long-doc edits.
+- **Decomposition evals** (story-076) — `evals/decomposition-evals.json`: 4 prose-feature prompts that grade the proposed `build_hierarchy` tree for *altitude* (building blocks vs task-slices), the behavioral regression net for story-074/075. Embeds the MM case + over-split, multi-block, and order-as-dependency cases. Documented in `evals/RESULTS.md`.
+
+### Compatibility
+- Skill-text only. Best paired with `@my-architect/mcp` ≥ 1.5.3 (update_doc patch edits, `add_requirements`, `get_project_context` summary view) shipped alongside.
+
 ## [1.9.0] — 2026-06-25
 
 ### Added

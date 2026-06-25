@@ -1,0 +1,88 @@
+{
+  "skill_name": "myarchitect",
+  "note": "Behavioral decomposition evals (story-076) — the regression net for altitude. Given a prose feature, the skill must decompose into BUILDING BLOCKS (vertical, independently-demonstrable slices, may cross services), NOT task-slices by code layer (collection/field/endpoint/hook/migration). Grade the proposed build_hierarchy TREE (node titles + where the 'how' lives), not the prose around it. Guards story-074 (altitude guidance) + story-075 (altitude_warnings lint). Run by giving an agent the skill + the prompt, capturing the build_hierarchy it WOULD call (dry-run, no mutations), then checking the assertions.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "domain-tier-isolation (the MM case)",
+      "prompt": "Заведи фичу в архитекторе: изоляция домена по слоям. У группы есть слой L1/L2/L3; админ объявляет слой для группы; при логине гость редиректится на домен своего слоя. Сформируй дерево нод перед кодом.",
+      "expect_building_blocks": [
+        "Админ может объявить слой группы",
+        "Гость попадает на домен своего слоя при логине"
+      ],
+      "reject_task_slices": [
+        "Коллекция domain_tier",
+        "Поле tier на группе",
+        "Хук на логине",
+        "Миграция tier",
+        "Endpoint create_tokens"
+      ],
+      "assertions": [
+        "Top-level nodes name observable outcomes (\"<actor> can <X>\"), not artifacts.",
+        "No node is titled after a collection / field / endpoint / hook / migration (would draw an altitude_warning).",
+        "Implementation steps + file:line anchors live in the node description/acceptance, NOT as child nodes.",
+        "Each block passes the demo-test: the demo is 'admin can declare a tier' / 'guest lands on the right domain', not 'a collection now exists'.",
+        "An unverified integration premise (e.g. 'core reads via ACP-API') is filed as VERIFY/draft, not asserted as a confident block (story-078)."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "svg-export (single block, resist over-splitting)",
+      "prompt": "Опиши фичу: экспорт диаграммы в SVG с сохранением позиций нод. Заведи в архитекторе.",
+      "expect_building_blocks": [
+        "Export diagram as SVG"
+      ],
+      "reject_task_slices": [
+        "Serializer для SVG",
+        "Кнопка экспорта",
+        "Endpoint /export",
+        "Хендлер скачивания"
+      ],
+      "assertions": [
+        "This is ONE building block (one observable outcome: a user gets an SVG file) — the merge-test collapses serializer+button+endpoint into it; they are NOT separate sibling nodes.",
+        "Crossing front+back (button + endpoint + serializer) is NOT a reason to split — number of touched components is not a granularity signal.",
+        "Steps go into the description; a child node appears only if there is a separately-demonstrable sub-result."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "realtime-collab (epic with genuine multiple blocks)",
+      "prompt": "Realtime collaboration на канвасе: несколько пользователей видят правки друг друга вживую, видят курсоры, и при конфликте правок последний выигрывает. Сформируй ноды.",
+      "expect_building_blocks": [
+        "Пользователь видит чужие правки вживую",
+        "Пользователь видит курсоры соавторов",
+        "Конфликт правок разрешается (last-write-wins)"
+      ],
+      "reject_task_slices": [
+        "WebSocket-канал",
+        "Presence-стор",
+        "CRDT-слой",
+        "Broadcast endpoint"
+      ],
+      "assertions": [
+        "Multiple blocks are justified ONLY because each has a distinct observable demo (live edits / cursors / conflict resolution), not because the code has multiple layers.",
+        "Transport (WebSocket), presence store, CRDT are implementation of the blocks — they live in descriptions/acceptance, not as nodes.",
+        "Cross-cutting concerns (latency SLO, reconnect) are acceptance properties of the blocks or a cross-cutting epic, not feature nodes (story: cross-cutting ≠ feature)."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "notifications (order = deps + releases, not stage-nodes)",
+      "prompt": "Уведомления: пользователь получает email при упоминании, и может отключить их в настройках. Сначала бэкенд-контракт, потом фронт. Заведи фичу.",
+      "expect_building_blocks": [
+        "Пользователь получает email при упоминании",
+        "Пользователь может отключить уведомления"
+      ],
+      "reject_task_slices": [
+        "Контракт нотификаций",
+        "Бэкенд-этап",
+        "Фронт-этап",
+        "Шаблон письма"
+      ],
+      "assertions": [
+        "\"Сначала контракт, потом фронт\" is expressed as a dependency + release assignment, NOT as стадии-узлы ('контракт' / 'бэкенд' / 'фронт').",
+        "Two blocks because two observable outcomes (receive email / mute), each shippable and demo-able on its own."
+      ]
+    }
+  ]
+}
