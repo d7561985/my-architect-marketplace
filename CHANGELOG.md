@@ -4,6 +4,14 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.11.0] — 2026-06-29
+
+### Added
+- **Event Storming canvas guidance** in the `myarchitect` skill. A new `event-storming` diagram type for collaborative domain/event modeling: author it with `create_diagram({diagramType:'event-storming', dsl})` on an epic/initiative, or embed a ` ```event-storming ` block in a node doc. The DSL is line-based, agent-native and round-trippable — `group "Context"` swimlane frames (cards inside move together), nested `[event|command|policy|readmodel|actor|aggregate|external|hotspot] "label"` cards, free cards with an `@x,y` pin, and `connect "A" -> "B"` causal arrows. It can also be created from the hierarchy node menu. Documented in `references/forming-nodes.md`; positions it as the "where the HOW lives" for domain flow + open questions (hotspot = neon-pink rotated diamond), above box/ASCII relationship graphs.
+
+### Compatibility
+- **Skill-text only, but gated:** requires an app + `@my-architect/mcp` build where the `event-storming` diagram type is registered (feature-006). Until it ships to my-architect.app, `create_diagram` rejects this type — do not advertise it as live before the app/MCP deploy (avoids the "done-locally-not-shipped" trap).
+
 ## [1.10.0] — 2026-06-25
 
 ### Added

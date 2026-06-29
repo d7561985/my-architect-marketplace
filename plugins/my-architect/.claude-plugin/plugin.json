@@ -1,6 +1,6 @@
 {
   "name": "my-architect",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Skill + auto-configured MCP server for working with the My Architect backlog from Claude Code.",
   "homepage": "https://my-architect.app",
   "license": "MIT",
