@@ -103,7 +103,9 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.13 (2026-07-03). Bump: **Recursive context** (feature-010). Сосед-скил `recursive-context` — дисциплина RLM для oversized-входов (гигантский файл / аудит репо / requirements-mining); Workflow Z шаг 3 и Workflow I шаг 3 получили указатель «факты из кода добывает recursive-context, `[факт: код <path>]`». Правила живут в скиле recursive-context, workflows.md ссылается. (1.12 ниже.)
+**Version:** 1.14 (2026-07-03). Bump: **Code-graph awareness** (feature-011). Workflow D шаг 1: при свежем локальном графе кода (Graphify-класс) связи символов сперва у графа, факты — только после verify по файлам; правила в скиле recursive-context (references/code-graph.md). (1.13 ниже.)
+
+**Prior:** 1.13 (2026-07-03). Bump: **Recursive context** (feature-010). Сосед-скил `recursive-context` — дисциплина RLM для oversized-входов (гигантский файл / аудит репо / requirements-mining); Workflow Z шаг 3 и Workflow I шаг 3 получили указатель «факты из кода добывает recursive-context, `[факт: код <path>]`». Правила живут в скиле recursive-context, workflows.md ссылается. (1.12 ниже.)
 
 **Prior:** 1.12 (2026-07-03). Bump: **Initiative gate + BO review** (feature-009). (1) `references/initiative-gate.md` — свод правил (7 вопросов, правила текста, две корзины) как единственный источник истины для правил. (2) **Workflow I** — оформление инициативы: фильтр корзин → интервью только по дыркам → правило фактов `[факт: …]` → спина PROPOSE-then-CONFIRM → эпик фиксированной структуры + ноды; «не делаем»/«не сейчас» — легитимные исходы. (3) **Workflow R** — read-only BO-ревью: 5 проверок + блокер-скан плейсхолдеров, таблица «цитата → почему → фикс → needs_user_fact». (4) Workflow Z шаг 3 — четыре правила гейта. Команды `/initiative`, `/bo-review`; агенты initiative-author / initiative-reviewer (reviewer — мутаторы в disallowedTools). Evals: initiative-evals.json + фикстура 00-EPIC-weak.md (13 слабостей, RED→GREEN). (1.11 ниже.)
 

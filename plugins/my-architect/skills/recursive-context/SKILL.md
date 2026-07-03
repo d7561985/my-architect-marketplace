@@ -27,6 +27,7 @@ description: 'Use when an input is too big to read wholesale and must be decompo
 | «Пойми / проаудируй репозиторий целиком» | [references/repo-audit.md](references/repo-audit.md) |
 | Факты из кода для требований / гейта инициатив | [references/requirements-mining.md](references/requirements-mining.md) |
 | Канонический Workflow-скрипт (его адаптируют все рецепты) | [references/map-reduce-workflow.md](references/map-reduce-workflow.md) |
+| В репо есть локальный граф кода (`graphify-out/graph.json`) | сперва [references/code-graph.md](references/code-graph.md): кандидаты из графа, факты — по файлам |
 
 ## Non-negotiables (для всех рецептов)
 

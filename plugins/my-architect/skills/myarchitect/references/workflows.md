@@ -50,7 +50,7 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 Архитектор — то, против чего ведёшь работу и что держишь актуальным, а не запись постфактум.
 
-1. **Перед кодом** — `get_node({pid, nodeId})` + прочитать каждый док из `docIds` (`get_doc`) **и** `get_requirements({pid, nodeId, inherited: true})` (приёмка). Истина о фиче — в доке/требованиях, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове.
+1. **Перед кодом** — `get_node({pid, nodeId})` + прочитать каждый док из `docIds` (`get_doc`) **и** `get_requirements({pid, nodeId, inherited: true})` (приёмка). Истина о фиче — в доке/требованиях, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове. В репо есть свежий локальный граф кода → связи затрагиваемых символов сперва у графа, потом точечный verify по файлам (правила и freshness-check — скил `recursive-context`, references/code-graph.md).
 
 2. **По ходу** — всплыло реальное под-разбиение → сформировать дочерние ноды (`build_hierarchy`, см. [forming-nodes.md](forming-nodes.md)). Не давай скоупу жить только в твоей голове.
 
