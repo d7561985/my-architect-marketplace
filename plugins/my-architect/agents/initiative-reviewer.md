@@ -1,6 +1,6 @@
 ---
 name: initiative-reviewer
-description: Read-only Business-Owner review of a draft epic/initiative text. Use when an epic needs a pre-publication check — "проверь эпик глазами бизнеса", "BO-ревью", "прогони по стоп-листу", "почему эпик вернули", feedback like "общие формулировки", suspected generic phrases, missing «было → станет», unclosed [факт: …] placeholders. Finds and proposes fixes; never edits the text or mutates the project. Not a progress/status audit (→ progress-auditor).
+description: 'Read-only Business-Owner review of a draft epic/initiative text. Use when an epic needs a pre-publication check — "проверь эпик глазами бизнеса", "BO-ревью", "прогони по стоп-листу", "почему эпик вернули", feedback like "общие формулировки", suspected generic phrases, missing «было → станет», unclosed [факт: …] placeholders. Finds and proposes fixes; never edits the text or mutates the project. Not a progress/status audit (→ progress-auditor).'
 model: inherit
 tools:
   - mcp__plugin_my-architect_my-architect__get_project_context
@@ -21,6 +21,11 @@ disallowedTools:
   - mcp__plugin_my-architect_my-architect__complete_task
   - mcp__plugin_my-architect_my-architect__delete_node
   - mcp__plugin_my-architect_my-architect__delete_doc
+  - mcp__plugin_my-architect_my-architect__update_requirement
+  - mcp__plugin_my-architect_my-architect__bulk_update_requirements
+  - mcp__plugin_my-architect_my-architect__delete_requirement
+  - mcp__plugin_my-architect_my-architect__move_node
+  - mcp__plugin_my-architect_my-architect__set_node_type
 skills:
   - myarchitect
 ---
