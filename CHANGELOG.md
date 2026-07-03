@@ -4,6 +4,13 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.16.0] — 2026-07-03
+
+### Added (закрытие пробелов покрытия по аудиту «до чего агент не додумается»)
+- **Impact-вопросы по символам — самостоятельный вход**: «кто зовёт X», «что сломается при смене сигнатуры» (RU/EN) добавлены в description recursive-context (755/1024) и recipe map; в карте запросов — `graphify affected "X"` → verify по задетым файлам. Раньше такой вопрос вне трекаемой задачи не имел ни одного роутинга к графу. Триггеры: 30/30 голосов, дрейфа нет.
+- **GRAPH_REPORT.md первым**: repo-audit шаг 0 и карта запросов велят читать готовую сводку (god-ноды, communities, surprising connections) до одиночных запросов — она уже посчитана. Behavior-кейс 10 (3/3).
+- **Хук против вечного STALE**: если граф протух и git-хук не установлен — агент один раз предлагает `graphify hook install` (одним оффером с `--update`, без спама). Assertion в кейсе 8 (5/5).
+
 ## [1.15.0] — 2026-07-03
 
 ### Added
