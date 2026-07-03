@@ -54,7 +54,7 @@
     { "id": 11, "kind": "behavior", "name": "stop-list phrase gets flagged with reversibility test",
       "prompt": "bo-review этого фрагмента: «Единый слой доступа создаст опору для авторизации и разблокирует полноценную персонализацию»",
       "assertions": [
-        "Both stop-list hits are flagged: «опора для …» and «разблокирует …» without a concrete continuation, plus «полноценную» as a stop-word.",
+        "Three stop-list hits are flagged: «опора для …», «разблокирует …» without a concrete continuation, and «полноценную» as a stop-word.",
         "The reversibility test is applied and named (negation of the phrase is meaningless -> phrase is empty).",
         "Proposed fix asks for the concrete chain (актор -> поведение -> сигнал) or marks needs_user_fact — no invented facts."
       ] },
@@ -70,12 +70,12 @@
       "assertions": [
         "Reviewer output is the findings table: quote -> why weak (gate rule named) -> proposed fix from doc facts only -> needs_user_fact.",
         "At least 10 of the 13 manifest weaknesses are found (match by quote overlap).",
-        "Mandatory hits present: w1 («опора для авторизации, бэкенда, CMS и сегментации»), w2 («полноценная сегментация невозможна»), w10 (contradiction «опора для авторизации» <-> «для авторизованных резолв уже работает»).",
+        "Mandatory hits present: w1 («опору для авторизации, бэкенда, CMS и сегментации»), w2 («полноценная сегментация невозможна»), w10 (contradiction «опора для авторизации» <-> «для авторизованных резолв уже работает»).",
         "No edits proposed as applied — reviewer stays read-only, ends with the score N blockers / M recommendations."
       ] }
   ],
   "fixture_manifest": {
-    "file": "fixtures/00-EPIC-weak.md",
+    "file": "evals/fixtures/00-EPIC-weak.md",
     "weaknesses": [
       { "id": "w1",  "category": "generic",        "quote": "создаст опору для авторизации, бэкенда, CMS и сегментации", "why": "стоп-лист «опора»; перечисление без конкретики — CTO-фраза 1; тест переворачиваемости проваливается" },
       { "id": "w2",  "category": "generic",        "quote": "полноценная сегментация невозможна", "why": "стоп-слово «полноценная», нет факта что именно невозможно и почему — CTO-фраза 2" },
@@ -85,8 +85,8 @@
       { "id": "w6",  "category": "bylo-stanet",    "quote": "Возможности нужны многим командам: контент, маркетинг, платформа", "why": "потребитель не поимённо: нет таблицы «фича/KR → чем блокируется → что сможет → чья цель»" },
       { "id": "w7",  "category": "status-quo",     "quote": "Для авторизованных пользователей резолв бренда уже работает через сессионный контекст — жалоб нет", "why": "текст сам поднимает «и так работает» и не отвечает на него в разделе ценности" },
       { "id": "w8",  "category": "if-not-done",    "quote": "Технический долг будет накапливаться, и со временем будет плохо", "why": "неизмеримо: нет тренда на горизонте 6–12 месяцев, ни одного числа" },
-      { "id": "w9",  "category": "if-not-done",    "quote": "(раздел «Если не делать» целиком)", "why": "нет Опции 0 и честного do-minimum — самой дешёвой альтернативы и почему её недостаточно" },
-      { "id": "w10", "category": "contradiction",  "quote": "опора для авторизации … ↔ … Для авторизованных пользователей резолв бренда уже работает", "why": "ценность заявляет то, что раздел ниже называет уже работающим" },
+      { "id": "w9",  "category": "if-not-done",    "quote": "(раздел «Если не делать» целиком)", "match_hint": "грейдится по отсутствию: в разделе «Если не делать» нет Опции 0 и do-minimum", "why": "нет Опции 0 и честного do-minimum — самой дешёвой альтернативы и почему её недостаточно" },
+      { "id": "w10", "category": "contradiction",  "quotes": ["создаст опору для авторизации, бэкенда, CMS и сегментации", "Для авторизованных пользователей резолв бренда уже работает"], "why": "ценность заявляет то, что раздел ниже называет уже работающим — засчитывается, когда обе цитаты найдены и связаны как противоречие" },
       { "id": "w11", "category": "register",       "quote": "Появится коллекция brand_source и API-endpoint /v2/brand/resolve — результат работы", "why": "артефакт вместо исхода: нет цепочки актор → поведение → сигнал" },
       { "id": "w12", "category": "register",       "quote": "Время резолва бренда — 50мс", "why": "целевое число подано как текущее состояние (модальность ЦЕЛЬ/СЕЙЧАС)" },
       { "id": "w13", "category": "register",       "quote": "CDA-пайплайн доставляет атрибуты через ACP-шину с fallback на LCR-кэш", "why": "жаргон без глоссария во входном разделе — эпик не читается без словаря" }

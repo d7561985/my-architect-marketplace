@@ -40,7 +40,7 @@ Run: give an agent the skill + each prompt, capture the `build_hierarchy` it wou
 
 ## Initiative commands — RED baseline (2026-07-03, до реализации v1.12.0)
 
-Датасет: trigger-evals 21–29 + initiative-evals.json (13 кейсов) + фикстура 00-EPIC-weak.md. Прогон ДО создания файлов плагина (Iron Law writing-skills). Судьи: независимые агенты, видят только name+description, 3 голоса на кейс.
+Датасет: trigger-evals 21–29 + initiative-evals.json (13 кейсов) + фикстура 00-EPIC-weak.md. Прогон ДО создания файлов плагина (Iron Law writing-skills). Судьи (триггер/роутинг): независимые агенты, видят только name+description, 3 голоса на кейс; behavior — dry-run одним агентом.
 
 - Trigger 21–25 vs description v1.11: **23 — NO 3/3** (BO-ревью файла вообще не триггерит скилл); **25 — YES 2/3** (нестабильно); 21/22/24 — YES 3/3, но по неверному основанию: судьи мапят «заведи/оформи инициативу» на «опиши фичу»/node-tree — гейта в описании нет.
 - Routing 1/3/5/6 vs четыре текущих агента (3 голоса): кейс 1 → **feature-author 3/3** (неверно: CREATE-фаза без гейта ценности); кейс 3 → none 3/3; кейс 5 → none 3/3; кейс 6 → none 2/3 + feature-author 1/3. Ревью-запросы не обслуживает никто.
