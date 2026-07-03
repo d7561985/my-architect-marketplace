@@ -51,7 +51,8 @@
         "Agent checks graph presence AND freshness (graph mtime vs last commit time) before relying on it.",
         "Scoping/candidates come from graph queries (query/path/explain or Graphify MCP tools) BEFORE any manual grep.",
         "Every fact still carries an evidence_path verified against the live file — graph answers are treated as candidates, not facts.",
-        "At least the key claims get a verify pass on the actual code."
+        "At least the key claims get a verify pass on the actual code.",
+        "Verification reads only the REGION around each candidate's evidence line (offset/limit or sed, ~±30 lines), not whole files — whole-file reads only when the region is insufficient."
       ] },
     { "id": 8, "kind": "behavior", "name": "stale code graph -> flagged, not trusted",
       "prompt": "в репозитории есть graphify-out/graph.json, но он собран три дня назад, с тех пор было 14 коммитов. Вопрос: какие модули зависят от PaymentReconciler?",
