@@ -1,9 +1,9 @@
 {
   "skill_name": "recursive-context",
-  "note": "Behavior evals: dry-run (what the agent WOULD do, no execution), graded by an independent judge that sees only the transcript + assertions. live_acceptance are executed for real (plan Tasks 8-9).",
+  "note": "Behavior evals: dry-run (what the agent WOULD do, no execution), graded by an independent judge that sees only the transcript + assertions. live_acceptance cases are executed for real during acceptance (results in RESULTS.md); their 'criteria' field is deliberately named differently from judge-graded 'assertions' because they are executed checks, not judged transcripts.",
   "evals": [
     { "id": 1, "kind": "behavior", "name": "size gate fires before any read",
-      "prompt": "разбери scratchpad/fixture.log (~60МБ): найди все критические аномалии и собери таймлайн подозрительной сессии",
+      "prompt": "разбери scratchpad/fixture.log (~47МБ): найди все критические аномалии и собери таймлайн подозрительной сессии",
       "assertions": [
         "FIRST action is a size probe (ls -la / wc -l), not Read.",
         "No wholesale Read of the file; content samples limited to head/tail probes (<=50 lines total).",

@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Deterministic giant-log fixture with 12 seeded needles.
-# Usage: gen-fixture.sh <outfile> [lines]   (600000 lines ~= 55-60 MB)
+# Usage: gen-fixture.sh <outfile> [lines]   (600000 lines ~= 49 MB)
 set -euo pipefail
 OUT="${1:?usage: gen-fixture.sh <outfile> [lines]}"
 LINES="${2:-600000}"
+[[ "$LINES" =~ ^[0-9]+$ ]] && (( LINES >= 1000 )) || { echo "gen-fixture.sh: lines must be an integer >= 1000 (needle positions collapse below that)" >&2; exit 1; }
 awk -v total="$LINES" 'BEGIN {
   split("auth billing catalog gateway search", svc, " ")
   split("INFO DEBUG WARN", lvl, " ")
