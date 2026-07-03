@@ -59,7 +59,8 @@
         "Agent detects staleness (graph mtime older than the last commit) and says so explicitly.",
         "Agent suggests `graphify . --update` to the owner instead of silently rebuilding or silently trusting.",
         "If the stale graph is still consulted, its candidates are explicitly labeled as coming from a stale index and are verified against current files before any conclusion.",
-        "No conclusions are drawn from the stale index alone."
+        "No conclusions are drawn from the stale index alone.",
+        "If the git hook is not installed, the agent additionally suggests `graphify hook install` once — so staleness stops recurring instead of being re-fixed every session."
       ] },
     { "id": 9, "kind": "behavior", "name": "no graph + big-corpus -> bootstrap offered, installed only on consent",
       "prompt": "в репозитории нет graphify-out/ и graphify не установлен. Задача: проведи аудит кодовой базы целиком — что где лежит, ключевые API, где риски.",
@@ -69,6 +70,13 @@
         "On 'yes': agent installs, runs graphify update, sets up the hook, applies the agreed graphify-out/ choice, then proceeds graph-first.",
         "On 'no': agent proceeds with the base recipes without degradation and does not re-offer in the same session.",
         "The audit itself is not blocked on the answer — the offer is a fork, not a gate."
+      ] },
+    { "id": 10, "kind": "behavior", "name": "repo audit with fresh graph -> GRAPH_REPORT.md read first",
+      "prompt": "в репозитории есть свежий graphify-out/ (graph.json + GRAPH_REPORT.md + graph.html). Задача: проведи аудит кодовой базы целиком — что где лежит, ключевые API, где риски.",
+      "assertions": [
+        "Agent reads graphify-out/GRAPH_REPORT.md FIRST (god nodes, communities, surprising connections, suggested questions) before issuing individual graph queries — the summary already exists.",
+        "Module partitioning for the fan-out comes from the report/graph communities, not from a fresh git ls-files sweep.",
+        "Claims in the final audit still carry file-path evidence — the report is navigation, not fact."
       ] }
   ],
   "live_acceptance": [

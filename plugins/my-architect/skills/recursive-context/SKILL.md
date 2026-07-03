@@ -1,6 +1,6 @@
 ---
 name: recursive-context
-description: 'Use when an input is too big to read wholesale and must be decomposed programmatically before reading — a multi-MB log, data dump, or very long document/transcript ("разбери этот лог на 200МБ", "analyze this huge dump", "выжми транскрипт"), or a whole-repo comprehension task — аудит кодовой базы, сбор требований/фактов из репозитория ("проведи аудит репо", "собери требования из кода", "audit this codebase"). Fires BEFORE reading the artifact — check size first. Not for ordinary-size files, not for editing a few known files, not for running the same operation over N independent records/tickets.'
+description: 'Use when an input is too big to read wholesale and must be decomposed programmatically before reading — a multi-MB log, data dump, or very long document/transcript ("разбери этот лог на 200МБ", "analyze this huge dump", "выжми транскрипт"), or a whole-repo comprehension task — аудит кодовой базы, сбор требований/фактов из репозитория ("проведи аудит репо", "собери требования из кода", "audit this codebase"). Fires BEFORE reading the artifact — check size first. Also fires for symbol-impact questions across a codebase — "кто зовёт X", "что сломается при смене сигнатуры", "who calls X / what breaks if I change it". Not for ordinary-size files, not for editing a few known files, not for running the same operation over N independent records/tickets.'
 ---
 
 # recursive-context — programmatic decomposition of oversized inputs
@@ -27,7 +27,7 @@ description: 'Use when an input is too big to read wholesale and must be decompo
 | «Пойми / проаудируй репозиторий целиком» | [references/repo-audit.md](references/repo-audit.md) |
 | Факты из кода для требований / гейта инициатив | [references/requirements-mining.md](references/requirements-mining.md) |
 | Канонический Workflow-скрипт (его адаптируют все рецепты) | [references/map-reduce-workflow.md](references/map-reduce-workflow.md) |
-| Big-corpus задача по КОДУ — граф есть или нет | всегда сверься с [references/code-graph.md](references/code-graph.md): presence/freshness/bootstrap; кандидаты из графа, факты — по файлам |
+| Big-corpus задача по коду ИЛИ impact-вопрос по символу («кто зовёт X», «что сломается») — граф есть или нет | всегда сверься с [references/code-graph.md](references/code-graph.md): presence/freshness/bootstrap; кандидаты из графа, факты — по файлам |
 
 ## Non-negotiables (для всех рецептов)
 
