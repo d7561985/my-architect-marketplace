@@ -21,6 +21,15 @@
     { "id": 17, "should_trigger": false, "query": "explain how MCP servers are configured in Claude Code plugins" },
     { "id": 18, "should_trigger": false, "query": "the deferred tax payment deadline is next week — can you remind me what the amount was?" },
     { "id": 19, "should_trigger": false, "query": "write the SQL to find all users who haven't logged in for the last 30 days" },
-    { "id": 20, "should_trigger": false, "query": "document the architecture of our microservices in a plain markdown file in the repo root" }
+    { "id": 20, "should_trigger": false, "query": "document the architecture of our microservices in a plain markdown file in the repo root" },
+    { "id": 21, "should_trigger": true,  "query": "заведи инициативу: вынос резолва бренда в отдельный сервис, надо обосновать перед CTO" },
+    { "id": 22, "should_trigger": true,  "query": "оформи инициативу — миграция на новую шину событий; что теряем, пока ждём?" },
+    { "id": 23, "should_trigger": true,  "query": "проверь эпик глазами бизнеса перед публикацией, файл docs/tasks/brand-source/00-EPIC.md" },
+    { "id": 24, "should_trigger": true,  "query": "сделай BO-ревью дока EPIC-BRAND-RESOLVE в архитекторе" },
+    { "id": 25, "should_trigger": true,  "query": "эпик вернули с ревью — говорят «общие формулировки», помоги найти слабые места" },
+    { "id": 26, "should_trigger": false, "query": "напиши бизнес-план для стартапа по доставке еды" },
+    { "id": 27, "should_trigger": false, "query": "проверь маркетинговый текст лендинга на общие фразы и воду" },
+    { "id": 28, "should_trigger": false, "query": "оформи эпик в Jira и раскидай стори-поинты по спринтам" },
+    { "id": 29, "should_trigger": false, "query": "сделай code review моего PR перед публикацией релиза" }
   ]
 }
