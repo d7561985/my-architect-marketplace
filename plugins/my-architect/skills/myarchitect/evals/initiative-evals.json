@@ -1,0 +1,95 @@
+{
+  "skill_name": "myarchitect",
+  "note": "Initiative-commands regression net (feature-009, plugin v1.12.0). Three kinds: routing (which agent picks up the query — judged from agent name+description only), behavior (dry-run: what the agent WOULD do, no mutations), fixture (bo-review vs the seeded weak epic). Acceptance: routing/behavior assertions hold; fixture run finds >=10 of 13 seeded weaknesses incl. all three mandatory ones (w1, w2, w10).",
+  "evals": [
+    { "id": 1, "kind": "routing", "name": "initiative goes to initiative-author, not feature-author",
+      "prompt": "заведи инициативу: вынос резолва бренда в отдельный сервис, надо обосновать перед CTO",
+      "expect_agent": "initiative-author", "reject_agents": ["feature-author", "progress-auditor"] },
+    { "id": 2, "kind": "routing", "name": "feature description still goes to feature-author",
+      "prompt": "опиши фичу: экспорт диаграмм в PDF, заведи в архитекторе перед кодом",
+      "expect_agent": "feature-author", "reject_agents": ["initiative-author", "initiative-reviewer"] },
+    { "id": 3, "kind": "routing", "name": "BO review goes to initiative-reviewer, not progress-auditor",
+      "prompt": "проверь эпик глазами бизнеса перед публикацией: docs/tasks/brand-source/00-EPIC.md",
+      "expect_agent": "initiative-reviewer", "reject_agents": ["progress-auditor", "feature-author"] },
+    { "id": 4, "kind": "routing", "name": "progress question still goes to progress-auditor",
+      "prompt": "что сделано по эпику brand-source, сколько осталось до релиза?",
+      "expect_agent": "progress-auditor", "reject_agents": ["initiative-reviewer"] },
+    { "id": 5, "kind": "routing", "name": "value justification wording routes to initiative-author",
+      "prompt": "стоит ли вообще делать миграцию на новую шину? обоснуй ценность и цену промедления",
+      "expect_agent": "initiative-author", "reject_agents": ["feature-author"] },
+    { "id": 6, "kind": "routing", "name": "returned-epic feedback routes to initiative-reviewer",
+      "prompt": "CTO вернул эпик: «довольно общие формулировки». Найди слабые места в тексте",
+      "expect_agent": "initiative-reviewer", "reject_agents": ["progress-auditor"] },
+    { "id": 7, "kind": "behavior", "name": "small bucket -> refuse to form an initiative",
+      "prompt": "заведи инициативу: добавить ретраи в HTTP-клиент каталога, работа на 3-4 дня, контракты сервисов не меняются",
+      "assertions": [
+        "Agent applies the two-buckets filter BEFORE any gate question.",
+        "Answer states this is team cost ('себестоимость команды'), no initiative is formed — and presents it as a successful outcome, not an error.",
+        "Agent points to /my-architect:feature (Workflow Z) if tracking is still wanted.",
+        "No build_hierarchy / create_doc calls planned."
+      ] },
+    { "id": 8, "kind": "behavior", "name": "no named consumer -> 'не делаем / не сейчас'",
+      "prompt": "заведи инициативу: единый слой кэширования для всех сервисов. Потребитель? ну, пригодится всем когда-нибудь. Что теряем пока ждём — да ничего особо",
+      "assertions": [
+        "Gate question 2 (named consumer) fails: no feature/KR/team named -> agent concludes 'не делаем' or 'не сейчас + триггер пересмотра'.",
+        "Honest 'ничего не теряем' on question 4 maps to 'не сейчас' + review trigger, offered as a future node with an observable trigger.",
+        "The ending is presented as a legitimate success of the gate.",
+        "No epic text is generated."
+      ] },
+    { "id": 9, "kind": "behavior", "name": "prose lump -> only gaps asked (anti-questionnaire)",
+      "prompt": "заведи инициативу. Сейчас бренд у контента резолвится из трёх источников с расхождениями ~7% (замер платформы, май 2026); после внедрения brand-source расхождения уходят, брендовые витрины (KR маркетинга Q3) перестают быть заблокированными. Для авторизованных резолв уже работает через сессию — не трогаем. Пока ждём: каждый месяц ручная сверка каталога ~3 чел-дня.",
+      "assertions": [
+        "Agent maps the prose onto gate questions 1, 2, 3, 4 itself and does NOT re-ask any of them.",
+        "Agent asks ONLY about the gaps: question 5 (Option 0 / do-minimum), 6 (appetite/remainder), 7 (reversibility/kill-criterion) — one at a time.",
+        "Facts vs estimates are labeled (7% -> факт с источником; 3 чел-дня -> оценка, чья).",
+        "No plausible filler is invented for the missing answers."
+      ] },
+    { "id": 10, "kind": "behavior", "name": "missing fact -> [факт: …] placeholder, not filler",
+      "prompt": "заведи инициативу: переезд поиска на новый движок. Что было/станет знаю, потребители — команда каталога (фича фасетного поиска). Сколько готовы потратить — понятия не имею, и что останется недоделанным тоже",
+      "assertions": [
+        "Question 6 (appetite + remainder) has no answer -> the spine contains a literal placeholder '[факт: аппетит и поимённый остаток]' (or equivalent wording inside [факт: …]).",
+        "The placeholder is listed explicitly as a publication blocker in the final output.",
+        "Agent does NOT invent an appetite number or a plausible remainder list."
+      ] },
+    { "id": 11, "kind": "behavior", "name": "stop-list phrase gets flagged with reversibility test",
+      "prompt": "bo-review этого фрагмента: «Единый слой доступа создаст опору для авторизации и разблокирует полноценную персонализацию»",
+      "assertions": [
+        "Both stop-list hits are flagged: «опора для …» and «разблокирует …» without a concrete continuation, plus «полноценную» as a stop-word.",
+        "The reversibility test is applied and named (negation of the phrase is meaningless -> phrase is empty).",
+        "Proposed fix asks for the concrete chain (актор -> поведение -> сигнал) or marks needs_user_fact — no invented facts."
+      ] },
+    { "id": 12, "kind": "behavior", "name": "goal-as-fact modality gets flagged",
+      "prompt": "bo-review этого фрагмента: «Время резолва бренда — 50мс. Каталог обновляется мгновенно.»",
+      "assertions": [
+        "«50мс» is flagged as a target number presented as current state (ЦЕЛЬ/СЕЙЧАС modality violation) unless the doc marks it as a goal.",
+        "«мгновенно» is flagged as unverifiable phrasing.",
+        "Fixes are built only from facts present in the fragment -> both go to needs_user_fact."
+      ] },
+    { "id": 13, "kind": "fixture", "name": "seeded weak epic: >=10/13 incl. mandatory three",
+      "prompt": "Прогони /my-architect:bo-review на evals/fixtures/00-EPIC-weak.md",
+      "assertions": [
+        "Reviewer output is the findings table: quote -> why weak (gate rule named) -> proposed fix from doc facts only -> needs_user_fact.",
+        "At least 10 of the 13 manifest weaknesses are found (match by quote overlap).",
+        "Mandatory hits present: w1 («опора для авторизации, бэкенда, CMS и сегментации»), w2 («полноценная сегментация невозможна»), w10 (contradiction «опора для авторизации» <-> «для авторизованных резолв уже работает»).",
+        "No edits proposed as applied — reviewer stays read-only, ends with the score N blockers / M recommendations."
+      ] }
+  ],
+  "fixture_manifest": {
+    "file": "fixtures/00-EPIC-weak.md",
+    "weaknesses": [
+      { "id": "w1",  "category": "generic",        "quote": "создаст опору для авторизации, бэкенда, CMS и сегментации", "why": "стоп-лист «опора»; перечисление без конкретики — CTO-фраза 1; тест переворачиваемости проваливается" },
+      { "id": "w2",  "category": "generic",        "quote": "полноценная сегментация невозможна", "why": "стоп-слово «полноценная», нет факта что именно невозможно и почему — CTO-фраза 2" },
+      { "id": "w3",  "category": "generic",        "quote": "обеспечит гибкость и единый фундамент платформы", "why": "три стоп-слова подряд («гибкость», «единый», «фундамент»); отрицание бессмысленно" },
+      { "id": "w4",  "category": "bylo-stanet",    "quote": "разблокирует брендовые витрины", "why": "«разблокирует X» без «сегодня X невозможно потому-то» — нет исходного состояния с фактом" },
+      { "id": "w5",  "category": "bylo-stanet",    "quote": "Страницы каталога станут значительно быстрее", "why": "чужая дельта: скорость даёт параллельная миграция на новый рендер-слой (упомянута в том же доке), не эта работа" },
+      { "id": "w6",  "category": "bylo-stanet",    "quote": "Возможности нужны многим командам: контент, маркетинг, платформа", "why": "потребитель не поимённо: нет таблицы «фича/KR → чем блокируется → что сможет → чья цель»" },
+      { "id": "w7",  "category": "status-quo",     "quote": "Для авторизованных пользователей резолв бренда уже работает через сессионный контекст — жалоб нет", "why": "текст сам поднимает «и так работает» и не отвечает на него в разделе ценности" },
+      { "id": "w8",  "category": "if-not-done",    "quote": "Технический долг будет накапливаться, и со временем будет плохо", "why": "неизмеримо: нет тренда на горизонте 6–12 месяцев, ни одного числа" },
+      { "id": "w9",  "category": "if-not-done",    "quote": "(раздел «Если не делать» целиком)", "why": "нет Опции 0 и честного do-minimum — самой дешёвой альтернативы и почему её недостаточно" },
+      { "id": "w10", "category": "contradiction",  "quote": "опора для авторизации … ↔ … Для авторизованных пользователей резолв бренда уже работает", "why": "ценность заявляет то, что раздел ниже называет уже работающим" },
+      { "id": "w11", "category": "register",       "quote": "Появится коллекция brand_source и API-endpoint /v2/brand/resolve — результат работы", "why": "артефакт вместо исхода: нет цепочки актор → поведение → сигнал" },
+      { "id": "w12", "category": "register",       "quote": "Время резолва бренда — 50мс", "why": "целевое число подано как текущее состояние (модальность ЦЕЛЬ/СЕЙЧАС)" },
+      { "id": "w13", "category": "register",       "quote": "CDA-пайплайн доставляет атрибуты через ACP-шину с fallback на LCR-кэш", "why": "жаргон без глоссария во входном разделе — эпик не читается без словаря" }
+    ]
+  }
+}
