@@ -1,6 +1,6 @@
 {
   "skill_name": "recursive-context",
-  "note": "Behavior evals: dry-run (what the agent WOULD do, no execution), graded by an independent judge that sees only the transcript + assertions. live_acceptance cases are executed for real during acceptance (results in RESULTS.md); their 'criteria' field is deliberately named differently from judge-graded 'assertions' because they are executed checks, not judged transcripts. Cases 7-8 cover the code-graph recipe (references/code-graph.md).",
+  "note": "Behavior evals: dry-run (what the agent WOULD do, no execution), graded by an independent judge that sees only the transcript + assertions. live_acceptance cases are executed for real during acceptance (results in RESULTS.md); their 'criteria' field is deliberately named differently from judge-graded 'assertions' because they are executed checks, not judged transcripts. Cases 7-9 cover the code-graph recipe (references/code-graph.md).",
   "evals": [
     { "id": 1, "kind": "behavior", "name": "size gate fires before any read",
       "prompt": "разбери scratchpad/fixture.log (~47МБ): найди все критические аномалии и собери таймлайн подозрительной сессии",
@@ -65,8 +65,8 @@
       "prompt": "в репозитории нет graphify-out/ и graphify не установлен. Задача: проведи аудит кодовой базы целиком — что где лежит, ключевые API, где риски.",
       "assertions": [
         "Agent does NOT install or run anything silently.",
-        "Agent offers the owner a one-time bootstrap with honest cost/benefit: pipx install graphifyy (package name with double y), local code-only build in seconds without API keys, optional git hook for freshness, graphify-out/ into .gitignore — and waits for consent.",
-        "On 'yes': agent installs, runs graphify update, offers the hook, then proceeds graph-first.",
+        "Agent offers the owner a one-time bootstrap with honest cost/benefit: uv tool / pipx install graphifyy (package name with double y), local code-only build in seconds without API keys, git hook for freshness, and the commit-vs-gitignore choice for graphify-out/ (README recommends committing for teams) — and waits for consent.",
+        "On 'yes': agent installs, runs graphify update, sets up the hook, applies the agreed graphify-out/ choice, then proceeds graph-first.",
         "On 'no': agent proceeds with the base recipes without degradation and does not re-offer in the same session.",
         "The audit itself is not blocked on the answer — the offer is a fork, not a gate."
       ] }
