@@ -4,6 +4,15 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.13.0] — 2026-07-03
+
+### Added
+- **Skill `recursive-context`** — дисциплина Recursive Language Models (arXiv:2512.24601) нативными средствами Claude Code для oversized-входов: размер-гейт ДО чтения (>256 КБ / >5000 строк; пробы ≤50 строк), index-don't-ingest (нарезка кодом в scratchpad, coarse-pass grep для needle-задач), fan-out изолированных суб-агентов через Workflow `pipeline()` со schema-возвратами, рекурсия = loop-until-small с доказуемой терминацией (no-progress guard), честное покрытие (`failedGroups`, никаких silent caps), фолбэк на параллельные plain `Agent` без Workflow. Рецепты: `giant-file`, `repo-audit`, `requirements-mining` (факты `{claim, evidence_path, confidence}`, «факт без пути — не факт», дыры → `[факт: …]`); канонический map-reduce скрипт с защитным парсом `args` (живая находка L1: args может прийти JSON-строкой).
+- Evals `recursive-context`: `trigger-evals.json` (6 позитивных + 4 негативных), `behavior-evals.json` (6 dry-run кейсов + live-критерии L1/L2), детерминированный генератор фикстуры `gen-fixture.sh` (~49 МБ, 12 иголок, guard аргументов). RED→GREEN→LIVE в `RESULTS.md`: триггеры **60/60 голосов** (3 судьи × 20 запросов, включая кросс-регрессию против myarchitect), поведение **6/6 кейсов (19/19 assertions)** с живой проверкой фолбэк-ветки, live L1 **12/12 иголок** настоящим Workflow-прогоном (60 map-агентов, 0 упавших групп), live L2 — **40 verified-фактов с путями** на реальном репо + 5/5 выборочных проверок.
+
+### Changed
+- **myarchitect 1.13** — Workflow Z шаг 3 и Workflow I шаг 3: при доступном репозитории факты из кода добывает `recursive-context`/requirements-mining (пометка `[факт: код <path>]`); секция Composes with — новый сосед-скил. Description не тронут.
+
 ## [1.12.0] — 2026-07-03
 
 ### Added
