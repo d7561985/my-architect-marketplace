@@ -13,6 +13,8 @@ export const meta = {
 }
 
 // args = { chunks: ['/abs/path/chunk-000', ...], question: 'что извлекать', batch: 3 }
+// В рантайме args может прийти JSON-строкой — парсь защитно (проверено живым прогоном L1)
+const A = typeof args === 'string' ? JSON.parse(args) : args
 const FINDING = {
   type: 'object',
   properties: {
@@ -26,17 +28,17 @@ const FINDING = {
 }
 
 phase('Map')
-const B = args.batch || 3
+const B = A.batch || 3
 const groups = []
-for (let i = 0; i < args.chunks.length; i += B) groups.push(args.chunks.slice(i, i + B))
-log(`${args.chunks.length} chunks in ${groups.length} groups`)
+for (let i = 0; i < A.chunks.length; i += B) groups.push(A.chunks.slice(i, i + B))
+log(`${A.chunks.length} chunks in ${groups.length} groups`)
 
 // не .filter сразу: pipeline сохраняет порядок, null на месте упавшей группы —
 // это единственный способ узнать, ЧТО именно не покрыто
 const rawPartials = await pipeline(
   groups,
   (g, _orig, i) => agent(
-    `Read ONLY these files: ${g.join(', ')}. Question: ${args.question}. ` +
+    `Read ONLY these files: ${g.join(', ')}. Question: ${A.question}. ` +
     `Report every relevant finding with an exact supporting quote. If nothing relevant, return empty findings.`,
     { label: `map:${i}`, phase: 'Map', schema: FINDING }
   ),
@@ -65,7 +67,7 @@ while (JSON.stringify(working).length > 30_000) {
   for (let i = 0; i < working.length; i += 40) parts.push(working.slice(i, i + 40))
   log(`reducing ${working.length} findings in ${parts.length} groups`)
   const rawReduced = await parallel(parts.map((part, i) => () => agent(
-    `Merge these findings for the question "${args.question}": dedupe, keep evidence and chunk paths, drop irrelevant. ` +
+    `Merge these findings for the question "${A.question}": dedupe, keep evidence and chunk paths, drop irrelevant. ` +
     `Findings: ${JSON.stringify(part)}`,
     { label: `reduce:${i}`, phase: 'Reduce', schema: FINDING }
   )))
@@ -76,7 +78,7 @@ while (JSON.stringify(working).length > 30_000) {
 
 return {
   findings: working,
-  chunksTotal: args.chunks.length,
+  chunksTotal: A.chunks.length,
   groupsTotal: groups.length,
   groupsSucceeded: partials.length,
   failedGroups,
