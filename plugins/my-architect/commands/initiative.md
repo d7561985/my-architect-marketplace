@@ -11,6 +11,6 @@ Use the **myarchitect** skill, **Workflow I** (Authoring an initiative). Resolve
 4. **On confirm — write it:** epic text with the fixed section structure; nodes + requirements + doc in my_architect (live `levelNames`, single text canon); final self-pass against the stop-list from `references/initiative-gate.md`.
 5. **Verify, don't claim silently.** `validate_project` → clean; echo created IDs and every unclosed `[факт: …]` placeholder as a publication blocker.
 
-Keep this a thin wrapper; the logic lives in Workflow I and the rules in `references/initiative-gate.md`.
+Never invent facts — a gap is a literal `[факт: …]` placeholder, not plausible filler. Keep this a thin wrapper; the logic lives in Workflow I and the rules in `references/initiative-gate.md`.
 
 $ARGUMENTS
