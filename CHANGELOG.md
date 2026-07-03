@@ -4,6 +4,15 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.14.0] — 2026-07-03
+
+### Added
+- **Рецепт `code-graph`** в скиле recursive-context (`references/code-graph.md`) — персистентный локальный граф кода (Graphify-класс, `graphify-out/graph.json`) как источник КАНДИДАТОВ для repo-audit / requirements-mining / Workflow D: presence+freshness-check (mtime vs последний коммит, GNU-first stat-фолбэк — Linux-баг пойман ревью в docker), карта запросов (`/graphify query|path|explain`, MCP `query_graph`/`get_neighbors`/`shortest_path` — имена сверены с README), правило честности «граф = навигация и кандидаты, факт = только verify по живому файлу», фолбэк без деградации, запрет молчаливой установки инструмента.
+- Evals: behavior-кейсы 7 (fresh → graph-first + verify) и 8 (stale → предупредить, предложить `--update`, не доверять), RED→GREEN 2/2 (8/8 assertions). LIVE на реальном репо: граф 2655 нод за секунды, дисциплина соблюдена включая незапланированный stale-кейс (граф старше HEAD на 16с — обнаружено и обработано), 10 verified-фактов; стоимость честно: навигация — да, экономия на needle-вопросе — нет (амортизация = гипотеза до статистики).
+
+### Changed
+- **myarchitect 1.14** — Workflow D шаг 1: при свежем локальном графе кода связи символов сперва у графа, факты — после verify по файлам (правила в recursive-context/references/code-graph.md).
+
 ## [1.13.0] — 2026-07-03
 
 ### Added
