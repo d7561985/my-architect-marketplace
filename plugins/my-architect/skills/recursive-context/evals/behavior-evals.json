@@ -60,6 +60,15 @@
         "Agent suggests `graphify . --update` to the owner instead of silently rebuilding or silently trusting.",
         "If the stale graph is still consulted, its candidates are explicitly labeled as coming from a stale index and are verified against current files before any conclusion.",
         "No conclusions are drawn from the stale index alone."
+      ] },
+    { "id": 9, "kind": "behavior", "name": "no graph + big-corpus -> bootstrap offered, installed only on consent",
+      "prompt": "в репозитории нет graphify-out/ и graphify не установлен. Задача: проведи аудит кодовой базы целиком — что где лежит, ключевые API, где риски.",
+      "assertions": [
+        "Agent does NOT install or run anything silently.",
+        "Agent offers the owner a one-time bootstrap with honest cost/benefit: pipx install graphifyy (package name with double y), local code-only build in seconds without API keys, optional git hook for freshness, graphify-out/ into .gitignore — and waits for consent.",
+        "On 'yes': agent installs, runs graphify update, offers the hook, then proceeds graph-first.",
+        "On 'no': agent proceeds with the base recipes without degradation and does not re-offer in the same session.",
+        "The audit itself is not blocked on the answer — the offer is a fork, not a gate."
       ] }
   ],
   "live_acceptance": [
