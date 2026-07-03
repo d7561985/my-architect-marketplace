@@ -1,0 +1,16 @@
+{
+  "skill_name": "recursive-context",
+  "note": "Trigger evals: should/should-not. Judges see ONLY name+description, 3 votes per case. should-not are near-misses: ordinary-size work, batch-over-N-records (out of scope by design), single-file questions.",
+  "evals": [
+    { "id": 1,  "should_trigger": true,  "query": "разбери этот лог на 200 мегабайт: prod-gateway.log — почему ночью посыпались 502?" },
+    { "id": 2,  "should_trigger": true,  "query": "analyze this huge dump: exports/events-2026-06.ndjson is about 80MB, I need every payment anomaly" },
+    { "id": 3,  "should_trigger": true,  "query": "вот транскрипт воркшопа на 6 часов (transcript.txt, ~400 тысяч строк) — выжми все принятые решения и открытые вопросы" },
+    { "id": 4,  "should_trigger": true,  "query": "проведи аудит кодовой базы целиком: что где лежит, ключевые API, где риски" },
+    { "id": 5,  "should_trigger": true,  "query": "собери требования из кода: что уже работает в auth-сервисе и не должно быть тронуто новой фичей?" },
+    { "id": 6,  "should_trigger": true,  "query": "audit this codebase and map module dependencies — it's a big monorepo, don't try to read it all" },
+    { "id": 7,  "should_trigger": false, "query": "прочитай config/settings.yaml (строк 300) и скажи, включён ли фиче-флаг экспорта" },
+    { "id": 8,  "should_trigger": false, "query": "поправь эти три файла: routes.ts, schema.ts и тест — добавь поле dueDate" },
+    { "id": 9,  "should_trigger": false, "query": "у меня 40 тикетов в csv, по каждому надо сгенерить одинаковый ответ поддержки" },
+    { "id": 10, "should_trigger": false, "query": "объясни, что делает функция parseRetryPolicy в src/http/retry.ts" }
+  ]
+}

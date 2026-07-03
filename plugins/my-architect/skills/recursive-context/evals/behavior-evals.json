@@ -1,0 +1,66 @@
+{
+  "skill_name": "recursive-context",
+  "note": "Behavior evals: dry-run (what the agent WOULD do, no execution), graded by an independent judge that sees only the transcript + assertions. live_acceptance are executed for real (plan Tasks 8-9).",
+  "evals": [
+    { "id": 1, "kind": "behavior", "name": "size gate fires before any read",
+      "prompt": "разбери scratchpad/fixture.log (~60МБ): найди все критические аномалии и собери таймлайн подозрительной сессии",
+      "assertions": [
+        "FIRST action is a size probe (ls -la / wc -l), not Read.",
+        "No wholesale Read of the file; content samples limited to head/tail probes (<=50 lines total).",
+        "Plan cuts chunks on record boundaries into the scratchpad via Bash, then fans out agents per chunk group via Workflow pipeline().",
+        "Each sub-agent prompt contains ONLY its chunk paths + a narrow question; returns via schema, not prose.",
+        "Coverage is reported (chunks processed); any truncation is logged, not silent."
+      ] },
+    { "id": 2, "kind": "behavior", "name": "under threshold -> skill stands down",
+      "prompt": "разбери logs/deploy.log — файл на 180 строк, что пошло не так при последнем деплое?",
+      "assertions": [
+        "Agent checks size, sees it is under threshold, and reads the file normally.",
+        "No Workflow / chunking machinery is proposed for a 180-line file."
+      ] },
+    { "id": 3, "kind": "behavior", "name": "needle ask -> coarse grep pass before fan-out",
+      "prompt": "в огромном логе payments.log (2 млн строк) найди все упоминания txn=TXN-4444 и объясни, что с этой транзакцией происходило",
+      "assertions": [
+        "Agent runs grep -n for the anchor BEFORE any chunk fan-out.",
+        "If matches + context fit comfortably, agent extracts just those regions and answers without Workflow — and says so.",
+        "Fan-out is reserved for the case where candidates remain too large."
+      ] },
+    { "id": 4, "kind": "behavior", "name": "recurse expressed as loop, not nested workflow",
+      "prompt": "map-фаза по 120 чанкам вернула 4000 находок суммарно на ~400КБ JSON — что дальше?",
+      "assertions": [
+        "Aggregate is reduced in-script via a loop-until-small (batched reduce agents), NOT by nesting workflow() calls.",
+        "Budget remaining is consulted as a stop condition when a budget is set.",
+        "Early stop is logged with what was left unreduced."
+      ] },
+    { "id": 5, "kind": "behavior", "name": "requirements-mining facts carry evidence paths",
+      "prompt": "перед оформлением фичи собери из репозитория факты: что уже работает в резолве бренда и не должно быть тронуто?",
+      "assertions": [
+        "Output facts are of shape {claim, evidence_path, confidence} — every claim carries a concrete file path.",
+        "A claim without a path is demoted to a [факт: <вопрос>] placeholder, never presented as a fact.",
+        "Verified claims get a verify pass (an agent re-opens the path and confirms the quote supports the claim)."
+      ] },
+    { "id": 6, "kind": "behavior", "name": "Workflow unavailable -> plain-Agent fallback keeps the discipline",
+      "prompt": "Workflow-тул в этой сессии недоступен, а лог на 90МБ разобрать надо. Как действуешь?",
+      "assertions": [
+        "Fallback is parallel plain Agent calls (fresh, not fork), one per chunk group, same chunk+narrow-question isolation.",
+        "The size gate and index-don't-ingest discipline are unchanged.",
+        "Agent notes the loss of pipeline()/budget conveniences without abandoning decomposition."
+      ] }
+  ],
+  "live_acceptance": [
+    { "id": "L1", "name": "giant-file end-to-end on seeded fixture",
+      "setup": "evals/fixtures/gen-fixture.sh <scratchpad>/fixture.log 600000",
+      "question": "найди все критические аномалии и собери таймлайн подозрительной сессии",
+      "criteria": [
+        "All 12 seeded needles found: 4 PANIC ledger-drift lines, the 5-step sess-77f3a9 story in correct order, 3 UNSAFE_DIRECT_WRITE config overrides.",
+        "The fixture file is never read wholesale (no Read of the full file; probes <=50 lines).",
+        "Zero fabricated findings.",
+        "Coverage statement lists chunks processed."
+      ] },
+    { "id": "L2", "name": "requirements-mining on the real my_architect repo",
+      "question": "собери факты для гейта по фиче Open Question & Dependency Gate: что уже работает и не должно быть тронуто?",
+      "criteria": [
+        "Every fact carries an evidence_path into the repo; spot-check of 5 paths confirms the claims.",
+        "No invented facts; gaps surface as [факт: …] placeholders."
+      ] }
+  ]
+}
