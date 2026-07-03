@@ -7,7 +7,7 @@
 ```bash
 [ -f graphify-out/graph.json ] && echo present || echo absent
 # свежесть: индекс не старше последнего коммита
-G=$(stat -f %m graphify-out/graph.json 2>/dev/null || stat -c %Y graphify-out/graph.json)
+G=$(stat -c %Y graphify-out/graph.json 2>/dev/null || stat -f %m graphify-out/graph.json 2>/dev/null)
 H=$(git log -1 --format=%ct)
 [ "$G" -ge "$H" ] && echo fresh || echo STALE
 ```
