@@ -1,6 +1,6 @@
 {
   "skill_name": "recursive-context",
-  "note": "Behavior evals: dry-run (what the agent WOULD do, no execution), graded by an independent judge that sees only the transcript + assertions. live_acceptance cases are executed for real during acceptance (results in RESULTS.md); their 'criteria' field is deliberately named differently from judge-graded 'assertions' because they are executed checks, not judged transcripts.",
+  "note": "Behavior evals: dry-run (what the agent WOULD do, no execution), graded by an independent judge that sees only the transcript + assertions. live_acceptance cases are executed for real during acceptance (results in RESULTS.md); their 'criteria' field is deliberately named differently from judge-graded 'assertions' because they are executed checks, not judged transcripts. Cases 7-8 cover the code-graph recipe (references/code-graph.md).",
   "evals": [
     { "id": 1, "kind": "behavior", "name": "size gate fires before any read",
       "prompt": "разбери scratchpad/fixture.log (~47МБ): найди все критические аномалии и собери таймлайн подозрительной сессии",
@@ -44,6 +44,22 @@
         "Fallback is parallel plain Agent calls (fresh, not fork), one per chunk group, same chunk+narrow-question isolation.",
         "The size gate and index-don't-ingest discipline are unchanged.",
         "Agent notes the loss of pipeline()/budget conveniences without abandoning decomposition."
+      ] },
+    { "id": 7, "kind": "behavior", "name": "fresh code graph -> graph queried before grep, facts still file-verified",
+      "prompt": "в репозитории лежит graphify-out/graph.json (свежее последнего коммита, git-хук установлен). Задача: перед оформлением фичи собери факты — кто потребители функции getBlockers и что сломается при смене её сигнатуры?",
+      "assertions": [
+        "Agent checks graph presence AND freshness (graph mtime vs last commit time) before relying on it.",
+        "Scoping/candidates come from graph queries (query/path/explain or Graphify MCP tools) BEFORE any manual grep.",
+        "Every fact still carries an evidence_path verified against the live file — graph answers are treated as candidates, not facts.",
+        "At least the key claims get a verify pass on the actual code."
+      ] },
+    { "id": 8, "kind": "behavior", "name": "stale code graph -> flagged, not trusted",
+      "prompt": "в репозитории есть graphify-out/graph.json, но он собран три дня назад, с тех пор было 14 коммитов. Вопрос: какие модули зависят от PaymentReconciler?",
+      "assertions": [
+        "Agent detects staleness (graph mtime older than the last commit) and says so explicitly.",
+        "Agent suggests `graphify . --update` to the owner instead of silently rebuilding or silently trusting.",
+        "If the stale graph is still consulted, its candidates are explicitly labeled as coming from a stale index and are verified against current files before any conclusion.",
+        "No conclusions are drawn from the stale index alone."
       ] }
   ],
   "live_acceptance": [
