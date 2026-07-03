@@ -4,6 +4,15 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.15.0] — 2026-07-03
+
+### Added
+- **Bootstrap по согласию** (recursive-context/code-graph): графа нет + big-corpus задача по коду → агент один раз за сессию предлагает владельцу поставить и собрать граф (честная цена/выгода: `uv tool install graphifyy` (фолбэк pipx), локальная code-only сборка за секунды, git-хук, выбор коммитить/gitignore для `graphify-out/` — команде README рекомендует коммитить); на «да» — сам ставит, собирает, хук, и продолжает graph-first; на «нет» — базовые рецепты без повторных предложений. Молчаливые установки по-прежнему запрещены — ask-first доведён до действия. Behavior-кейс 9 (5/5 двумя независимыми грейдер-прогонами).
+
+### Fixed
+- **Роутинг в code-graph.md стал безусловным** для big-corpus задач по коду (recipe map + шаги 0 repo-audit/requirements-mining): раньше все указатели вели в рецепт только при НАЛИЧИИ графа — bootstrap-ветка была недостижима (Important, найдено ревью). Workflow D осознанно остаётся presence-gated (одиночная задача ≠ big-corpus).
+- Оффер выровнен с README Graphify: uv-first; команде — коммитить `graphify-out/` (merge-driver из `hook install`), в .gitignore только `cost.json`/`cache/`; соло-вариант — весь каталог.
+
 ## [1.14.0] — 2026-07-03
 
 ### Added
