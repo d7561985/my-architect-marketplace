@@ -4,6 +4,13 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.17.0] — 2026-07-06
+
+### Added
+- **Skill `design`** (feature-013) — architecture-aware дизайн-сессии: форк superpowers:brainstorming v5.1.0 (MIT-атрибуция). Диалоговое ядро сохранено (HARD-GATE, один вопрос за раз, 2–3 подхода, self-review); переопределены explore (get_project_context + code-graph + recursive-context), место спеки (док на узле, не docs/superpowers/specs/) и терминал (Workflow Z → writing-plans; план = файл-канон + зеркальный док с Source). Sketch mode отдаёт оцениваемый вариант в гейт Workflow I; эпики презентуются Event Storming канвасом до sequence.ok. Команда `/my-architect:design`; superpowers отключать не нужно (CON-008) — в проектах без my_architect продолжает работать оригинальный brainstorming.
+- **Оверлей в myarchitect 1.15** — таблица переопределений трёх шагов оригинального brainstorming (на случай его срабатывания) + мосты: systematic-debugging Phase 4.5 → Workflow I/B; finishing-a-development-branch → ship=sync. Workflow I шаг 2 роутит в design (фолбэк — оригинал).
+- Evals `skills/design/evals/design-evals.json`: RED→GREEN — триггеры 8/8 (3 судьи единогласно, 24/24 голосов), behavior dry-runs 4/4 (14/14 assertions), кросс-регрессия myarchitect 29/29 без дрейфа. README: секция design-sessions + 3-строчный CLAUDE.md-шаблон + совет skillListingBudgetFraction.
+
 ## [1.16.1] — 2026-07-03
 
 ### Added
