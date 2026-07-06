@@ -58,3 +58,31 @@ Run: give an agent the skill + each prompt, capture the `build_hierarchy` it wou
 - Fixture: **13/13** найдено (приёмка требовала ≥10), обязательные w1/w2/w10 — да; w9 пойман по отсутствию (нет Опции 0 / do-minimum), w10 связан как противоречие «опора для авторизации» ↔ «для авторизованных уже работает». REFACTOR-итераций не потребовалось.
 
 Вывод: FR-015 / FR-016 / NFR-005 выполнены; v1.12.0 готов к релизу.
+
+---
+
+# design skill — eval results (2026-07-06, plugin v1.17.0, feature-013)
+
+RED→GREEN: датасет `skills/design/evals/design-evals.json` написан ДО skill-файлов (skill не существовал — триггер-кейсы падали по построению); GREEN прогнан после Tasks 2–4.
+
+## Trigger evals (кейсы 1–8)
+
+8 запросов (4 should → design; 4 near-miss: без трекера → brainstorming, баг → systematic-debugging, инициатива → myarchitect, «дизайн уже утверждён» → myarchitect), 3 независимых судьи, каждому — только имена+descriptions установленного набора (design, superpowers:brainstorming, myarchitect, recursive-context, systematic-debugging).
+
+- **Accuracy: 8/8, единогласно (24/24 голосов).** False positives/negatives: 0.
+- Ключевая граница держится в обе стороны: «давай сделаем фичу … my_architect» → design (не brainstorming); «… пет-проект без трекера» → brainstorming (не design); «опиши фичу, дизайн утверждён вчера» → myarchitect/feature-author (design не перехватывает готовые дизайны).
+
+## Behavior dry-runs (кейсы 9–12)
+
+Свежие агенты с текстом SKILL.md, без MCP-мутаций; грейдинг по assertions датасета.
+
+- **9 (FR-019, спека на узле): 4/4** — шаг 0 до вопросов; Workflow Z перед create_doc; docs/superpowers/specs не канон; HARD-GATE до утверждения. Бонус: агент сам применил YAML-кавычки для `[факт: …]` в add_requirements.
+- **10 (FR-020, sketch → гейт I): 4/4** — «две корзины» распознаны (обе), sketch = оцениваемый вариант + альтернативы без спеки, handoff в Workflow I + STOP, «не делаем»/«не сейчас» = успех, 7 ответов гейта не переспрашиваются.
+- **11 (терминал): 3/3** — Workflow Z → writing-plans; план-файл = канон + зеркальный док на ноде с Source В ТОМ ЖЕ ходу («канон один», Workflow I шаг 6); дальше Workflow D.
+- **12 (Event Storming): 3/3** — create_diagram(event-storming, nodeId) → get_diagram.sequence → update_diagram-цикл до sequence.ok; текстом только секции/trade-offs.
+
+## Cross-regression myarchitect (кейс 13)
+
+trigger-evals.json myarchitect — все **29 кейсов** (в плане ошибочно «24»): **29/29 совпадений, дрейфа нет**. Точки соприкосновения — id 2 («опиши фичу») и id 7 («как сформировать ноды»): design может ко-срабатывать, но вердикт myarchitect не меняется (co-fire допустим по контракту evals).
+
+Вывод: FR-019/FR-020 подтверждены поведенчески, CON-008 соблюдён конструкцией (superpowers в наборе судей, не отключался); v1.17.0 готов к релизу.
