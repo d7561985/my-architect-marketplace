@@ -59,13 +59,17 @@ plugins/my-architect/
 ├── hooks/
 │   └── hooks.json      # PostToolUse debt-scan reminder on complete_task
 └── skills/
-    └── myarchitect/
-        └── SKILL.md    # Proactive backlog tracker skill (source of truth)
+    ├── myarchitect/
+    │   └── SKILL.md    # Proactive backlog tracker skill (source of truth)
+    ├── recursive-context/
+    │   └── SKILL.md    # RLM discipline for oversized inputs + code-graph recipes
+    └── design/
+        └── SKILL.md    # Architecture-aware design sessions (fork of superpowers:brainstorming)
 ```
 
 **MCP server (auto-configured):** `npx -y @my-architect/mcp@latest` with `MCP_API_KEY` from your shell env and `MA_API_URL=https://my-architect.app`.
 
-**Commands** (type `/my-architect:<name>`): **feature** (author a feature from scratch — propose a node tree, then write nodes + requirements + doc), **next** (pull + work the next task), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped).
+**Commands** (type `/my-architect:<name>`): **feature** (author a feature from scratch — propose a node tree, then write nodes + requirements + doc), **next** (pull + work the next task), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped), **design** (architecture-aware design session — dialogue to an approved spec on a node, then Workflow Z + plan), **initiative** (form an initiative through the 7-question gate), **bo-review** (read-only Business-Owner review of an epic).
 
 **Agents** (dispatched by the commands/skill, run in their own context): **feature-author** (prose → spec'd feature node, the engine behind `/feature`), **reconciler** (verify drafts against code, close what shipped — with evidence), **debt-scanner** (scan a closed feature + commit + chat for deferred/caveat/known-issue items and file them), **progress-auditor** (read-only status audit with drift flags).
 
@@ -76,6 +80,18 @@ plugins/my-architect/
 - Closing a feature → `complete_task` + scan commit + chat for surfaced gaps.
 - Each gap → de-dup against backlog → file via `build_hierarchy` + assign release via `bulk_update_nodes` (validate `successful` vs `failed`).
 - Decision rubric: tech-debt → no ask, future-with-trigger → no ask, strategic/scope → **ask before filing**.
+
+**Skill `design` (design sessions):** дизайн-сессии в проектах, трекаемых в my_architect, ведёт skill `design` — форк `superpowers:brainstorming` v5.1.0 (MIT, github.com/obra/superpowers), осведомлённый об архитекторе: explore через `get_project_context` + локальный граф кода + recursive-context, спека — доком на узле (не `docs/superpowers/specs/`), терминал — Workflow Z → writing-plans (план-файл + зеркальный док). superpowers отключать **не нужно** — skills сосуществуют; в проектах без my_architect продолжает работать оригинальный brainstorming.
+
+Рекомендуемые 3 строки в проектный CLAUDE.md (инструкции проекта имеют высший приоритет и усиливают выбор нужного skill'а):
+
+```
+- Дизайн-сессии: skill my-architect:design (не superpowers:brainstorming); спеки дизайна — доками на узлах my_architect.
+- Планы имплементации: файл в docs/plans/ + зеркальный док на ноде с Source (канон один).
+- my_architect pid: "<your-pid>"
+```
+
+Если установлено много плагинов и описания skills обрезаются (проверьте `/doctor`) — поднимите бюджет описаний: `"skillListingBudgetFraction": 0.02` в settings.json.
 
 ---
 
