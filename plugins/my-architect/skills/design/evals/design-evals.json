@@ -1,0 +1,46 @@
+{
+  "skill_name": "design",
+  "note": "Regression net для feature-013 (plugin v1.17.0). trigger: should/should-not (near-miss негативы); behavior: dry-run assertions, без мутаций; cross-regression: триггеры myarchitect не дрейфуют. Acceptance: trigger unanimous 3 судьи; behavior assertions выполняются в dry-run.",
+  "evals": [
+    { "id": 1, "kind": "trigger", "should_trigger": true, "query": "давай сделаем фичу: экспорт борды Event Storming в PNG. Проект трекается в my_architect (pid \"My Architect\")" },
+    { "id": 2, "kind": "trigger", "should_trigger": true, "query": "let's design a notifications subsystem for this project — it's tracked in my_architect, use the backlog" },
+    { "id": 3, "kind": "trigger", "should_trigger": true, "query": "спроектируй решение: вынести рендер диаграмм в отдельный воркер (проект в архитекторе)" },
+    { "id": 4, "kind": "trigger", "should_trigger": true, "query": "новая фича нужна — совместное редактирование канваса. Начни с дизайна, mcp my-architect подключен" },
+    { "id": 5, "kind": "trigger", "should_trigger": false, "query": "давай сделаем фичу: тёмная тема для моего пет-проекта на next.js (никакого трекера тут нет)" },
+    { "id": 6, "kind": "trigger", "should_trigger": false, "query": "почини баг: validate_project падает на пустой иерархии, вот стектрейс" },
+    { "id": 7, "kind": "trigger", "should_trigger": false, "query": "заведи инициативу: миграция на новую шину, обосновать перед CTO" },
+    { "id": 8, "kind": "trigger", "should_trigger": false, "query": "опиши фичу: экспорт в PDF — просто заведи ноды в архитекторе, дизайн уже утверждён вчера" },
+    { "id": 9, "kind": "behavior", "name": "spec lands on node, not docs/superpowers/specs",
+      "prompt": "давай сделаем фичу: экспорт борды в PNG (проект в my_architect). Доведи дизайн до спеки — dry-run, покажи какие вызовы сделаешь",
+      "assertions": [
+        "Шаг 0: resolve pid + get_project_context ДО вопросов.",
+        "Канон спеки — create_doc({nodeId}) на узле фичи; фича не заведена -> сперва Workflow Z (build_hierarchy + требования + validate_project).",
+        "Никакого файла в docs/superpowers/specs/ как канона (локальный черновик допустим только как промежуток с переносом на узел в том же ходу).",
+        "HARD-GATE соблюдён: никакой имплементации до утверждения дизайна."
+      ] },
+    { "id": 10, "kind": "behavior", "name": "structural work without decision -> sketch mode -> Workflow I",
+      "prompt": "давай спроектируем вынос резолва бренда в отдельный сервис — месяца на полтора работы, меняются контракты между сервисами. Проект в my_architect. Dry-run",
+      "assertions": [
+        "Агент распознаёт структурную работу (критерий двух корзин: > пары недель ИЛИ межсервисные контракты) без решения «делать ли».",
+        "Стартует sketch mode: оцениваемый вариант (подход, контракты, аппетит, обратимость) + 1-2 альтернативы, БЕЗ полной спеки.",
+        "Передаёт в Workflow I (гейт 7 вопросов) и останавливается; «не делаем»/«не сейчас» называет легитимным исходом.",
+        "НЕ переспрашивает в full mode ответы, уже данные гейтом."
+      ] },
+    { "id": 11, "kind": "behavior", "name": "terminal: Workflow Z then plan file + mirror doc",
+      "prompt": "дизайн утверждён (спека на узле). Что дальше? Dry-run: перечисли шаги и вызовы",
+      "assertions": [
+        "Сначала Workflow Z (если ноды ещё не заведены), затем superpowers:writing-plans.",
+        "План = ФАЙЛ в репо (канон для executing-plans/subagent-driven-development) + зеркальный док на ноде с 'Source: <путь>' в том же ходу.",
+        "Названо правило «канон один» (Workflow I шаг 6) — никаких двух независимых канонов."
+      ] },
+    { "id": 12, "kind": "behavior", "name": "epic design -> Event Storming canvas, fixed to sequence.ok",
+      "prompt": "дизайним эпик: пайплайн импорта из Jira в my_architect (проект трекается). Покажи dry-run презентации дизайна",
+      "assertions": [
+        "Для эпика презентация — Event Storming: create_diagram({diagramType:'event-storming', nodeId, dsl}).",
+        "get_diagram -> поле sequence; чинит бреши через update_diagram до sequence.ok.",
+        "Текстовые секции остаются только для мелкого/нефлоу-контента."
+      ] },
+    { "id": 13, "kind": "cross-regression", "name": "myarchitect triggers unchanged",
+      "note": "Прогнать trigger-evals.json myarchitect (24 кейса) — вердикты не изменились после оверлея (story-120)." }
+  ]
+}
