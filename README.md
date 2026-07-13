@@ -212,6 +212,23 @@ Conversely, when the install instructions change here, update `packages/mcp/READ
 
 ---
 
+## Background & deep dives
+
+A 10-part engineering series on how My Architect was designed and built — the architecture decisions behind the MCP server and skills in this marketplace.
+
+- [Giving an AI agent memory and a plan](https://harupa.pro/articles/my-architect-1-pamyat-dlya-agenta.html)
+- [An architecture with no database](https://harupa.pro/articles/my-architect-2-arhitektura-bez-bazy.html)
+- [A planning model that makes agents think like architects](https://harupa.pro/articles/my-architect-3-model-planirovaniya.html)
+- [The agent's working loop](https://harupa.pro/articles/my-architect-4-rabochiy-cikl-agenta.html)
+- [Shipping skills and MCP via the Claude Code marketplace](https://harupa.pro/articles/my-architect-5-marketplace.html)
+- [The human side — WBS, Building Blocks and the User Story Map](https://harupa.pro/articles/my-architect-6-storona-cheloveka.html)
+- [Obsidian vs Claude Code docs vs OpenClaw](https://harupa.pro/articles/my-architect-7-obsidian-openclaw-claude-code.html)
+- [Event Storming as sequence control, not another diagram](https://harupa.pro/articles/my-architect-8-event-storming.html)
+- [Recursive context — teaching the agent to admit what it hasn't read](https://harupa.pro/articles/my-architect-9-recursive-context.html)
+- [A repo memory the agent isn't allowed to trust](https://harupa.pro/articles/my-architect-10-code-graph.html)
+
+---
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
