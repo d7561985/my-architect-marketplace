@@ -1,6 +1,6 @@
 ---
 name: recursive-context
-description: 'Use when an input is too big to read wholesale and must be decomposed programmatically before reading — a multi-MB log, data dump, or very long document/transcript ("разбери этот лог на 200МБ", "analyze this huge dump", "выжми транскрипт"), or a whole-repo comprehension task — аудит кодовой базы, сбор требований/фактов из репозитория ("проведи аудит репо", "собери требования из кода", "audit this codebase"). Fires BEFORE reading the artifact — check size first. Also fires for symbol-impact questions across a codebase — "кто зовёт X", "что сломается при смене сигнатуры", "who calls X / what breaks if I change it". Not for ordinary-size files, not for editing a few known files, not for running the same operation over N independent records/tickets.'
+description: 'Use when an input is too big to read wholesale and must be decomposed programmatically before reading — a multi-MB log, data dump, or very long document/transcript ("разбери этот лог на 200МБ", "analyze this huge dump", "выжми транскрипт"), or a whole-repo comprehension task — аудит кодовой базы, сбор требований/фактов из репозитория ("проведи аудит репо", "собери требования из кода", "audit this codebase"). Fires BEFORE reading the artifact — check size first. Also fires for symbol-impact questions across a codebase — "кто зовёт X", "что сломается при смене сигнатуры", "who calls X / what breaks if I change it". Fires too, regardless of size, whenever a code graph may be present (graphify-out/) and the task needs codebase understanding beyond one known file: оценка трудозатрат, планирование, ревью, «где реализовано X», онбординг-доки, написание CLAUDE.md (в т.ч. /init). Not for ordinary-size files, not for editing a few known files, not for running the same operation over N independent records/tickets.'
 ---
 
 # recursive-context — programmatic decomposition of oversized inputs
@@ -9,7 +9,21 @@ description: 'Use when an input is too big to read wholesale and must be decompo
 
 Дисциплина Recursive Language Models (arXiv:2512.24601) нативными средствами Claude Code: oversized-вход — это **внешняя среда, а не содержимое промпта**. Индексируй его кодом, раздай изолированным суб-агентам по кускам, рекурсивно сворачивай агрегат до малого, потом синтезируй. Примитивы уже есть: `Bash` (детерминированная преднарезка), `agent()` в `Workflow` (изолированный суб-вызов = `rlm_query()`), `pipeline()`/`parallel()` (батчинг), `budget` (потолок затрат).
 
-## The size gate (ВСЕГДА первым)
+## Step 0 — code graph (ПЕРЕД размер-гейтом, одна команда)
+
+Задача требует понимания кодовой базы шире одного известного файла? Сначала — есть ли готовый индекс:
+
+```bash
+[ -f graphify-out/graph.json ] && echo present || echo absent
+```
+
+`present` → **граф первым**: он закрывает фазу Discovery за секунды, до `grep`, до `Read`, до `Workflow`, до fan-out агентов. Полная дисциплина (freshness, карта запросов, verify регионами, bootstrap по согласию) — [references/code-graph.md](references/code-graph.md).
+
+Проверка стоит один вызов `Bash` и не тащит контент в контекст. Не пропускай её на том основании, что задача «не выглядит как вопрос о кодовой базе»: оценка, планирование, ревью, аудит, онбординг-док, `/init` и «где реализовано X» — всё это Discovery по чужому коду, и все они этой проверке подлежат.
+
+`absent` → размер-гейт ниже; на big-corpus задаче см. «Bootstrap по согласию» в том же референсе.
+
+## The size gate (ВСЕГДА первым после Step 0)
 
 До чтения ЛЮБОГО потенциально большого артефакта:
 
@@ -41,6 +55,8 @@ description: 'Use when an input is too big to read wholesale and must be decompo
 ## Red flags — СТОП, ты нарушаешь дисциплину
 
 - «Сначала просто прочитаю файл, чтобы понять» (размер-гейт — первым)
+- «Это же не вопрос о кодовой базе, а оценка / план / ревью / доки» — Discovery по чужому коду есть в каждой из них; Step 0 подлежит выполнению
+- Разослал агентов грепать структуру проекта, не проверив `graphify-out/graph.json`
 - «Прочитаю первые 100КБ, наверное хватит»
 - Читаешь чанки сам вместо диспатча агентов
 - Промпт суб-агента тащит контекст твоей сессии

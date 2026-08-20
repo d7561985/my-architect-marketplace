@@ -14,6 +14,14 @@
     { "id": 10, "should_trigger": false, "query": "объясни, что делает функция parseRetryPolicy в src/http/retry.ts" },
     { "id": 11, "should_trigger": true,  "query": "что сломается, если я поменяю сигнатуру getBlockers? кто её вообще зовёт по всему репо?" },
     { "id": 12, "should_trigger": true,  "query": "what breaks if I change the return type of withProjectLock? who calls it?" },
-    { "id": 13, "should_trigger": false, "query": "переименуй локальную переменную в utils.ts и поправь её единственный тест" }
+    { "id": 13, "should_trigger": false, "query": "переименуй локальную переменную в utils.ts и поправь её единственный тест" },
+    { "id": 14, "should_trigger": true,  "query": "оцени, сколько займёт добавить permission-проверки в ItemGroup — по репо, который я вижу впервые" },
+    { "id": 15, "should_trigger": true,  "query": "estimate the effort to add field-level export restrictions across this service" },
+    { "id": 16, "should_trigger": true,  "query": "напиши CLAUDE.md для этого проекта: структура, точки входа, ключевые модули" },
+    { "id": 17, "should_trigger": true,  "query": "/init — собери документацию по кодовой базе в CLAUDE.md" },
+    { "id": 18, "should_trigger": true,  "query": "где вообще реализована машинерия прав в этом проекте? откуда начинать копать" },
+    { "id": 19, "should_trigger": true,  "query": "спланируй, как раскатить новый экспорт по всему сервису — что придётся трогать" },
+    { "id": 20, "should_trigger": false, "query": "напиши docstring для функции formatDuration, вот её тело" },
+    { "id": 21, "should_trigger": false, "query": "оцени, сколько займёт поднять версию lodash в package.json" }
   ]
 }

@@ -57,7 +57,8 @@ plugins/my-architect/
 ├── commands/           # slash commands (auto-discovered)
 ├── agents/             # subagents (auto-discovered)
 ├── hooks/
-│   └── hooks.json      # PostToolUse debt-scan reminder on complete_task
+│   ├── hooks.json      # SessionStart code-graph context + PostToolUse debt-scan reminder
+│   └── code-graph-context.sh
 └── skills/
     ├── myarchitect/
     │   └── SKILL.md    # Proactive backlog tracker skill (source of truth)
@@ -73,7 +74,9 @@ plugins/my-architect/
 
 **Agents** (dispatched by the commands/skill, run in their own context): **feature-author** (prose → spec'd feature node, the engine behind `/feature`), **reconciler** (verify drafts against code, close what shipped — with evidence), **debt-scanner** (scan a closed feature + commit + chat for deferred/caveat/known-issue items and file them), **progress-auditor** (read-only status audit with drift flags).
 
-**Hook:** a single `PostToolUse` hook on the `complete_task` MCP tool — when a feature is closed it reminds Claude to run the debt-scan pass. Scoped to that one tool; nothing fires on unrelated turns.
+**Hooks:** two, both narrowly scoped.
+- `PostToolUse` on the `complete_task` MCP tool — when a feature is closed it reminds Claude to run the debt-scan pass. Scoped to that one tool; nothing fires on unrelated turns.
+- `SessionStart` code-graph context — if the project root has `graphify-out/graph.json`, the session starts already knowing the index exists, when it was built, whether it is `fresh` or `STALE` relative to HEAD, and the composition rule (graph → verify against live files → Workflow/agents for what the graph cannot know). **No graph → the hook prints nothing**, so non-graphified projects pay zero. This exists because a skill description cannot express "fire when `graphify-out/` exists": only skill *descriptions* are in context at decision time, and checking the disk requires already deciding to look. A fact in context cannot be forgotten; a trigger has to be remembered.
 
 **Skill `myarchitect`:** triggers when you (or Claude) say "deferred", "known issue", "caveat", "not yet wired", "to be tested when…", "could improve later", or after closing a feature. Encodes the workflow:
 - Always start with `get_project_context` to load live state.
