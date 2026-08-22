@@ -30,13 +30,29 @@ graph="$root/graphify-out/graph.json"
 mtime="$(stat -f %m "$graph" 2>/dev/null || stat -c %Y "$graph" 2>/dev/null || echo 0)"
 built="$(date -r "$mtime" +%Y-%m-%d 2>/dev/null || date -d "@$mtime" +%Y-%m-%d 2>/dev/null || echo unknown)"
 
+# Freshness is decided by `built_at_commit` INSIDE graph.json, not by the file's mtime.
+# mtime answers "was this file touched", which is a different question: any rebuild that
+# bails out, any copy, any editor save moves it, and it says nothing about WHICH tree the
+# index was extracted from. built_at_commit is written by every rebuild and compares exactly.
+# mtime stays as the fallback for indexes built before the field existed.
+stale_advice="Say so out loud, offer the owner \`graphify update .\` (and \`graphify hook install\` if no post-commit hook is installed). Mark every graph candidate \"from a stale index\" and draw no conclusion from it without verifying against the current file."
+
+built_commit="$(grep -o '"built_at_commit"[[:space:]]*:[[:space:]]*"[0-9a-f]\{7,40\}"' "$graph" 2>/dev/null | head -1 | grep -o '[0-9a-f]\{7,40\}' | head -1)"
+head_sha="$(git -C "$root" rev-parse HEAD 2>/dev/null || echo '')"
 head_ct="$(git -C "$root" log -1 --format=%ct 2>/dev/null || echo '')"
-if [ -z "$head_ct" ]; then
+
+if [ -z "$head_sha" ]; then
     fresh_line="freshness unknown — no git history to compare against; treat as possibly stale."
-elif [ "$mtime" -lt "$head_ct" ] 2>/dev/null; then
-    fresh_line="STALE — the index predates HEAD. Say so out loud, offer the owner \`graphify . --update\` (and \`graphify hook install\` if no post-commit hook is installed). Mark every graph candidate \"from a stale index\" and draw no conclusion from it without verifying against the current file."
+elif [ -n "$built_commit" ]; then
+    if [ "$built_commit" = "$head_sha" ]; then
+        fresh_line="fresh — built at HEAD."
+    else
+        fresh_line="STALE — built at ${built_commit} while HEAD is ${head_sha}. ${stale_advice}"
+    fi
+elif [ "$mtime" -lt "${head_ct:-0}" ] 2>/dev/null; then
+    fresh_line="STALE — the index file predates HEAD (no built_at_commit field; judged by mtime). ${stale_advice}"
 else
-    fresh_line="fresh — not older than HEAD."
+    fresh_line="fresh — not older than HEAD (no built_at_commit field; judged by mtime, which is weaker)."
 fi
 
 report=""
@@ -53,7 +69,20 @@ estimation, audit, planning, review, onboarding docs, writing or updating CLAUDE
 (including /init) — STARTS at the graph, before grep, before Read, before Workflow,
 before fanning out agents:
 
-  graphify query "<question>"      graphify explain "<symbol>"      graphify affected "<symbol>"
+  graphify query "<SYMBOL AND FILE NAMES>"   graphify explain "<symbol>"   graphify affected "<symbol>"
+
+Query with SYMBOL NAMES, not prose. Measured A/B on the same question (9.5k-node index):
+"LibraryModal kindLock onPick uploadArtifact" returned the exact files and functions;
+"how does the user pick an image from the media library" returned marketing docs and an
+unrelated README — zero code. Doc nodes are labelled with section headings and are nearly
+as numerous as code nodes, so a natural-language query lands on headings and never reaches
+the symbols. No names yet? Take them from GRAPH_REPORT.md or one narrow grep first.
+
+The graph does NOT see symbols nested inside function bodies — the extractor emits
+top-level declarations only. A 4131-line React component yielded 17 nodes, the last being
+the component itself at L524: 3600 lines of body produced nothing. For fat files the graph
+answers only "which file"; absence of a symbol in the graph is NOT evidence it is absent
+from the code.
 
 Does NOT apply to editing a single known file, or to a purely conversational turn.
 
