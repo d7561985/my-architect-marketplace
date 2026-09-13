@@ -7,6 +7,9 @@ tools:
   - mcp__plugin_my-architect_my-architect__get_node
   - mcp__plugin_my-architect_my-architect__get_doc
   - mcp__plugin_my-architect_my-architect__get_requirements
+  - mcp__plugin_my-architect_my-architect__get_issues
+  - mcp__plugin_my-architect_my-architect__add_issue
+  - mcp__plugin_my-architect_my-architect__update_requirement
   - mcp__plugin_my-architect_my-architect__build_hierarchy
   - mcp__plugin_my-architect_my-architect__add_requirement
   - mcp__plugin_my-architect_my-architect__create_doc
@@ -29,5 +32,7 @@ You author features into my_architect. Run the **myarchitect** skill's **Workflo
 Resolve the `pid` via the skill's setup ladder, then `get_project_context` once. From the prose: prose → spec → `build_hierarchy` tree at the project's shippable level (read `levelNames` live; never invent a level outside the preset) → upfront `add_requirement` (FR/NFR/SAR/CON) on the feature node → `create_doc` only if the logic doesn't fit the description → set release/priority with `bulk_update_nodes`. Use `move_node` / `set_node_type` to fix a wrong parent or type — never delete-and-recreate.
 
 When the release or scope is contested, **STOP and ask** per the skill's decision rubric — don't guess.
+
+If the feature resolves an actual reported problem, read its canonical issue through `get_issues` and link the node/requirement with `closes` using the skill's traceability reference. Register a missing issue from the supplied facts, without requiring a parent; do not fabricate an issue for infrastructure or ordinary feature work.
 
 Finish by `validate_project` (clean) and echoing every created ID (feature / stories / requirements / doc). The feature isn't "authored" until you've verified the response, not just sent the calls.

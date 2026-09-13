@@ -5,11 +5,12 @@ description: Use when surfacing, working, or closing work in a project that uses
 
 # myarchitect — proactive backlog tracker
 
-Кодифицирует три вещи поверх любого проекта, использующего MCP-сервер `my_architect`:
+Кодифицирует четыре вещи поверх любого проекта, использующего MCP-сервер `my_architect`:
 
 1. **Архитектор — живой источник истины, а не журнал постфактум.** Берёшь задачу — сперва читаешь ноду и её доки, ведёшь работу против них и держишь их в актуальном состоянии, пока работаешь (не только на старте и финише).
-2. Любой surfaced gap (deferred / caveat / known issue / "to be tested when") становится my_architect-нодой **до конца текущего хода**.
+2. Любой surfaced gap (deferred / caveat / known issue / "to be tested when") отслеживается в Архитекторе **до конца текущего хода**: долг — нодой, названная пользователем/мейнтейнером проблема — issue без обязательного эпика; решение связывается через `closes`.
 3. Когда приоритет/release спорный — **остановиться и спросить**, не выдумывать.
+4. Реализация поведения идёт с обязательным TDD; перед закрытием Trace проверяет цепочку требование → постоянный тест → CI. Выполненные требования получают явный `done`; issue закрывается в том же ходу только когда **все** его closing-требования и узлы `done` (`approved` не равен `done`). Затем обновляются производный индекс и валидация.
 
 Skill универсальный: project ID, эпики, релизы, уровни иерархии и конвенции тайтлов читаются из текущего проекта, а не захардкожены.
 
@@ -20,6 +21,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - [`references/workflows.md`](references/workflows.md) — полные тела Workflow Z / D / A / B / C / I / R + Description template + `plan_release` note.
 - [`references/forming-nodes.md`](references/forming-nodes.md) — модель иерархии: пресеты/уровни, тест гранулярности, lint тайтлов, `build_hierarchy`, `move_node`/`set_node_type`.
 - [`references/initiative-gate.md`](references/initiative-gate.md) — свод правил инициатив: гейт 7 вопросов, правила текста, процесс «две корзины». Используют Workflow I / R и шаг 3 Workflow Z.
+- [`references/traceability.md`](references/traceability.md) — обязательная цепочка issue → требование → постоянный тест → CI: TDD, `covers`, проверка гейта мутацией, односторонний синк и явные waivers. Читать до реализации поведения и на шаге Trace.
 
 Карта ниже говорит, **когда** какой файл открыть. Не держи всё в голове — дошёл до Workflow → прочитал его тело.
 
@@ -27,7 +29,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 
 Лестница попыток (выполнять по порядку, остановиться на первом успехе):
 
-1. **Local `CLAUDE.md` проекта.** Поискать литеральный паттерн `pid:\s*["']([\w-]+)["']` рядом с упоминанием `my_architect` или `my-architect`. Это естественный маркер — туллы обычно цитируются с `pid` явно (пример: `mcp__my-architect__get_project_context({pid: "<id>"})`).
+1. **Local `CLAUDE.md` проекта.** Поискать литеральный паттерн `pid:\s*["']([^"'\r\n]+)["']` рядом с упоминанием `my_architect` или `my-architect`. Сохранять ID целиком, включая пробелы; не превращать в slug. Это естественный маркер — туллы обычно цитируются с `pid` явно (пример: `mcp__my-architect__get_project_context({pid: "<id>"})`). Если вместо `pid` дан маркер `my-architect:traceability`, прочитай `projectId` из указанного `.architect/traceability.json`.
 2. **`mcp__my-architect__list_projects({})`.** Если ровно один проект — он и есть. Если несколько — **спросить пользователя**, в каком работаем сейчас. Не угадывать.
 3. **Ноль проектов.** Предложить `mcp__my-architect__scaffold_project({...})`, но НЕ выполнять без подтверждения (создание проекта — scope decision, не routine). При scaffold — выбрать **preset** (`agile|safe|simple|custom`): он фиксирует схему уровней на весь проект, поменять потом нетривиально. Не дефолтить в `agile` молча, если проект явно не agile.
 
@@ -61,15 +63,16 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 0. **Decide → Workflow I** — структурная работа (не «две корзины»-мелочь: дольше пары недель или трогает межсервисные контракты)? Сначала ценность и «делать ли»: гейт 7 вопросов → спина из 7 ответов → апрув автора → эпик + ноды. Легитимные исходы: «не делаем» (Опция 0 / нет потребителя) и «не сейчас + триггер пересмотра». Мелкая работа идёт сразу в Workflow Z. Перед показом эпика бизнесу — **Workflow R** (`/my-architect:bo-review`, read-only, правки вносит автор).
 1. **Create → Workflow Z** — описать фичу ДО кода: дерево нод + upfront-требования (FR/NFR/SAR/CON) + (опц.) дока + релиз → `validate_project` + echo ID. **Каждый узел = building block** — вертикальный срез с наблюдаемым результатом («после поставки `<актор>` может `<X>`»), а НЕ задача по слоям кода («Коллекция X», «добавить поле»); прогони **merge-test + demo-test** перед `build_hierarchy`. Высота и дробление нод — [`references/forming-nodes.md`](references/forming-nodes.md). Shippable-фича **никогда** не заводится одиночной childless-нодой (≥1 дочерний срез).
 2. **Work → Workflow D** — взять задачу: `get_node` + доки + `get_requirements(inherited)` ДО кода; вести против ноды/доки и держать их актуальными по ходу.
-3. **Close → Workflow A** — `complete_task` с summary → scan-for-gaps (перечитать commit + чат-ход на deferred/caveat/known-issue) → end-of-turn summary.
-4. **File deferred → Workflow B** — каждый всплывший долг становится нодой: de-dup → parent epic → priority/release (rubric) → `build_hierarchy` → validate.
+3. **Trace → [traceability.md](references/traceability.md)** — постоянный тест декларирует требование, гейт видит эту связь и исполняется в CI; чувствительность проверена мутацией. Пропуски — явные waivers, не молчание. Команды берутся из local `CLAUDE.md`.
+4. **Close → Workflow A** — после Trace: `complete_task` с доказательствами → закрытие связанных `closes` issue в том же ходу → validate → scan-for-gaps (перечитать commit + чат-ход на deferred/caveat/known-issue) → end-of-turn summary.
+5. **File deferred → Workflow B** — каждый всплывший долг становится нодой: de-dup → parent epic → priority/release (rubric) → `build_hierarchy` → validate. Зарегистрированные проблемы хранятся как issue, связь решения — `closes`.
 - **Docs → Workflow C** — сквозной источник истины; вплетается в Z (создание) и D (работа).
 
 Authoring **ведёт** цикл — фичу формируешь ДО кода, а не дописываешь ноды постфактум.
 
 **Эпик/инициатива → Event Storming как контроль последовательности (сильный default).** Берёшь в работу эпик или инициативу (для структурной работы — уже прошедшую Decide-гейт, шаг 0) — по умолчанию проведи Event Storming суб-задачей ДО кода: `create_diagram({diagramType:'event-storming', nodeId:<эпик/инициатива>, dsl})` и разложи поток — Актор→**Команда**→**Событие**, **Политика**-мост (когда Событие → следующая Команда), **Read-model** кормит решение; открытые вопросы = **hotspot**. Прочитай доску `get_diagram` → поле `sequence` показывает БРЕШИ: событие без причины, команда без результирующего события, политика не мостит, изолированные карточки, нерешённые вопросы. Чини через `update_diagram` до `sequence.ok`. **Во время исполнения** возвращайся и снова валидируй последовательность (`get_diagram` → `sequence`). ПОЧЕМУ: на уровне эпика/инициативы это инструмент понимания и контроля — ловит пропущенные шаги и неверный порядок ДО и ВО ВРЕМЯ кода, а hotspot'ы держат открытые вопросы на виду. Пропускай только тривиальное (1–2 шага, нет потока). Требует MCP-сборку с типом `event-storming` (Compatibility).
 
-**Ship = sync (нет отложенного статуса).** Любой user-visible релиз — коммит, который отгружает фичу, или тегнутая версия — в ТОМ ЖЕ ходу двигает соответствующую ноду в её done/next-статус (`complete_task` или `update_node({status})`). Закрыть код и обновить архитектора — один шаг, не два: «отгрузил сейчас, статус проставлю потом» создаёт ровно тот дрейф, который этот skill предотвращает. Если отгрузка не привязана ни к одной ноде — это сигнал, что фича не была заведена (Workflow Z), а не разрешение пропустить синк.
+**Ship = sync (нет отложенного статуса).** Фактическая отгрузка в ТОМ ЖЕ ходу проходит полную последовательность Workflow A: нода → доказанно выполненные требования явно `done` → свежий `get_issues` → issue `closed` только при непустом `closedBy` и **всех** статусах `done` → синк индекса → `validate_project`. `complete_task` обновляет ноду и предков, но не требования/issue. Частичное решение оставляет проблему открытой. Если отгрузка не привязана ни к одной ноде — это сигнал пропущенного Workflow Z. Подготовленная локальная/preview-версия не является опубликованным релизом.
 
 ## Decision rubric
 
@@ -91,11 +94,12 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 - **Хардкодить эпики / релизы / конвенции** в самом skill — читать live из `get_project_context` и local `CLAUDE.md`. Skill универсальный, проектные данные живут в проекте.
 - **Restate local `CLAUDE.md`** — он всегда в контексте, дублировать в skill = дрейф. Reference, don't duplicate.
 - **Не оставлять ноду/доку устаревшей.** Разошлась работа с тем, что записано — синхронизировать в том же ходу (`update_doc` / `update_node`) или пометить `status: "blocked"` с причиной. Молчаливый дрейф источника истины — худшее из зол.
-- **Не отгружать без синка статуса (ship = sync).** Любой user-visible релиз — коммит, отгружающий фичу, или тегнутая версия — в ТОМ ЖЕ ходу двигает соответствующую ноду в done/next-статус (`complete_task` / `update_node({status})`). Закрыть код и обновить архитектора — один шаг, никакого «статус проставлю позже». Отложенный синк = гарантированный дрейф; `validate_project` поймает его как status-rollup-lag, но ловить уже поздно.
+- **Не обходить Workflow A прямым `done`.** Ни bulk-закрытие нод, ни старый `approved`, ни waiver не заменяют доказательства исполнения требований и синхронизацию issue. Порядок и условие **всех** closing-элементов — в Workflow A; отложенного «issue и индекс поправлю потом» нет.
 - **Не возводить непроверенную интеграцию в узел.** «X читает через Y», «завязано на сервис Z» — проверь по коду ДО создания ноды; не подтвердилось → draft с маркером `VERIFY:` в описании, не уверенный блок. `validate_project` ловит целостность, не выдумку. (Детали — [`references/forming-nodes.md`](references/forming-nodes.md) → Verify before you elevate.)
 
 ## Composes with
 
+- **`superpowers:test-driven-development` — REQUIRED.** Обязателен до реализации поведения и исправления регрессий. Архитектор добавляет проверяемую связь требование ↔ постоянный тест ↔ CI; доктрина TDD остаётся в этом skill. Подробности — [traceability.md](references/traceability.md).
 - **`superpowers:verification-before-completion`** — запустить ДО объявления фичи готовой; этот skill подхватывает после (closure + scan).
 - **`superpowers:dispatching-parallel-agents`** — если closure-scan нашёл 5+ новых нод для filed'инга, это subagent task, не main-thread.
 - **`recursive-context`** (этот же плагин) — oversized-входы: гигантский лог/дамп/транскрипт или whole-repo задача → декомпозиция вместо чтения в лоб; для Workflow Z шаг 3 / Workflow I шаг 3 добывает факты с путями (рецепт requirements-mining).
@@ -106,7 +110,9 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.15 (2026-07-06). Bump: **Design-skill оверлей** (feature-013). Composes with: дизайн-сессии ведёт skill `design` (форк brainstorming) + таблица переопределений на случай срабатывания оригинала + мосты systematic-debugging Phase 4.5 → I/B и finishing-branch → ship=sync; Workflow I шаг 2 роутит в design (фолбэк — оригинал). (1.14 ниже.)
+**Version:** 1.19.0 (2026-09-13, aligned with plugin version). **Traceability:** обязательный TDD + Trace; явный requirement `done` после доказанного исполнения; issue закрывается при завершении **всех** closing-элементов; синк и валидация в том же ходу. **Compatibility:** issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; проверяй живую схему, не только номер версии.
+
+**Prior:** 1.15 (2026-07-06). Bump: **Design-skill оверлей** (feature-013). Composes with: дизайн-сессии ведёт skill `design` (форк brainstorming) + таблица переопределений на случай срабатывания оригинала + мосты systematic-debugging Phase 4.5 → I/B и finishing-branch → ship=sync; Workflow I шаг 2 роутит в design (фолбэк — оригинал). (1.14 ниже.)
 
 **Prior:** 1.14 (2026-07-03). Bump: **Code-graph awareness** (feature-011). Workflow D шаг 1: при свежем локальном графе кода (Graphify-класс) связи символов сперва у графа, факты — только после verify по файлам; правила в скиле recursive-context (references/code-graph.md). (1.13 ниже.)
 

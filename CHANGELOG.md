@@ -4,6 +4,19 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.19.0] — 2026-09-13
+
+### Added
+- `/my-architect:init` with reusable project scripts for authoritative issue/requirement export, coverage declarations, and local instructions.
+- Silent `architect-health` SessionStart hook: reports missing synchronization, coverage/CI wiring, and completed requirements without any issue records; identifies the corrective command.
+- Traceability reference: permanent regression tests, mandatory composition with `superpowers:test-driven-development`, requirement declarations, CI execution, and mutation evidence.
+- Executable regression scenarios for missing coverage declarations, shrinking/replaced requirement sets, missing CI gates, and hook silence.
+- Existing-project update guidance: rerun `/my-architect:init` to inspect preserved project tooling, migrate custom indexes without losing requirement IDs, and verify the actual tests and CI gate. Plugin updates do not automatically replace project runtime/configuration or deploy the backend.
+
+### Changed
+- Trace is required before Close. Workflow A explicitly completes only proven requirements with `done`, reads fresh issue links, and closes an issue only when every closing requirement/node is `done`; `approved` remains distinct. Partial solutions stay open. Workflow B and direct completion commands use this same sequence, followed by index synchronization and validation in the same turn.
+- Architect is the source of truth for issue text/status. Repository synchronization rejects loss of any requirement ID; exceptions require an explicit requirement ID and reason.
+
 ## [1.18.2] — 2026-08-22
 
 Три находки с живой работы по графу (репозиторий на 9.5к узлов, полный цикл фичи от спеки до кода).

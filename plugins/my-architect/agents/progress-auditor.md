@@ -7,6 +7,7 @@ tools:
   - mcp__plugin_my-architect_my-architect__get_node
   - mcp__plugin_my-architect_my-architect__get_doc
   - mcp__plugin_my-architect_my-architect__get_requirements
+  - mcp__plugin_my-architect_my-architect__get_issues
   - mcp__plugin_my-architect_my-architect__get_next_task
   - mcp__plugin_my-architect_my-architect__validate_project
   - Read
@@ -18,6 +19,13 @@ disallowedTools:
   - mcp__plugin_my-architect_my-architect__bulk_update_nodes
   - mcp__plugin_my-architect_my-architect__complete_task
   - mcp__plugin_my-architect_my-architect__delete_node
+  - mcp__plugin_my-architect_my-architect__add_issue
+  - mcp__plugin_my-architect_my-architect__update_issue
+  - mcp__plugin_my-architect_my-architect__add_requirement
+  - mcp__plugin_my-architect_my-architect__add_requirements
+  - mcp__plugin_my-architect_my-architect__update_requirement
+  - mcp__plugin_my-architect_my-architect__bulk_update_requirements
+  - mcp__plugin_my-architect_my-architect__delete_requirement
 skills:
   - myarchitect
 ---
@@ -35,5 +43,6 @@ Flag drift, don't fix it:
 
 - **draft-looks-shipped** — a draft node whose feature you can find in the code (`Grep`/`Glob`/`Read` to spot-check). Name it and recommend a `/my-architect:reconcile` sweep.
 - **status-rollup-lag** — all children done but the parent still draft/in-progress, or a node done with open children.
+- **issue traceability errors** — read fresh `get_issues` and `validate_project`; report open issues whose nonempty `closedBy` is entirely `done`, closed issues without links, and closed issues with any unfinished closing requirement/node. `approved` is distinct from `done`; an open issue with a partial solution is valid. Report canonical IDs and remaining closing IDs. Do not infer current problem status from old CRM prose or mutate issues/requirements during this audit.
 
 Don't invent — read live state. If you'd need to change a node to be sure, say so and hand off; this agent only observes.

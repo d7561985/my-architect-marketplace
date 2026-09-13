@@ -9,6 +9,12 @@
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/code-graph-context.sh\"",
             "async": false,
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/architect-health.sh\"",
+            "async": false,
+            "timeout": 10
           }
         ]
       }
@@ -19,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'my_architect: a task was just closed. Run the Workflow A scan-for-gaps pass NOW: re-read the commit body AND the current chat turn, flag every \"deferred / caveat / known issue / not yet wired / to be tested when / could improve later / out of scope / manual probes pending\" item, and dispatch the debt-scanner for each (Workflow B). Then give the end-of-turn summary: for each flagged item state either \"already tracked in <node-id>\" or \"new node <node-id> created under epic <epic-id>\".'"
+            "command": "echo 'my_architect: complete_task changed node statuses only. Finish Workflow A now: explicitly mark only proven requirements done, read fresh get_issues, close an issue only when every link in its nonempty closedBy is done, then refresh the derived index and validate. Keep partial solutions open; approved is not done. Next run the scan-for-gaps pass: re-read commit body AND this chat turn, dispatch debt-scanner for every deferred/caveat/known issue, and summarize actual requirement/issue status, validation and tracked gaps.'"
           }
         ]
       }

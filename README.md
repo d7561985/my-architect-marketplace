@@ -57,8 +57,11 @@ plugins/my-architect/
 ├── commands/           # slash commands (auto-discovered)
 ├── agents/             # subagents (auto-discovered)
 ├── hooks/
-│   ├── hooks.json      # SessionStart code-graph context + PostToolUse debt-scan reminder
-│   └── code-graph-context.sh
+│   ├── hooks.json      # SessionStart context + PostToolUse closure/scan reminder
+│   ├── code-graph-context.sh
+│   └── architect-health.sh
+├── scripts/            # reusable init + standalone project traceability runtime
+├── tests/              # executable traceability regressions
 └── skills/
     ├── myarchitect/
     │   └── SKILL.md    # Proactive backlog tracker skill (source of truth)
@@ -70,17 +73,20 @@ plugins/my-architect/
 
 **MCP server (auto-configured):** `npx -y @my-architect/mcp@latest` with `MCP_API_KEY` from your shell env and `MA_API_URL=https://my-architect.app`.
 
-**Commands** (type `/my-architect:<name>`): **feature** (author a feature from scratch — propose a node tree, then write nodes + requirements + doc), **next** (pull + work the next task), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped), **design** (architecture-aware design session — dialogue to an approved spec on a node, then Workflow Z + plan), **initiative** (form an initiative through the 7-question gate), **bo-review** (read-only Business-Owner review of an epic).
+**Commands** (type `/my-architect:<name>`): **init** (install or repair project traceability and verify tests/CI), **feature** (author a feature from scratch — propose a node tree, then write nodes + requirements + doc), **next** (pull + work the next task), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped), **design** (architecture-aware design session — dialogue to an approved spec on a node, then Workflow Z + plan), **initiative** (form an initiative through the 7-question gate), **bo-review** (read-only Business-Owner review of an epic).
 
 **Agents** (dispatched by the commands/skill, run in their own context): **feature-author** (prose → spec'd feature node, the engine behind `/feature`), **reconciler** (verify drafts against code, close what shipped — with evidence), **debt-scanner** (scan a closed feature + commit + chat for deferred/caveat/known-issue items and file them), **progress-auditor** (read-only status audit with drift flags).
 
-**Hooks:** two, both narrowly scoped.
-- `PostToolUse` on the `complete_task` MCP tool — when a feature is closed it reminds Claude to run the debt-scan pass. Scoped to that one tool; nothing fires on unrelated turns.
+**Traceability (1.19.0):** `/my-architect:init` installs project synchronization, requirement coverage, and local instructions. Architect owns issue text and status; repository indexes are generated from it. Before closing work, Trace requires a permanent test declaring its requirement, a demonstrated failing mutation, and the gate running in CI. Proven requirements receive explicit `done`; `approved` means approved, not implemented. An issue closes only when all linked requirements/nodes are `done`; partial solutions stay open. Issue updates, index refresh and validation happen in the same turn. These capabilities require compatible backend/MCP issue tools and the explicit requirement `done` status; check the connected tool schema. Project commands live in local `CLAUDE.md`; see [the traceability reference](plugins/my-architect/skills/myarchitect/references/traceability.md).
+
+**Hooks:** narrowly scoped.
+- `PostToolUse` on the `complete_task` MCP tool — reminds Claude to finish requirement/issue/index synchronization and validation, then run the debt-scan pass. Scoped to that one tool; nothing fires on unrelated turns.
+- `SessionStart` architect health — reports missing synchronization, coverage or CI wiring, and completed requirements alongside an empty issue registry. It names a corrective command; healthy projects and projects without Architect produce no output.
 - `SessionStart` code-graph context — if the project root has `graphify-out/graph.json`, the session starts already knowing the index exists, when it was built, whether it is `fresh` or `STALE` relative to HEAD, and the composition rule (graph → verify against live files → Workflow/agents for what the graph cannot know). **No graph → the hook prints nothing**, so non-graphified projects pay zero. This exists because a skill description cannot express "fire when `graphify-out/` exists": only skill *descriptions* are in context at decision time, and checking the disk requires already deciding to look. A fact in context cannot be forgotten; a trigger has to be remembered.
 
 **Skill `myarchitect`:** triggers when you (or Claude) say "deferred", "known issue", "caveat", "not yet wired", "to be tested when…", "could improve later", or after closing a feature. Encodes the workflow:
 - Always start with `get_project_context` to load live state.
-- Closing a feature → `complete_task` + scan commit + chat for surfaced gaps.
+- Closing a feature → Trace → `complete_task` → proven requirements explicitly `done` → fresh issue links → close issues whose closing elements are all `done` → sync index → validate → scan commit/chat for surfaced gaps.
 - Each gap → de-dup against backlog → file via `build_hierarchy` + assign release via `bulk_update_nodes` (validate `successful` vs `failed`).
 - Decision rubric: tech-debt → no ask, future-with-trigger → no ask, strategic/scope → **ask before filing**.
 
@@ -107,7 +113,17 @@ When a new plugin version is released, pull it manually:
 /plugin update my-architect
 ```
 
-There is **no marketplace-side auto-update toggle** — a plugin author cannot force auto-update on for you. Whether a marketplace auto-refreshes is a per-user Claude Code setting, so the two commands above are the reliable path. The MCP server itself always self-updates: it is launched as `@my-architect/mcp@latest`, so each new Claude Code session picks up the newest server build without any action.
+The plugin's MCP launch command requests `@my-architect/mcp@latest`. Restart the session or reconnect MCP after updating, then verify the connected tools. Updating the plugin does not deploy the backend; traceability requires the compatible server capabilities listed below.
+
+For each existing project, open its repository in Claude Code and run:
+
+```
+/my-architect:init
+```
+
+This command guides the agent through the actual project's configuration, existing index, tests and CI, then synchronizes real Architect data and verifies the full gate with intentional failure checks. For HTTP synchronization, supply `MA_API_URL` from the configured MCP connection and any required `MCP_API_KEY` through the shell environment; the MCP child process does not export its environment back to the shell. A complete JSON export from Architect is also supported.
+
+Project files are preserved by the installer: an existing `.architect/traceability.mjs`, configuration and marked `CLAUDE.md` block are not overwritten. The agent must inspect and update them when needed. There is no runtime version/hash drift check or automatic migration of custom index formats. Existing indexes must retain every previous requirement ID during migration. A silent health hook confirms only the checks it performs; it does not prove that a project's runtime is current or that hosted CI and branch protection passed. See [the init workflow](plugins/my-architect/commands/init.md) for the complete procedure.
 
 ---
 
@@ -139,6 +155,7 @@ The skill description triggers on specific phrases (deferred, known issue, cavea
 
 - Claude Code 2.0+
 - `@my-architect/mcp` ≥ 1.5.0
+- Traceability in 1.19.0: `@my-architect/mcp` ≥ 1.8.0 and a compatible backend exposing issue tools, `closes`, explicit requirement `done`, and issue validation. Verify the connected schema before using these capabilities.
 
 ---
 
@@ -150,7 +167,7 @@ This plugin uses semantic versioning. The current version is in [`plugins/my-arc
 
 ## Maintaining this repository
 
-This repo is a Claude Code plugin marketplace — a thin distribution layer. There is one plugin (`my-architect`) and one skill (`myarchitect`). The skill content (`SKILL.md`) lives here as the **single source of truth** — do not maintain copies in `~/.claude/skills/` or in the private product repo.
+This repo is a Claude Code plugin marketplace — a thin distribution layer. There is one plugin (`my-architect`) with three skills (`myarchitect`, `recursive-context`, and `design`), commands, agents, hooks and project traceability scripts. The skill content (`SKILL.md`) lives here as the **single source of truth** — do not maintain copies in `~/.claude/skills/` or in the private product repo.
 
 ### Repo layout
 
@@ -176,7 +193,10 @@ When changing the skill or plugin config:
 3. **Add a CHANGELOG entry** — date + bullets under a new `## [X.Y.Z] — YYYY-MM-DD` heading.
 4. **Validate locally:**
    ```bash
+   node --test plugins/my-architect/tests/traceability.test.mjs
+   claude plugin validate plugins/my-architect
    claude plugin validate .
+   git diff --check
    ```
 5. **Commit** with a message like `chore: release v<X.Y.Z>` summarising the change.
 6. **Tag the release** — Claude Code's CLI verifies that `plugin.json` and the marketplace entry agree:

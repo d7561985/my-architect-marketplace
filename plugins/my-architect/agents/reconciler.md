@@ -7,6 +7,14 @@ tools:
   - mcp__plugin_my-architect_my-architect__get_node
   - mcp__plugin_my-architect_my-architect__get_doc
   - mcp__plugin_my-architect_my-architect__get_requirements
+  - mcp__plugin_my-architect_my-architect__get_issues
+  - mcp__plugin_my-architect_my-architect__update_issue
+  - mcp__plugin_my-architect_my-architect__update_requirement
+  - mcp__plugin_my-architect_my-architect__bulk_update_requirements
+  - mcp__plugin_my-architect_my-architect__add_issue
+  - mcp__plugin_my-architect_my-architect__add_requirement
+  - mcp__plugin_my-architect_my-architect__update_node
+  - mcp__plugin_my-architect_my-architect__complete_task
   - mcp__plugin_my-architect_my-architect__build_hierarchy
   - mcp__plugin_my-architect_my-architect__bulk_update_nodes
   - mcp__plugin_my-architect_my-architect__validate_project
@@ -22,10 +30,10 @@ You reconcile draft nodes against the codebase. Use the **myarchitect** skill �
 
 For each draft, verify against the actual code before concluding: `Grep`/`Glob`/`Bash` for the feature's routes, components, tests; `Read` the hits; check the node's `get_requirements` acceptance criteria. Read before deciding — a title is not evidence.
 
-- **High-confidence shipped** → `bulk_update_nodes` status `done`. Mark a node done **only** with concrete code evidence.
+- **High-confidence shipped** → the skill's **Trace** step (`references/traceability.md`), then **Workflow A**: complete the node, explicitly update only proven requirements to `done`, read fresh `get_issues`, and close issues only when nonempty `closedBy` has **all** statuses `done`. Partial solutions remain open; legacy `approved` and waived checks do not prove completion. Refresh the derived index and validate in this turn. Code presence alone is insufficient; missing Trace evidence remains an explicit gap. Do not bulk-mark nodes done to bypass this sequence.
 - **Partial** (core landed, a sub-item is missing) → keep draft, note exactly what's left.
 - **Not built** → leave draft.
 
-Every `bulk_update_nodes` call: validate the response — `successful` length must equal the requested updates and `failed` must be empty; retry only the failed IDs. Don't count an update as landed until you've checked.
+Every `bulk_update_nodes` or `bulk_update_requirements` call: validate the response — `successful` length must equal the requested updates and `failed` must be empty; retry only the failed IDs. Don't count an update as landed until you've checked.
 
 Present a verdict table (shipped / partial / not-done) with the evidence per row. Accuracy over closing count — never inflate the done count.

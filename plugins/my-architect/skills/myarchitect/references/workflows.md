@@ -2,7 +2,7 @@
 
 The [Feature-lifecycle map in SKILL.md](../SKILL.md) routes here. The letters are historical (slash commands reference them); the **map** defines the sequence, not the alphabet. Read the relevant workflow when you reach that lifecycle step.
 
-- **Create → Workflow Z** · **Work → Workflow D** · **Close → Workflow A** · **File deferred → Workflow B** · **Docs → Workflow C** (cross-cutting) · **Decide (initiative) → Workflow I** · **BO-review → Workflow R**
+- **Create → Workflow Z** · **Work → Workflow D** · **Trace → [traceability.md](traceability.md)** · **Close → Workflow A** · **File deferred → Workflow B** · **Docs → Workflow C** (cross-cutting) · **Decide (initiative) → Workflow I** · **BO-review → Workflow R**
 
 Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassification) live in [forming-nodes.md](forming-nodes.md).
 
@@ -52,28 +52,42 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 1. **Перед кодом** — `get_node({pid, nodeId})` + прочитать каждый док из `docIds` (`get_doc`) **и** `get_requirements({pid, nodeId, inherited: true})` (приёмка). Истина о фиче — в доке/требованиях, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове. В репо есть свежий локальный граф кода → связи затрагиваемых символов сперва у графа, потом точечный verify по файлам (правила и freshness-check — скил `recursive-context`, references/code-graph.md).
 
+   Прочитай [traceability.md](traceability.md): для реализации поведения обязателен `superpowers:test-driven-development`, постоянный тест декларирует ID требования. Прочитай `closes` ноды/требований и связанные issue через `get_issues({pid})`: текст проблемы и текущий статус берутся из Архитектора.
+
 2. **По ходу** — всплыло реальное под-разбиение → сформировать дочерние ноды (`build_hierarchy`, см. [forming-nodes.md](forming-nodes.md)). Не давай скоупу жить только в твоей голове.
 
 3. **Понимание изменилось** — `update_doc` сразу, не «потом». Дока описывает то, что фича делает СЕЙЧАС, а не первую догадку. Нода/дока, которые врут, хуже их отсутствия.
 
-4. **Закрытие** — `validate_project` (почини dangling-ref) → `complete_task` с summary (Workflow A). К этому моменту дока и статус ноды совпадают с реальностью.
+4. **Перед закрытием** — Trace по [traceability.md](traceability.md): синк → связь требование/тест → тесты и гейт в CI → доказательство мутацией → фактические результаты. Затем Workflow A. К этому моменту дока и проверенная приёмка совпадают с реальностью.
 
 ## Workflow A — Closing a feature (CLOSE)
 
-1. **Закрыть с summary:**
+1. **Trace до статуса.** Выполни [traceability.md](traceability.md), прочитай ноду, её требования (включая inherited), их `closes` и `get_issues({pid})`. Составь список **конкретных требований, исполнение которых доказано**: ID → тест → результат гейта/CI → мутация. `approved` означает согласованное требование, а `done` — выполненное; старые `approved`, принадлежность закрытой ноде и waiver не доказывают исполнение. Не переводить inherited или соседние требования в `done` автоматически. Проверь `validate_project`: ошибки целостности исправь до закрытия; выявленное рассогласование статуса issue исправляется шагами 3–5 этого же хода, а не блокирует собственное исправление.
+
+   Уже сохранённый `done` — факт **статуса в Архитекторе**, а не прочитанный отчёт тестов. Если тестовые доказательства старой работы не проверялись, в summary укажи «статус done, доказательства в этом ходу не проверены»; не придумывай прежние прогоны. Исправление ошибочного `closed` на `open` не требует придумывать доказательства закрытой части.
+
+2. **Закрой выполненную ноду.** Если она ещё не `done`, вызвать:
    ```
    mcp__my-architect__complete_task({
      pid, nodeId,
-     summary: "<commit SHA> — <one-line outcome> — acceptance: <T-cases or smoke> — caveats: <list or none>"
+     summary: "<commit SHA> — <one-line outcome> — trace: <requirement IDs → permanent tests; gate/CI results; mutation red → restored green> — waivers/caveats: <list or none>"
    })
    ```
-   Каскадирует статус по предкам, возвращает `next_task`. Не дублировать `update_node({status: "done"})` — `complete_task` делает оба.
+   Проверь ответ. Каскадирует статус по предкам и возвращает `next_task`; **не меняет статусы требований или issue**. Не передавай ID требования как `nodeId` и не дублируй `update_node({status: "done"})`. Уже закрытая нода не требует повторного `complete_task` для ремонта прослеживаемости.
 
-2. **Scan-for-gaps pass.** Перечитать commit body **и** текущий чат-ход. Помечать каждое вхождение: «deferred», «caveat», «known issue», «not yet wired», «to be tested when», «could improve later», «out of scope», «manual probes pending». Каждый помеченный айтем → Workflow B.
+3. **Явно обнови выполненные требования.** Только для ID с доказательствами из шага 1: `update_requirement({pid, requirementId: "<id>", status: "done"})`. Для 2+ требований — `bulk_update_requirements({pid, updates: [{id: "<id>", fields: {status: "done"}}, ...]})`; проверь `successful`/`failed`, повтори только неудачные обновления и перечитай статусы. Непроверенные требования сохраняют прежний статус. Если живая схема MCP не поддерживает `done`, требуется совместимое обновление backend/MCP: не подменяй его `approved` и не заявляй завершённую синхронизацию.
 
-3. **End-of-turn summary.** Перечислить либо «<X> уже отслеживается в `<node-id>`», либо «новая нода `<node-id>` создана под эпик `<epic-id>`, релиз `<release-id>`». Это закрывает «не теряем ли мы это?».
+4. **Синхронизируй issue в этом же ходу.** После записей обязательно заново вызови `get_issues({pid})`: `closedBy` содержит все закрывающие требования **и** узлы, включая другие ветки и предков после каскада. Для затронутых issue условие закрытия строгое: `closedBy.length > 0 && closedBy.every(link => link.status === "done")`. Условие выполнено → `update_issue({pid, issueId: "<id>", status: "closed"})`, если ещё открыт. Хотя бы один closing-элемент не `done` → проблема остаётся `open`; перечисли оставшиеся ID, не повышай им статусы ради закрытия. Если такой issue уже `closed`, верни `open` и укажи причину. Закрытый issue без связей также верни в `open` либо восстанови связь только по доказательствам. Не удаляй реальные `closes`, чтобы сделать условие истинным. Проверь ответы и перечитай issue; `closes` само не закрывает проблему.
+
+5. **Обнови производные данные и проверь итог.** После изменения требований/issue выполни **ещё раз** команду синка из local `CLAUDE.md` (Архитектор → индекс), проверь сохранение набора ID и новые статусы/связи. Затем `validate_project({pid})`: `valid: true` и отсутствие ошибок прослеживаемости подтверждаются ответом. Ошибка API, синка или валидации — незавершённое закрытие; зафиксируй точный гэп и продолжай исправление в пределах доказанных данных. Локальный индекс или старый кеш `get_issues` не заменяет свежий ответ Архитектора.
+
+6. **Scan-for-gaps pass.** Перечитать commit body **и** текущий чат-ход. Помечать каждое вхождение: «deferred», «caveat», «known issue», «not yet wired», «to be tested when», «could improve later», «out of scope», «manual probes pending». Каждый помеченный айтем → Workflow B.
+
+7. **End-of-turn summary.** Укажи закрытые ноды и требования с доказательствами, issue ID → фактический статус (для открытых — remaining closing IDs), результат синка и валидации. Для каждого гэпа: «<X> уже отслеживается в `<node-id>`» либо «новая нода `<node-id>` создана под эпик `<epic-id>`, релиз `<release-id>`». Локально подготовленную или preview-версию не называй опубликованным релизом без фактической публикации.
 
 ## Workflow B — Adding a deferred item
+
+0. **Проблема или работа?** Если surfaced gap — конкретная проблема, названная пользователем или мейнтейнером, сначала `get_issues({pid})`: проверь дубликат по смыслу и источнику. Нет дубликата → `add_issue({pid, title, description, source?, reported_at?})`; description — полный текст проблемы, source — ссылка на наблюдение, без переноса протокола интервью. Issue заводится сразу, без эпика и решения о приоритете. Если это долг/инфраструктура без зарегистрированной проблемы, не придумывай issue. Дальнейшие шаги — для планируемой работы по решению; записи о проблеме в производных документах ссылаются на её ID.
 
 1. **De-dup.** Keyword-поиск в кешированном `get_project_context`. Если нашёл draft/in-progress ноду с overlap по тайтлу/описанию ≥60% — **процитировать ID, не создавать**. Дубликаты ломают `get_next_task` (он leaf-first + alpha — дубль может опередить настоящую работу).
 
@@ -100,6 +114,10 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
    - **Всегда валидировать:** длина `successful` должна совпасть с числом запрошенных апдейтов, `failed` — пустой. Если нет — ретрай только по failed-ID. Не считать апдейт состоявшимся пока не проверил ответ.
 
 6. **Опционально: requirement.** Если у дефера есть hard testable criterion — `add_requirement` с `type: "FR"` (поведение), `"NFR"` (SLO/качество), `"SAR"` (arch constraint) или `"CON"` (hard constraint).
+
+   Работа закрывает зарегистрированную проблему → укажи `closes: ["<issue-id>"]` на требовании или ноде через поддерживаемый create/update. Связь выводится из подтверждённой приёмки, не из похожего тайтла. Отсутствие закрывающего требования/узла и другие пропуски фиксируются явно по [traceability.md](traceability.md); причина неизвестна — уточни, не выдумывай.
+
+7. **Уже реализованное решение — тот же цикл закрытия.** Если при разборе проблемы найдено уже выполненное решение, сначала проверь Trace, затем выполни **Workflow A, шаги 2–5** в этом ходу: нода `done` → только доказанные требования явно `done` → свежий `get_issues` → `update_issue` по условию **все** closing-элементы `done` → синк индекса → `validate_project`. Не оставляй подтверждённо устаревший `open` «до следующего прохода». Если завершена лишь часть closing-элементов, issue остаётся `open` с конкретными оставшимися ID. Если работа только заведена, оставь её фактические статусы и после связывания выполни синк и `validate_project`; регистрация работы не является её исполнением.
 
 ## Workflow C — Authoring docs as source of truth
 

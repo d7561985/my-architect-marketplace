@@ -4,7 +4,7 @@ Guidance for Claude Code when working in **this** repository (`my-architect-mark
 
 ## What this repo is
 
-A Claude Code **plugin marketplace** — a thin, public distribution layer. It ships one plugin (`my-architect`) containing one skill (`myarchitect`) and an auto-configured MCP server reference. There is no application code here.
+A Claude Code **plugin marketplace** — a thin, public distribution layer. It contains one plugin (`my-architect`) with three skills (`myarchitect`, `recursive-context`, and `design`), commands, agents, hooks, project traceability scripts and an auto-configured MCP server reference. The product application lives separately.
 
 The actual product (the My Architect app + the `@my-architect/mcp` server source) lives in a separate **private** repo (`my_architect`). This repo is intentionally minimal: a stable distribution surface that users can `git clone`-implicitly via `/plugin marketplace add d7561985/my-architect-marketplace`.
 
