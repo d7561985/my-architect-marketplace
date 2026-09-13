@@ -9,7 +9,9 @@ Read this when creating nodes (Workflow Z step 2, Workflow B step 4, or any `bui
 | `agile` (default) | Epic → Feature → Story → Task |
 | `safe` | Initiative → Epic → Feature → Story (лист — Story, **Task'а нет**) |
 | `simple` | Category → Item |
-| `custom` | свои `levelNames` |
+| `custom` | фактические `levelNames` из проекта; см. ограничение создания ниже |
+
+Текущий `scaffold_project` не принимает `levelNames`: `custom` создаётся с уровнями по умолчанию, а не с произвольными именами из ответа пользователя. Для собственной структуры сначала установи поддержанный способ её настройки; не выдумывай поле MCP. После создания перечитай реальные уровни через `get_project_context`.
 
 Тесты гранулярности ниже даны на примере `agile`. Для другого пресета **переноси те же тесты** на реальные `levelNames` проекта (в `safe` лист — Story, не Task; в `simple` всего два уровня). **Не заводи уровень, которого нет в схеме.**
 

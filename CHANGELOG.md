@@ -4,6 +4,20 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.20.0] — 2026-09-13
+
+### Added
+- A first-setup guide for choosing an existing Architect project or creating one, verifying its exact ID, and saving a local repository binding for future sessions. Users do not need to look up `pid` manually.
+- Permanent setup scenarios covering single-project ambiguity, already-authorized creation, saved/conflicting bindings, connection errors, restart persistence, and empty new projects.
+
+### Fixed
+- Health detection requires an explicit tracker-use declaration or project configuration. Bare mentions, comparison prose, references to another repository, and quoted/fenced examples no longer trigger missing-setup warnings.
+- Missing-setup guidance explains how `/my-architect:init` reuses a confirmed link or offers project selection/creation before synchronization, tests and CI.
+- A single project or the first project in a recency-sorted list is no longer automatically selected. Connection errors are not treated as an empty project list; existing selections are reused without repeated permission questions.
+
+### Changed
+- Document that repository binding is local, linking an empty project is distinct from completing traceability, and invalid issue closures are reported by validation rather than rejected by the write API.
+
 ## [1.19.1] — 2026-09-13
 
 ### Fixed

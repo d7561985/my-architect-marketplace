@@ -219,12 +219,23 @@ test('non-Architect projects are silent; existing MCP or CLAUDE markers report m
   assert.match(health(root).stdout, /my-architect:init/);
 });
 
-for (const instructions of [
-  'Use my_architect to track project work.\n',
-  '**my_architect MCP** project `example-project` — keep requirements current.\n',
-  '**Canonical source:** `my-architect` MCP server, project **`example-project`**.\n',
+for (const [name, instructions, mentionOnly] of [
+  ['work tracking', 'Use my_architect to track project work.\n', 'my_architect\n'],
+  ['MCP project', '**my_architect MCP** project `example-project` — keep requirements current.\n', '**my_architect**\n'],
+  ['canonical source', '**Canonical source:** `my-architect` MCP server, project **`example-project`**.\n', '`my-architect`\n'],
+  ['numbered declaration', '2. **my_architect MCP** project `example-project` — keep requirements current.\n', '2. **my_architect**\n'],
+  ['legacy binding', 'my_architect pid: "example project"\n', 'my_architect\n'],
+  ['compact legacy binding', 'my_architect pid:"example project"\n', 'my_architect\n'],
+  ['legacy binding with colon whitespace', 'my-architect pid \t:\t"example project"\n', 'my-architect\n'],
+  ['canonical setup marker', '<!-- my-architect:traceability .architect/traceability.json -->\n', 'my-architect\n'],
+  ['MCP call instruction', 'Use my-architect get_project_context({pid: "example project"}).\n', 'my-architect\n'],
+  ['declaration after a fenced comment example', '```html\n<!--\n```\nUse my_architect to track project work.\n', 'my_architect\n'],
+  ['declaration after indented code', '    ```markdown\n    example\n\nUse my_architect to track project work.\n', 'my_architect\n'],
+  ['heading ends a blockquote', '> Historical note\n## Tracker\nUse my_architect to track project work.\n', 'my_architect\n'],
+  ['list ends a blockquote', '> Historical note\n2. **my_architect MCP** project `example-project` — keep requirements current.\n', 'my_architect\n'],
 ]) {
-  test(`Architect usage without pid or init reports missing setup: ${instructions.trim()}`, (t) => {
+  // Broadening detection to any brand mention must fail the second invocation.
+  test(`Architect declaration reports missing setup and removing usage leaves silence: ${name}`, (t) => {
     const root = project(t);
     put(root, 'CLAUDE.md', instructions);
     const result = health(root);
@@ -234,8 +245,59 @@ for (const instructions of [
     assert.equal(result.stderr, '');
     assert.equal(existsSync(join(root, '.architect')), false);
     assert.equal(readFileSync(join(root, 'CLAUDE.md'), 'utf8'), instructions);
+    put(root, 'CLAUDE.md', mentionOnly);
+    const unrelated = health(root);
+    assert.equal(unrelated.status, 0, unrelated.stderr);
+    assert.equal(unrelated.stdout, '');
+    assert.equal(unrelated.stderr, '');
+    assert.equal(existsSync(join(root, '.architect')), false);
+    assert.equal(readFileSync(join(root, 'CLAUDE.md'), 'utf8'), mentionOnly);
   });
 }
+
+for (const [name, instructions] of [
+  ['comparison prose', 'This document compares my_architect with another tracker.\n'],
+  ['product repository reference', 'The product source lives in a separate repository (`my_architect`).\n'],
+  ['explicit non-use', 'We do not use my_architect in this project.\n'],
+  ['quoted example', '"Use my_architect to track project work."\n'],
+  ['inline code example', '`Use my_architect to track project work.`\n'],
+  ['blockquote example', '> Use my_architect to track project work.\n'],
+  ['blockquote continuation', '> Example instruction:\nUse my_architect to track project work.\n'],
+  ['backtick fence example', '```markdown\nUse my_architect to track project work.\n```\n'],
+  ['fence example inside a list', '- ```markdown\n  Use my_architect to track project work.\n  ```\n'],
+  ['tilde fence example', '~~~markdown\nmy_architect pid: "example project"\n~~~\n'],
+  ['shorter fence is not a closing fence', '````markdown\n```\nUse my_architect to track project work.\n````\n'],
+  ['indented code example', '    Use my_architect to track project work.\n'],
+  ['commented example', '<!--\nUse my_architect to track project work.\n-->\n'],
+  ['fenced setup marker example', '```markdown\n<!-- my-architect:traceability .architect/traceability.json -->\n```\n'],
+]) {
+  // A comparison, quotation or example is not a local project declaration.
+  test(`Architect mention without an active declaration stays silent: ${name}`, (t) => {
+    const root = project(t);
+    put(root, 'CLAUDE.md', instructions);
+    const result = health(root);
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout, '');
+    assert.equal(result.stderr, '');
+    assert.equal(existsSync(join(root, '.architect')), false);
+    assert.equal(readFileSync(join(root, 'CLAUDE.md'), 'utf8'), instructions);
+  });
+}
+
+test('missing setup guidance explains project binding before synchronization and never creates it', (t) => {
+  const root = project(t);
+  put(root, 'CLAUDE.md', 'Use my_architect to track project work.\n');
+  const result = health(root);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /\/my-architect:init/);
+  assert.match(result.stdout, /reuse.*confirmed.*(?:link|binding)/i);
+  assert.match(result.stdout, /choose.*existing.*project/i);
+  assert.match(result.stdout, /create.*project/i);
+  assert.match(result.stdout, /already authorized|existing authorization/i);
+  assert.match(result.stdout, /save.*local.*binding/i);
+  assert.match(result.stdout, /sync.*tests.*CI/i);
+  assert.equal(existsSync(join(root, '.architect')), false);
+});
 
 test('nested invocation finds uninitialized Architect usage at the Git root', (t) => {
   const root = project(t);

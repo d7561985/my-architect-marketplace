@@ -4,7 +4,7 @@ description: Initialize or repair Architect → requirements/issues index → pe
 
 Use the **myarchitect** skill and its `references/traceability.md`. Complete the setup and its verification in the current project; this command is an implementation workflow, not just advice.
 
-1. **Read facts before choosing commands.** Resolve `pid` through the skill's Setup ladder. Read local `CLAUDE.md`, existing indexes/sync scripts, test runners and CI configuration. Identify the actual permanent test suite, test paths and active CI workflow. Ask the user if the project identity, test scope, or existing scope migration is ambiguous. Do not infer a new project, create example requirements/issues, replace an existing index, or shrink an established requirement set.
+1. **Connect this repository to a verified project.** Follow the skill's `references/setup.md`: inspect both local instructions and config, reuse a confirmed binding, or offer the real existing projects and creation of a new project. Neither one result nor the first result establishes identity. A user choice or creation instruction already given in this conversation remains valid. Verify the exact ID through `get_project_context`; users do not need to supply `pid` manually. Treat connection failure, conflicting IDs, and a successful empty project list as different cases. Read existing indexes/sync scripts, test runners and CI configuration before invoking the installer. Identify the actual permanent test suite, test paths and active CI workflow; step 2 then persists the binding with those verified values. If test/CI facts require clarification, save only the confirmed ID in `CLAUDE.md` as described in the setup reference, and ask before dependent configuration writes. Do not create example requirements/issues, replace an existing index, or shrink an established requirement set.
 2. **Install the missing local tooling.** Run the bundled installer from the project root with the values verified above:
 
    ```bash
@@ -40,7 +40,7 @@ Local contract (`.architect/traceability.json`):
 - `coverageCommand`: `node .architect/traceability.mjs check`, the full gate. `syncCommand`: `node .architect/traceability.mjs sync`. Project-specific commands belong in local config, never in the universal skill.
 - `ciFiles`: actual project-relative workflow files containing the dedicated gate; files must exist and visibly execute it. GitHub workflows must have an automatic push/pull-request/merge-group trigger. The conservative check reports conditional/complex YAML as unverified instead of assuming it is safe.
 - `waived`: explicit `{reason, requirement}` records. They remain visible in gate output and never erase previous requirement IDs.
-- `CLAUDE.md` includes `my_architect pid: "<resolved-pid>"`, exact commands, and `<!-- my-architect:traceability .architect/traceability.json -->`.
+- `CLAUDE.md` includes `my_architect pid: "<resolved-pid>"`, exact commands, and `<!-- my-architect:traceability .architect/traceability.json -->`. This persisted local binding is reused in future sessions. It does not register a Git URL with the backend.
 
 The installed runtime requires Node.js 18+ and no packages. Health runs locally, without network, test execution, source mutation, or automatic repair.
 

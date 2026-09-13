@@ -184,7 +184,7 @@ function health() {
     if (!activeCIGate(cfg)) gaps.push('CI gap: place the full test + coverage gate in a dedicated, unconditional run/script step with automatic CI triggers. Complex/conditional shell wiring cannot be verified by this hook.');
   } catch (error) { gaps.push(`Missing or invalid traceability setup: ${error.message}`); }
   if (!gaps.length) return;
-  const context = `<architect-health>\n${gaps.join('\n')}\nRepair action: /my-architect:init. Read local CLAUDE.md and .architect/traceability.json; run the configured sync after verifying the project. This hook reports facts only and performs no repairs.\n</architect-health>`;
+  const context = `<architect-health>\n${gaps.join('\n')}\nRepair action: /my-architect:init. Reuse a confirmed project link from local instructions/config or the user's existing choice. Otherwise choose the correct existing Architect project, or create a project when already authorized; ask only if the choice or creation authorization is unresolved. Save the confirmed local project binding, then complete sync, permanent tests and the CI gate. Missing local traceability config does not establish whether an Architect project exists. This hook reports facts only and performs no repairs.\n</architect-health>`;
   if (process.env.CURSOR_PLUGIN_ROOT) console.log(JSON.stringify({ additional_context: context }));
   else if (process.env.CLAUDE_PLUGIN_ROOT && !process.env.COPILOT_CLI) console.log(JSON.stringify({ hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: context } }));
   else console.log(JSON.stringify({ additionalContext: context }));

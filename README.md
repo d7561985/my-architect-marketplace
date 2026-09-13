@@ -46,6 +46,24 @@ In Claude Code:
 
 You should see `my-architect` listed and connected. The skill `myarchitect` becomes available automatically — Claude will load it when surfacing deferred items, closing features, or asked about the backlog.
 
+### 4. Connect your repository to a project
+
+Open the repository you want to track and run:
+
+```
+/my-architect:init
+```
+
+You do not need to look up a project ID. The agent checks for a saved project link first. If none exists, it lists your actual projects and asks:
+
+> This repository has no selected Architect project yet. Which existing project should it use, or would you like to create a new one?
+
+Choose an existing project, or provide a name and hierarchy for a new one. You can also defer setup. A single available project is still a choice; the agent does not assume it belongs to this repository. If you already chose a project or requested creation, that decision is reused.
+
+The agent verifies the project and saves the link locally in `CLAUDE.md` and, when traceability tooling is configured, `.architect/traceability.json`. Future sessions reuse it. It then configures synchronization, permanent tests and CI. A newly created empty project can be linked successfully while traceability remains incomplete; the agent reports what is missing without creating sample requirements to hide it.
+
+An authentication or network error leads to connection guidance, not another project. Conflicting saved project IDs require a choice before any switch. This is a local repository link, not a server-side Git integration. See the [setup workflow](plugins/my-architect/skills/myarchitect/references/setup.md) for the agent's exact procedure.
+
 ---
 
 ## What's in the plugin
@@ -77,22 +95,22 @@ plugins/my-architect/
 
 **Agents** (dispatched by the commands/skill, run in their own context): **feature-author** (prose → spec'd feature node, the engine behind `/feature`), **reconciler** (verify drafts against code, close what shipped — with evidence), **debt-scanner** (scan a closed feature + commit + chat for deferred/caveat/known-issue items and file them), **progress-auditor** (read-only status audit with drift flags).
 
-**Traceability (1.19.0):** `/my-architect:init` installs project synchronization, requirement coverage, and local instructions. Architect owns issue text and status; repository indexes are generated from it. Before closing work, Trace requires a permanent test declaring its requirement, a demonstrated failing mutation, and the gate running in CI. Proven requirements receive explicit `done`; `approved` means approved, not implemented. An issue closes only when all linked requirements/nodes are `done`; partial solutions stay open. Issue updates, index refresh and validation happen in the same turn. These capabilities require compatible backend/MCP issue tools and the explicit requirement `done` status; check the connected tool schema. Project commands live in local `CLAUDE.md`; see [the traceability reference](plugins/my-architect/skills/myarchitect/references/traceability.md).
+**Traceability (1.19.0):** `/my-architect:init` installs project synchronization, requirement coverage, and local instructions. Architect owns issue text and status; repository indexes are generated from it. Before closing work, Trace requires a permanent test declaring its requirement, a demonstrated failing mutation, and the gate running in CI. Proven requirements receive explicit `done`; `approved` means approved, not implemented. The agent closes an issue only when all linked requirements/nodes are `done`; partial solutions stay open. The API can store an invalid closure; `validate_project` reports it as an error. Issue updates, index refresh and validation happen in the same turn. These capabilities require compatible backend/MCP issue tools and the explicit requirement `done` status; check the connected tool schema. Project commands live in local `CLAUDE.md`; see [the traceability reference](plugins/my-architect/skills/myarchitect/references/traceability.md).
 
 **Hooks:** narrowly scoped.
 - `PostToolUse` on the `complete_task` MCP tool — reminds Claude to finish requirement/issue/index synchronization and validation, then run the debt-scan pass. Scoped to that one tool; nothing fires on unrelated turns.
-- `SessionStart` architect health — reports missing synchronization, coverage or CI wiring, and completed requirements alongside an empty issue registry. A `my_architect` or `my-architect` mention in `CLAUDE.md` is enough to check for gaps before init; an existing MCP configuration or traceability configuration is also recognized. It names a corrective command; healthy projects and projects without these markers produce no output. Detection does not resolve a project ID or call MCP: init must determine the required `pid` before accessing project data.
+- `SessionStart` architect health — reports missing synchronization, coverage or CI wiring, and completed requirements alongside an empty issue registry. It recognizes project MCP/traceability configuration or explicit tracker-use declarations in `CLAUDE.md`, such as `Use my_architect to track project work.`, `my_architect MCP project <id>`, or `my_architect pid: "<id>"`. A bare name, comparison, reference to another repository, or quoted/fenced example is insufficient. Healthy and unrelated projects produce no output. The hook names `/my-architect:init`, which reuses a confirmed link or guides project selection/creation and local setup. Detection does not resolve a project ID, call MCP, or perform repairs.
 - `SessionStart` code-graph context — if the project root has `graphify-out/graph.json`, the session starts already knowing the index exists, when it was built, whether it is `fresh` or `STALE` relative to HEAD, and the composition rule (graph → verify against live files → Workflow/agents for what the graph cannot know). **No graph → the hook prints nothing**, so non-graphified projects pay zero. This exists because a skill description cannot express "fire when `graphify-out/` exists": only skill *descriptions* are in context at decision time, and checking the disk requires already deciding to look. A fact in context cannot be forgotten; a trigger has to be remembered.
 
 **Skill `myarchitect`:** triggers when you (or Claude) say "deferred", "known issue", "caveat", "not yet wired", "to be tested when…", "could improve later", or after closing a feature. Encodes the workflow:
-- Always start with `get_project_context` to load live state.
+- Resolve the project through Setup first, then use `get_project_context` to load its live state.
 - Closing a feature → Trace → `complete_task` → proven requirements explicitly `done` → fresh issue links → close issues whose closing elements are all `done` → sync index → validate → scan commit/chat for surfaced gaps.
 - Each gap → de-dup against backlog → file via `build_hierarchy` + assign release via `bulk_update_nodes` (validate `successful` vs `failed`).
 - Decision rubric: tech-debt → no ask, future-with-trigger → no ask, strategic/scope → **ask before filing**.
 
 **Skill `design` (design sessions):** дизайн-сессии в проектах, трекаемых в my_architect, ведёт skill `design` — форк `superpowers:brainstorming` v5.1.0 (MIT, github.com/obra/superpowers), осведомлённый об архитекторе: explore через `get_project_context` + локальный граф кода + recursive-context, спека — доком на узле (не `docs/superpowers/specs/`), терминал — Workflow Z → writing-plans (план-файл + зеркальный док). superpowers отключать **не нужно** — skills сосуществуют; в проектах без my_architect продолжает работать оригинальный brainstorming.
 
-Рекомендуемые 3 строки в проектный CLAUDE.md (инструкции проекта имеют высший приоритет и усиливают выбор нужного skill'а):
+Дополнительные инструкции в проектный `CLAUDE.md` (имеют высший приоритет и усиливают выбор нужного skill'а). Строку `pid` ниже агент сохраняет при `/my-architect:init`; вручную искать ID не требуется:
 
 ```
 - Дизайн-сессии: skill my-architect:design (не superpowers:brainstorming); спеки дизайна — доками на узлах my_architect.

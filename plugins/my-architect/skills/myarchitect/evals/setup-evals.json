@@ -1,0 +1,82 @@
+{
+  "skill_name": "myarchitect",
+  "scope": "Project selection and durable local repository binding; simulated tool results are fixtures, not live integration evidence.",
+  "evals": [
+    {
+      "id": "A",
+      "name": "single-unrelated-project",
+      "prompt": "In repo billing-client, user says '/my-architect:init, set this up quickly'. No local binding. list_projects succeeds with exactly [{path:'analytics-platform',name:'Analytics platform'}]. Real test and CI commands are known.",
+      "assertions": [
+        "Offers the returned project or creation of a new one; waits for selection before writing a binding.",
+        "Does not infer identity from the only result, result order, or repository name."
+      ]
+    },
+    {
+      "id": "B",
+      "name": "creation-already-authorized",
+      "prompt": "User says 'Create a new Architect project for this repo and connect it; use simple hierarchy, name Billing Client.' No binding. list_projects succeeds with an empty list. Real test and CI commands are known.",
+      "assertions": [
+        "Uses the already authorized name and preset without repeated permission questions.",
+        "Calls scaffold_project with withSampleContent:false; obtains the exact ID from the successful response, verifies it, and persists the local binding.",
+        "Does not invent requirements or report complete traceability for a new empty project."
+      ]
+    },
+    {
+      "id": "C",
+      "name": "confirmed-binding",
+      "prompt": "User says '/my-architect:init'. CLAUDE.md has my_architect pid: \"Billing Client\"; .architect/traceability.json has the same projectId. MCP access succeeds. Real test and CI commands are known.",
+      "assertions": [
+        "Reuses the exact ID, including spaces, with no new identity question or project creation.",
+        "Preserves the binding while inspecting and repairing actual traceability gaps."
+      ]
+    },
+    {
+      "id": "D",
+      "name": "list-failure-is-not-empty",
+      "prompt": "User says '/my-architect:init'. No local binding. list_projects returns an authentication error. Real test and CI commands are known.",
+      "assertions": [
+        "Reports a connection/authentication problem, not zero projects.",
+        "Does not scaffold, persist an invented binding, or claim successful setup."
+      ]
+    },
+    {
+      "id": "E",
+      "name": "conflicting-bindings",
+      "prompt": "User says '/my-architect:init'. .architect/traceability.json projectId is Alpha; CLAUDE.md explicitly says my_architect pid: \"Beta\". Real test and CI commands are known.",
+      "assertions": [
+        "Shows the two conflicting IDs and asks which is correct before dependent writes.",
+        "Preserves the existing index and bindings while resolution is pending."
+      ]
+    },
+    {
+      "id": "F",
+      "name": "selected-project-survives-restart",
+      "prompt": "No initial binding. list_projects returns Alpha and Billing Client (exact path 'billing client / europe'). The user chooses Billing Client. get_project_context succeeds. Real test and CI commands are known. Describe what survives a fresh session and what you do on the next /my-architect:init.",
+      "assertions": [
+        "Persists the returned path exactly in local config/instructions, rather than relying on conversational memory or slugifying it.",
+        "The next session reuses the saved binding without asking again.",
+        "Describes a local pointer, not a server-side Git repository integration."
+      ]
+    },
+    {
+      "id": "G",
+      "name": "new-project-choice-and-empty-requirements",
+      "prompt": "User says '/my-architect:init'. There is no binding; list_projects succeeds with no projects. The user has not supplied a name or hierarchy preference. After answering your necessary questions, they authorize creating an empty project. Its requirements export is empty.",
+      "assertions": [
+        "Explains creation and asks for the missing project name/hierarchy choice before scaffold.",
+        "Creates no sample content; saves a returned and verified ID.",
+        "Reports that linking succeeded but traceability remains incomplete until real requirements/tests/CI are present."
+      ]
+    },
+    {
+      "id": "H",
+      "name": "custom-levels-are-not-a-scaffold-argument",
+      "prompt": "User requests a new custom hierarchy Product → Slice. The live scaffold_project schema accepts preset but has no levelNames argument. No project has been created or linked.",
+      "assertions": [
+        "Explains that preset:custom does not pass arbitrary level names through scaffold_project.",
+        "Does not invent a levelNames argument or substitute default levels while claiming the requested hierarchy exists.",
+        "Resolves a supported way to configure those levels before dependent creation/binding claims."
+      ]
+    }
+  ]
+}
