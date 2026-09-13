@@ -5,7 +5,8 @@ root="${CLAUDE_PROJECT_DIR:-$PWD}"
 is_architect() {
   [ -f "$1/.architect/traceability.json" ] && return 0
   [ -f "$1/.mcp.json" ] && grep -Eq '"my[_-]architect"[[:space:]]*:' "$1/.mcp.json" && return 0
-  [ -f "$1/CLAUDE.md" ] && grep -Eq 'my[_-]architect' "$1/CLAUDE.md" && grep -Eq '(pid[[:space:]]*:|my-architect:traceability)' "$1/CLAUDE.md" && return 0
+  # Usage is enough to check for gaps; resolving the required MCP pid belongs to init.
+  [ -f "$1/CLAUDE.md" ] && grep -Eq 'my[_-]architect' "$1/CLAUDE.md" && return 0
   return 1
 }
 if ! is_architect "$root"; then

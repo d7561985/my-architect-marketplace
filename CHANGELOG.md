@@ -4,6 +4,14 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.19.1] — 2026-09-13
+
+### Fixed
+- Architect health recognizes `my_architect` or `my-architect` usage in `CLAUDE.md` before `pid:` or traceability initialization exists. Missing setup now produces `/my-architect:init` guidance, including when invoked from a nested Git directory.
+- Keep detection separate from project identity: the hook makes no MCP calls or repairs, and init still resolves the required project ID before accessing project data.
+- Mark the health hook and both traceability scripts executable, consistent with their shebangs and the neighboring code-graph hook.
+- Add permanent regressions for uninitialized Architect usage and Git-root lookup; healthy and unrelated projects retain their existing behavior.
+
 ## [1.19.0] — 2026-09-13
 
 ### Added

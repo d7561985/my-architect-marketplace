@@ -219,6 +219,38 @@ test('non-Architect projects are silent; existing MCP or CLAUDE markers report m
   assert.match(health(root).stdout, /my-architect:init/);
 });
 
+for (const instructions of [
+  'Use my_architect to track project work.\n',
+  '**my_architect MCP** project `example-project` — keep requirements current.\n',
+  '**Canonical source:** `my-architect` MCP server, project **`example-project`**.\n',
+]) {
+  test(`Architect usage without pid or init reports missing setup: ${instructions.trim()}`, (t) => {
+    const root = project(t);
+    put(root, 'CLAUDE.md', instructions);
+    const result = health(root);
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /Missing or invalid traceability setup/);
+    assert.match(result.stdout, /my-architect:init/);
+    assert.equal(result.stderr, '');
+    assert.equal(existsSync(join(root, '.architect')), false);
+    assert.equal(readFileSync(join(root, 'CLAUDE.md'), 'utf8'), instructions);
+  });
+}
+
+test('nested invocation finds uninitialized Architect usage at the Git root', (t) => {
+  const root = project(t);
+  const git = spawnSync('git', ['init', '--quiet'], { cwd: root, encoding: 'utf8' });
+  assert.equal(git.status, 0, git.stderr);
+  put(root, 'CLAUDE.md', 'Use my_architect to track project work.\n');
+  const nested = join(root, 'packages', 'example');
+  mkdirSync(nested, { recursive: true });
+  const result = health(nested);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /my-architect:init/);
+  assert.equal(existsSync(join(root, '.architect')), false);
+  assert.equal(existsSync(join(nested, '.architect')), false);
+});
+
 test('done requirements and no issues emit a factual registry gap; approved alone does not', (t) => {
   const root = project(t); init(root); testFile(root); ci(root);
   snapshot(root, [req('FR-1')], []);

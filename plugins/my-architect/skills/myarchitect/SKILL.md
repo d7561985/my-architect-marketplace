@@ -110,7 +110,7 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.19.0 (2026-09-13, aligned with plugin version). **Traceability:** обязательный TDD + Trace; явный requirement `done` после доказанного исполнения; issue закрывается при завершении **всех** closing-элементов; синк и валидация в том же ходу. **Compatibility:** issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; проверяй живую схему, не только номер версии.
+**Version:** 1.19.1 (2026-09-13, aligned with plugin version). **Traceability:** обязательный TDD + Trace; явный requirement `done` после доказанного исполнения; issue закрывается при завершении **всех** closing-элементов; синк и валидация в том же ходу. **Compatibility:** issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; проверяй живую схему, не только номер версии.
 
 **Prior:** 1.15 (2026-07-06). Bump: **Design-skill оверлей** (feature-013). Composes with: дизайн-сессии ведёт skill `design` (форк brainstorming) + таблица переопределений на случай срабатывания оригинала + мосты systematic-debugging Phase 4.5 → I/B и finishing-branch → ship=sync; Workflow I шаг 2 роутит в design (фолбэк — оригинал). (1.14 ниже.)
 
