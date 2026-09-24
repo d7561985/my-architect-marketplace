@@ -4,6 +4,14 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.21.0] — 2026-09-24
+
+### Changed
+- `design`: when the person deciding is not an engineer, the decision page is capped at ~400 words plus mockups; every decision is phrased as its consequence in their words, while engineering diagrams and self-review stay in the spec.
+- `design`: after approval, state the timeline in one line — deadline, when the first result will be shown (in their time), each addition beyond their minimum with its cost in hours, and a "thorough ~N h / faster ~M h" choice.
+- `design`: if the project's CLAUDE.md keeps the spec canon in the repository, the node gets a summary card with `Source:` instead of a verbatim copy; the review gate and checklist name either location.
+- `design`: probes that proved a defect are kept as acceptance checks and rerun after the first screen-changing task, so user-visible results are checked early rather than at the end.
+
 ## [1.20.0] — 2026-09-13
 
 ### Added
