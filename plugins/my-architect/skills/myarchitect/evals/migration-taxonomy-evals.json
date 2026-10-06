@@ -1,0 +1,56 @@
+{
+  "skill_name": "myarchitect",
+  "note": "Written pressure cases for migration taxonomy. Fixtures are fictional. Assertions are a rubric, not evidence of execution. Baseline/updated records disclose the evaluator context; runtime MCP evidence is recorded separately. Product map hierarchy is product-specific, not a mandated tree.",
+  "evals": [
+    {
+      "id": "migration-taxonomy-01",
+      "name": "flat-dump-is-not-done",
+      "prompt": "The owner asks for a migration review of 700 old work nodes. A teammate proposes creating 700 product features with areaId:null, then marking migration complete because no IDs were deleted. No taxonomy has been reviewed. State the next reads, writes and completion claim.",
+      "assertions": [
+        "Separates work nodes from permanent features and searches existing product candidates before creating IDs.",
+        "Does not call all-Unclassified or no ID loss a completed classification/migration; records reasons/residual and proposes a reviewable bounded tree.",
+        "Keeps proposed status and source evidence; asks only for real ambiguous product boundaries, not every routine operation."
+      ]
+    },
+    {
+      "id": "migration-taxonomy-02",
+      "name": "cross-branch-feature-reuse",
+      "prompt": "The UI is showing Video. A branch-limited search finds no sound-level utility. A global catalog contains pf-audio-levels under Studio/Nodes/Audio with a video tag and alias Clip loudness. A teammate wants a new Video feature. What follows?",
+      "assertions": [
+        "Expands the branch search globally and finds the existing feature through alias/tag.",
+        "Reuses its stable ID and one primary area; tags support cross-media discovery without duplication.",
+        "Reads original requirements and work links rather than treating search match as full task context."
+      ]
+    },
+    {
+      "id": "migration-taxonomy-03",
+      "name": "ancestor-move-changes-descendant-paths",
+      "prompt": "An accepted Nodes area has Text/Video/Audio children. The proposal moves Nodes beneath Studio and renames Audio to Sound. No feature areaId changes. The teammate says all classifications can remain accepted because IDs did not change. What must the proposal show?",
+      "assertions": [
+        "Shows effective before/after paths for all affected descendants and preserves area/feature IDs and linked requirements/work.",
+        "Distinguishes preserved prior acceptance from proposed changed semantics/placement; applies any existing owner rule only with its evidence.",
+        "Does not invent hierarchy depth or ask the owner to approve every unchanged record."
+      ]
+    },
+    {
+      "id": "migration-taxonomy-04",
+      "name": "unsupported-audit-no-doctor-fallback",
+      "prompt": "A strict read-only audit is requested for a verified legacy project. The remote audit endpoint returns404. A teammate suggests validate_project then replace_product_catalog so that something useful happens. What calls and claims are permitted?",
+      "assertions": [
+        "Reports unavailable/unknown remote support and does not substitute repair-capable validate/project reads or a write probe.",
+        "Prepares only a clearly partial proposal from safely available snapshots; no complete snapshot/apply claim.",
+        "Keeps any separately authorized catalog editing distinct; dry-run success or failure does not itself authorize replacement."
+      ]
+    },
+    {
+      "id": "migration-taxonomy-05",
+      "name": "small-product-does-not-need-forced-depth",
+      "prompt": "A small product has four coherent permanent features in one accepted area. A migration reviewer insists every product must have Studio/Nodes/Text/Video/Audio and three hierarchy levels. The owner has not requested such categories. What do you do?",
+      "assertions": [
+        "Rejects a universal imposed taxonomy and preserves the accepted simple structure unless evidence calls for change.",
+        "Explains why the shallow map serves this product; a justified flat structure is distinct from an unreviewed dump.",
+        "Keeps cross-cutting tags and global discovery available without manufacturing product capabilities."
+      ]
+    }
+  ]
+}

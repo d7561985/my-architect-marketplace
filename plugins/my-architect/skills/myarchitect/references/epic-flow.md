@@ -6,14 +6,28 @@
 
 ## 1. Проверить удалённую capability без записи
 
-Найди реальные схемы `get_epic_flow`, `get_next_epic`, `get_epic_flow_history`, `apply_epic_flow_command` и сделай `get_epic_flow({pid})`. Наличие локального tool/plugin не доказывает поддержку backend. При смене подключения или возобновлении перечитай живое состояние.
+Найди реальные схемы `get_epic_flow`, `get_next_epic`, `get_epic_flow_history`, `get_epic_flow_detail`, `get_epic_flow_capabilities`, `apply_epic_flow_command` и сделай `get_epic_flow({pid})`. Отдельный `get_epic_flow_capabilities({pid})` показывает возможности **удалённого сервера и текущего credential**; перед новым подтверждением поставки этот probe обязателен. Наличие локального tool/plugin не доказывает поддержку backend. При смене подключения/credential или возобновлении перечитай живое состояние и возможности.
 
 | Наблюдение | Действие |
 |---|---|
 | Успешный `schemaVersion: 1`, `projection: "compact"`, `revision: 0`, пустой flow | Чтение поддерживается; GET ничего не создал. Это не разрешение импортировать все эпики. |
 | Успешный заполненный flow | Сохрани revision, policy, counts и нужные entries; продолжи чтение/claim. |
-| Нет инструмента или HTTP 404 | Capability недоступна, очередь не доказана пустой. Не писать и не пробовать legacy bypass. |
+| Нет flow tool или `get_epic_flow` вернул HTTP 404 | Capability чтения очереди недоступна, очередь не доказана пустой. Не писать в неизвестный flow и не пробовать legacy bypass. |
 | Ошибка доступа/сети, corrupt/future schema | Сохрани точный сбой, текущий checkpoint; записи потока остановить до совместимого успешного чтения. |
+| Flow читается, но confirmation discovery отсутствует или вернул `EPIC_CAPABILITIES_UNAVAILABLE` | Возможность подтверждения неизвестна: 404 может означать старый endpoint или отсутствующий проект. Не пробовать `confirm_delivery` как probe. Это не обнуляет прочитанный flow и не запрещает независимые разрешённые действия по проверенному контракту очереди. |
+
+```ts
+get_epic_flow_capabilities({ pid })
+// {capabilities:{schemaVersion:1, flowSchemaVersions:[1], commands:[...],
+//   authentication:'mcp-key'|'session'|'unavailable',
+//   verifier:null|{identity:'mcp-key:<64hex>',kind:'automation'},
+//   confirmation:{mode:'authenticated-assertion',reason:null}
+//     |{mode:'unsupported',reason:'SESSION_VERIFIER_UNSUPPORTED'|'AUTH_PRINCIPAL_UNAVAILABLE'},
+//   evidenceValidation:'modeled-baseline-and-attributed-references',
+//   humanPresenceVerified:false}}
+```
+
+`commands` перечисляет реализованные операции, а не разрешённые именно сейчас переходы. Этот ответ не читает policy/требования, не создаёт registry и не даёт `canDeliver`. Сначала прочитай policy и review отдельно. `verifier.identity` идентифицирует проверенный MCP-ключ; общий ключ не различает сессии/агентов. Это не session actor владельца claim. Cookie/account и local/demo userId не устанавливают human verifier. Повреждённый успешный ответ, ошибка/404 или отсутствующий tool — неизвестная capability, а не выдуманный `{supported:false}` либо разрешение. Не кэшируй возможности между credentials.
 
 Современные legacy task tools тоже проверяют flow: `EPIC_FLOW_CAPABILITY_UNSUPPORTED`/`EPIC_FLOW_CAPABILITY_UNAVAILABLE` означают ограничение подключения, не разрешение обойти его через `update_node`, bulk, move или full replace. Независимые адресные чтения, разбор источников и авторизованная настройка Trace могут продолжаться. Старый workflow допустим только для подтверждённо unmanaged работы через реально поддерживаемые инструменты; неизвестное состояние не считать unmanaged. Успешный GET не доказывает права записи.
 
@@ -119,7 +133,16 @@ action: { type: 'submit_review', nodeId, claimId,
 
 `confirm_delivery` требует review, текущий claimId, `reason` и `checks:[{criterionId,outcome:'passed'|'failed',evidence:[...]}]` — ровно по одному на каждый criterion фактически принятой policy. Пропуск, failed check, wait, открытые relevant OQ или dependency не проходят. `policy.delivery:null` даёт `EPIC_DELIVERY_POLICY_REQUIRED`: подготовь конкретное предложение принятия, продолжай разрешённую реализацию/review, не объявляй поставку.
 
-**Текущий HTTP/MCP adapter не устанавливает authenticatedVerifier ни для человека, ни для automation.** Поэтому подтверждение сейчас остаётся `EPIC_VERIFIER_UNSUPPORTED` даже при `requiresHuman:false`; actor="human", дополнительное поле или ручной клик не создают поддержку. Сохрани evidence и покажи compatibility gap. Если будущий совместимый adapter действительно установил нужного verifier и policy разрешает автоматический путь, выполняй его без лишнего человеческого апрува; human-only policy требует реально установленного human verifier. Версия плагина этого не доказывает. Требования, issue и product lifecycle не становятся done/available автоматически от flow transition.
+Совместимый HTTP/MCP adapter теперь может подтвердить **automation identity проверенного MCP-ключа**. Это доступно только при фактически успешном discovery, а не по версии этого плагина:
+
+1. Проверь, что `commands` содержит `confirm_delivery`, `confirmation.mode === 'authenticated-assertion'`, verifier задан и `kind === 'automation'`. Прочитай полный актуальный policy/review на согласованной revision. Policy должна быть действительно принята и разрешать non-human путь (`requiresHuman:false`). `policy.delivery:null`, unsupported или неизвестный ответ не исправляются произвольным actor либо дополнительным полем verifier.
+2. Проверь каждый policy criterion по источнику именно `review.artifactRevision`: например, immutable commit/build ID, а не ссылка `/latest` на другой результат. Сервер сверяет modeled baseline и структуру attributed checks, но не скачивает и не удостоверяет внешние артефакты. Полный URL или HTTP 200 не доказывает нужную редакцию/результат.
+3. Для **новой** разрешённой confirmation сохрани полный request с новым operationId, текущими expectedRevision/claimId, `actor: capabilities.verifier.identity`, reason и checks по всем точным criterion IDs. Не подменяй этим actor существующий claim или сохранённый retry. Capability не добавляет новое требование человеческого апрува к уже принятой automatic policy.
+4. После вызова проверь квитанцию и актуальное состояние. Только проверенный успех позволяет сообщить подтверждение по записанной policy. `EPIC_VERIFIER_IDENTITY_MISMATCH`, `EPIC_HUMAN_VERIFIER_REQUIRED`, `EPIC_REVIEW_STALE`, `EPIC_VERIFIER_UNSUPPORTED` — конкретные ограничения, а не повод менять actor/policy/baseline ради прохождения.
+
+Session cookie, local/demo identity и ручной клик по-прежнему не устанавливают human verifier; поддержка human-only policy отсутствует в этом adapter. У старого remote может отсутствовать и automation verifier: оставь review/evidence, зафиксируй фактический сбой и продолжай независимую разрешённую работу.
+
+**Граница полномочий policy:** текущий project writer технически может записать `update_policy`, включая `requiresHuman:false`. `source`/`decisionReference` — атрибуция решения, не проверка согласия владельца; нет отдельного защищённого human-approval/RBAC gate. Агент записывает только фактически принятое решение и не ослабляет policy ради собственного подтверждения. Capability и наличие ключа не являются доказательством такого принятия. Требования, issues и product lifecycle не становятся done/available автоматически от flow transition.
 
 ## 6. Конфликт, неизвестный исход и продолжение
 
@@ -127,6 +150,7 @@ action: { type: 'submit_review', nodeId, claimId,
 - **Известный CAS conflict:** перечитай flow/owner/источники и заново оцени intent. Сохрани чужие изменения. Новый логический request получает новый operationId; не просто увеличивай revision старого payload. Чужой claim не становится твоим.
 - **`EPIC_OPERATION_REUSED`:** payload/actor/revision уже отличаются для старого ID; не подменяй сохранённый request. Сверь `get_epic_flow_history({pid,operationId})` и текущую запись. Если точный исходный request утрачен, history preview не позволяет восстановить его для точного replay.
 - **Успешный replay:** `receipt.resultRevision` — исходная операция; `flow.revision` — текущая очередь. Ответ для node command содержит текущую затронутую entry, не весь flow и не исходное состояние. Не возвращай старое владение/этап из receipt.
+- **Смена ключа после timeout confirmation:** новый probe может вернуть другую verifier.identity. Для точного replay сохрани **прежний actor и весь прежний payload**, не «исправляй» их новым key ID. При действующем доступе к тому же проекту сервер может вернуть прежнюю квитанцию со старым verifier; это не новое подтверждение новым ключом. Для новой логической confirmation нужен новый operationId и текущая подтверждённая identity. Ошибка доступа требует восстановления доступа, не обхода авторизации.
 - **Каталог:** replacement каталога не имеет operationId этого потока; после его timeout действует read-and-compare из [product-catalog.md](product-catalog.md), не queue replay.
 
 После подтверждённого command проверь receipt, actor/node/action, claim ID/stage и перечитай нужную entry; для исторической неопределённости используй operationId history lookup. Никогда не объявляй успех по отправленному запросу. Checkpoint сохраняет точный pid, actor/claim, полные собственные requests/receipts, актуальные flow/catalog revisions, прочитанные источники и evidence, принятые решения, waits, проверенные/оставшиеся операции и следующий шаг. Это обычный проектный документ, не автоматический engine и не доказательство текущего сервера; не публикуй его личные данные в plugin repo.
