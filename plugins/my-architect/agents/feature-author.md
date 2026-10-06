@@ -8,6 +8,7 @@ tools:
   - mcp__plugin_my-architect_my-architect__search_product_features
   - mcp__plugin_my-architect_my-architect__get_scoped_context
   - mcp__plugin_my-architect_my-architect__get_scoped_context_detail
+  - mcp__plugin_my-architect_my-architect__get_scoped_context_details
   - mcp__plugin_my-architect_my-architect__get_node
   - mcp__plugin_my-architect_my-architect__get_doc
   - mcp__plugin_my-architect_my-architect__get_requirements

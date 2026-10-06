@@ -111,6 +111,72 @@
         "Names dependent decisions that cannot yet be made while continuing independent authorized work.",
         "Does not repair/reset/delete source data or convert partial context into complete by hiding gaps."
       ]
+    },
+    {
+      "id": "context-11",
+      "name": "batch-deferred-is-not-reviewed",
+      "prompt": "A manifest contains 39 mandatory keys. A 32-key batch returns two complete windows, one partial Unicode window and 29 deferred items; another seven keys were not requested. The owner asks whether the requirements are now reviewed.",
+      "assertions": [
+        "Keeps all 39 manifest keys in the read ledger, including the seven not yet requested; a successful batch does not imply the whole manifest was read.",
+        "Assembles each key only from matching UTF16 offsets under the same target and snapshot, follows exact nextRequests and sends the remaining unrequested keys in later bounded groups.",
+        "Deferred records and partially assembled JSON remain unread; preserves explicit remainder if the dependent decision cannot wait.",
+        "Does not drop globals, conflicting variants or recorded statuses to reduce the call count."
+      ]
+    },
+    {
+      "id": "context-12",
+      "name": "batch-explicit-unsupported-scalar-reset",
+      "prompt": "The batch tool exists locally but the remote returns HTTP400 with the exact view.kind discriminator issue listing page/detail and excluding details. A successful scalar detail on the same target and snapshot is available. One prior batch-format record was partly assembled.",
+      "assertions": [
+        "Treats only this explicit kind discriminator or an absent MCP tool as evidence of unsupported batch capability, then verifies a successful scalar read on the same target/token.",
+        "Restarts each incomplete record at scalar offset0, discards its partial batch envelope and uses the unchanged scalar JSON format; does not reuse batch offsets or concatenate both formats.",
+        "Retains already decoded records only if the same snapshot has been verified; a changed token requires fresh context and mandatory reads.",
+        "Does not claim adapter auto-fallback, deployment proof from tools/list or a newly invented capability endpoint."
+      ]
+    },
+    {
+      "id": "context-13",
+      "name": "batch-source-error-not-capability",
+      "prompt": "Three separate batch calls return: HTTP409 CONTEXT_SNAPSHOT_STALE, HTTP404 CONTEXT_RECORD_NOT_FOUND and HTTP200 with a duplicate key and an invented continuation. Legacy scalar endpoints respond, so a teammate suggests silently switching to them.",
+      "assertions": [
+        "Rejects all three as batch-source/response failures, not proof of unsupported capability; makes no silent scalar fallback.",
+        "For stale content, gets fresh context and restarts dependent manifest/details instead of just substituting a token into old offsets.",
+        "For absent records and malformed responses, states the explicit gap/error and stops relying on incomplete evidence while continuing independent authorized work.",
+        "Does not equate generic HTTP400/404, access denial or a malformed successful body with the exact unsupported view.kind discriminator."
+      ]
+    },
+    {
+      "id": "context-14",
+      "name": "batch-lossless-variant-decode",
+      "prompt": "A completed scoped-context-shared-variant-v1 record contains detail without root value, one full variant and valueFromVariant:0. A second record has two conflicting variants and no pointer. A third claims valueFromVariant:1 or has no sole variant.",
+      "assertions": [
+        "Parses only a fully assembled envelope and restores the first root value from its sole variant while preserving complete variant/provenance fields.",
+        "Preserves both conflicting variants in the second record and does not choose a winner or pool content across records.",
+        "Rejects the invalid pointer, absent variant or conflicting existing root value rather than silently dropping raw evidence.",
+        "Treats restored original records as recorded source facts, not approved taxonomy, specification revisions or accepted delivery evidence."
+      ]
+    },
+    {
+      "id": "context-15",
+      "name": "batch-complete-byte-budget",
+      "prompt": "The next request has 32 long Unicode keys. The server rejects the complete normalized target/view over16KiB. A separate valid response reaches the chosen65536-byte compact {batch} budget and defers most records.",
+      "assertions": [
+        "Reduces the request group using complete normalized UTF8 payload size; the32-record count limit is not permission to exceed16KiB.",
+        "Checks the exact compact {batch} application envelope against maxOutputBytes, including JSON escaping/metadata/continuations; does not count only content characters.",
+        "Accounts for outer MCP framing separately and does not report unmeasured token or disk-I/O savings.",
+        "Follows deferred continuations or reports CONTEXT_BATCH_BUDGET_TOO_SMALL without fabricating progress or discarding mandatory records."
+      ]
+    },
+    {
+      "id": "context-16",
+      "name": "batch-resume-freshness-without-efficiency-claim",
+      "prompt": "A checkpoint records completed batch keys and a partial window. On resume, catalogRevision is unchanged but fresh context has another snapshot token. A new batched implementation has unit tests; the old scalar benchmark used498calls.",
+      "assertions": [
+        "Invalidates cached dependent acceptance and partial offsets when the fresh snapshot differs, then rereads the mandatory manifest and required sources.",
+        "Keeps target, actual read keys, unresolved gaps and remaining work in the checkpoint without treating the source token as a claim.",
+        "Does not claim the new batch path reduced498calls until the same task, mandatory selection and lossless oracle have actually been executed.",
+        "Separates written expectations, static checks, deterministic protocol execution and blind installed-agent-host evaluation; does not invent a pass rate."
+      ]
     }
   ]
 }

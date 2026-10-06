@@ -7,7 +7,7 @@ const read = (file) => readFileSync(new URL(`../skills/myarchitect/${file}`, imp
 
 test('feature-author can actually call the discovery and context tools it is instructed to use', () => {
   const agent = readFileSync(new URL('../agents/feature-author.md', import.meta.url), 'utf8')
-  for (const tool of ['get_product_catalog', 'search_product_features', 'get_scoped_context', 'get_scoped_context_detail']) assert.ok(agent.includes(`  - mcp__plugin_my-architect_my-architect__${tool}\n`), tool)
+  for (const tool of ['get_product_catalog', 'search_product_features', 'get_scoped_context', 'get_scoped_context_detail', 'get_scoped_context_details']) assert.ok(agent.includes(`  - mcp__plugin_my-architect_my-architect__${tool}\n`), tool)
 })
 
 test('existing create/work entries route to bounded scoped context', () => {
@@ -34,4 +34,11 @@ test('written scenarios distinguish mandatory context, stale resume and unavaila
   for (const name of ['global-discovery-to-stable-target', 'mandatory-manifest-is-not-a-preview', 'resume-same-catalog-new-global-source', 'unavailable-is-not-empty', 'no-invented-spec-or-canonical-role', 'context-is-not-migration-or-claim']) assert.ok(names.has(name), name)
   assert.equal(new Set(fixture.evals.map(item => item.id)).size, fixture.evals.length)
   for (const item of fixture.evals) assert.ok(item.prompt && item.assertions.length > 0, item.id)
+})
+
+test('batch guidance keeps explicit remainder, byte budget and scalar compatibility boundaries', () => {
+  const reference = read('references/scoped-context.md')
+  for (const field of ['get_scoped_context_details(', 'nextRequests', 'maxOutputBytes', 'valueFromVariant', 'scoped-context-shared-variant-v1', 'CONTEXT_BATCH_BUDGET_TOO_SMALL']) assert.ok(reference.includes(field), field)
+  const names = new Set(JSON.parse(read('evals/scoped-context-evals.json')).evals.map(item => item.name))
+  for (const name of ['batch-deferred-is-not-reviewed', 'batch-explicit-unsupported-scalar-reset', 'batch-source-error-not-capability', 'batch-lossless-variant-decode']) assert.ok(names.has(name), name)
 })
