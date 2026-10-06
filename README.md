@@ -91,11 +91,11 @@ plugins/my-architect/
 
 **MCP server (auto-configured):** `npx -y @my-architect/mcp@latest` with `MCP_API_KEY` from your shell env and `MA_API_URL=https://my-architect.app`.
 
-**Commands** (type `/my-architect:<name>`): **init** (install or repair project traceability and verify tests/CI), **feature** (author a feature from scratch — propose a node tree, then write nodes + requirements + doc), **next** (pull + work the next task), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped), **design** (architecture-aware design session — dialogue to an approved spec on a node, then Workflow Z + plan), **initiative** (form an initiative through the 7-question gate), **bo-review** (read-only Business-Owner review of an epic).
+**Commands** (type `/my-architect:<name>`): **init** (install or repair project traceability and verify tests/CI), **feature** (author a feature from scratch — propose a node tree, then write nodes + requirements + doc), **next** (claim an eligible epic, then work within its scope), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped), **design** (architecture-aware design session — dialogue to an approved spec on a node, then Workflow Z + plan), **initiative** (form an initiative through the 7-question gate), **bo-review** (read-only Business-Owner review of an epic).
 
 **Agents** (dispatched by the commands/skill, run in their own context): **feature-author** (prose → spec'd feature node, the engine behind `/feature`), **reconciler** (verify drafts against code, close what shipped — with evidence), **debt-scanner** (scan a closed feature + commit + chat for deferred/caveat/known-issue items and file them), **progress-auditor** (read-only status audit with drift flags).
 
-**Traceability (1.19.0):** `/my-architect:init` installs project synchronization, requirement coverage, and local instructions. Architect owns issue text and status; repository indexes are generated from it. Before closing work, Trace requires a permanent test declaring its requirement, a demonstrated failing mutation, and the gate running in CI. Proven requirements receive explicit `done`; `approved` means approved, not implemented. The agent closes an issue only when all linked requirements/nodes are `done`; partial solutions stay open. The API can store an invalid closure; `validate_project` reports it as an error. Issue updates, index refresh and validation happen in the same turn. These capabilities require compatible backend/MCP issue tools and the explicit requirement `done` status; check the connected tool schema. Project commands live in local `CLAUDE.md`; see [the traceability reference](plugins/my-architect/skills/myarchitect/references/traceability.md).
+**Traceability (1.19.0):** `/my-architect:init` installs project synchronization, requirement coverage, and local instructions. Architect owns issue text and status; repository indexes are generated from it. Before closing work, Trace requires a permanent test declaring its requirement, a demonstrated failing mutation, and the gate running in CI. Proven requirements receive explicit `done`; `approved` means approved, not implemented. The agent closes an issue only when all linked elements are complete: requirements/ordinary nodes are `done`, managed epics have explicit `delivered: true`. Raw legacy status does not override delivery; partial solutions stay open. The API can store an invalid closure; `validate_project` reports it as an error. Issue updates, index refresh and validation happen in the same turn. These capabilities require compatible backend/MCP issue tools and the explicit requirement `done` status; check the connected tool schema. Project commands live in local `CLAUDE.md`; see [the traceability reference](plugins/my-architect/skills/myarchitect/references/traceability.md).
 
 **Hooks:** narrowly scoped.
 - `PostToolUse` on the `complete_task` MCP tool — reminds Claude to finish requirement/issue/index synchronization and validation, then run the debt-scan pass. Scoped to that one tool; nothing fires on unrelated turns.
@@ -104,7 +104,7 @@ plugins/my-architect/
 
 **Skill `myarchitect`:** triggers when you (or Claude) say "deferred", "known issue", "caveat", "not yet wired", "to be tested when…", "could improve later", or after closing a feature. Encodes the workflow:
 - Resolve the project through Setup first, then use `get_project_context` to load its live state.
-- Closing a feature → Trace → `complete_task` → proven requirements explicitly `done` → fresh issue links → close issues whose closing elements are all `done` → sync index → validate → scan commit/chat for surfaced gaps.
+- Closing work → Trace → ordinary child `complete_task` or managed epic review/delivery → proven requirements explicitly `done` → fresh issue links → close issues only when every closing element is complete → sync index → validate → scan commit/chat for surfaced gaps.
 - Each gap → de-dup against backlog → file via `build_hierarchy` + assign release via `bulk_update_nodes` (validate `successful` vs `failed`).
 - Decision rubric: tech-debt → no ask, future-with-trigger → no ask, strategic/scope → **ask before filing**.
 
@@ -147,6 +147,10 @@ The product catalog pilot separates permanent product features from delivery nod
 
 Init verifies remote support with `get_product_catalog`. Its normalized `catalog.schemaVersion: 2` is separate from `remoteSchemaVersion`: v1 reads can normalize without mutation, but an old or unknown remote format must stop v2 writes. A local tool name or plugin update does not establish backend support. On a verified compatible backend, the agent preserves all unrelated entries in a complete replacement using the fresh expected revision; a search page is not a replacement payload. Failed reads stop catalog writes while independent traceability work can continue. See [catalog guidance](plugins/my-architect/skills/myarchitect/references/product-catalog.md).
 
+Epic flow adds a shared queue with explicit claims, waits, review and delivery. The agent verifies the remote flow capability, claims authorized eligible work atomically, and selects children with the current `scopeEpicId`, `claimId` and `assignee`. Compact projections have bounded detail/history reads; they are not full snapshots. Unknown command outcomes use the exact saved operation request, while catalog replacement keeps its separate read-and-compare rule.
+
+The current HTTP/MCP transport does not establish a delivery verifier, so even an accepted automatic policy cannot yet confirm delivery through it. Review evidence and real artifact checks remain useful; merged PRs, completed children and legacy `done` do not establish delivery. Init discovers support without enrolling epics, setting policy or migrating live data. See [epic-flow guidance](plugins/my-architect/skills/myarchitect/references/epic-flow.md) and the [evaluation record](plugins/my-architect/skills/myarchitect/evals/EPIC_FLOW_RESULTS.md).
+
 Organizing a legacy project starts with a read-only inventory and a proposed mapping for owner review. Product areas and ambiguous merges are not accepted automatically, and a done work node does not prove current product behavior. The [migration review reference](plugins/my-architect/skills/myarchitect/references/product-migration.md) describes a project-local checkpoint and how to resume after source changes. It does not provide a full migration apply/rollback engine or automatically rewrite old hierarchies.
 
 ---
@@ -179,6 +183,7 @@ The skill description triggers on specific phrases (deferred, known issue, cavea
 
 - Claude Code 2.0+
 - `@my-architect/mcp` ≥ 1.5.0
+- Epic flow: verify the connected schemas and a successful remote read. Local plugin/tool availability and HTTP 404 do not establish a usable empty queue. Delivery confirmation remains unsupported by the current transport.
 - Traceability in 1.19.0: `@my-architect/mcp` ≥ 1.8.0 and a compatible backend exposing issue tools, `closes`, explicit requirement `done`, and issue validation. Verify the connected schema before using these capabilities.
 
 ---

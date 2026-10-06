@@ -6,6 +6,8 @@ The [Feature-lifecycle map in SKILL.md](../SKILL.md) routes here. The letters ar
 
 Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassification) live in [forming-nodes.md](forming-nodes.md).
 
+**Managed epic override.** Before work selection, start, waiting or closure, read [epic-flow.md](epic-flow.md). Flow owns managed epic stage/claim/review/delivery; the legacy task steps below apply to ordinary work nodes. Never substitute legacy/bulk/move/full-replace writes for a rejected flow command. Creation in Z/I/B does not automatically enqueue or claim an epic.
+
 ## Workflow Z — Authoring a feature from scratch (CREATE)
 
 Превращает prose-описание в спецированную фичу-ноду **до кода**. Это вход в цикл; не путать с Workflow B (тот — про долги уже existing/закрытой работы).
@@ -52,6 +54,8 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 Архитектор — то, против чего ведёшь работу и что держишь актуальным, а не запись постфактум.
 
+0. **Scope и владение.** Проверь capability и текущее состояние flow. Продолжи разрешённый owned claim либо получи server recommendation и подтверждённый claim по [epic-flow.md](epic-flow.md). Дочерний `get_next_task` в managed проекте требует актуальные `scopeEpicId`, `claimId`, `assignee`; отсутствующий/чужой/waiting claim не разрешает глобальный fallback. Read-only discovery не требует claim, исполнение managed scope — требует. При ожидании используй wait с причиной/ответственным/следующим шагом, сохраняя stage и claim.
+
 1. **Перед кодом** — `get_node({pid, nodeId})` + прочитать каждый док из `docIds` (`get_doc`) **и** `get_requirements({pid, nodeId, inherited: true})` (приёмка). При доступном каталоге прочитай затронутые постоянные фичи/impacts и их исходные требования по [product-catalog.md](product-catalog.md): текущее поведение отдельно от целевой дельты. Отсутствующую связь покажи как пробел, не угадывай. Истина о фиче — в доке/требованиях, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове. В репо есть свежий локальный граф кода → связи затрагиваемых символов сперва у графа, потом точечный verify по файлам (правила и freshness-check — скил `recursive-context`, references/code-graph.md).
 
    Прочитай [traceability.md](traceability.md): для реализации поведения обязателен `superpowers:test-driven-development`, постоянный тест декларирует ID требования. Прочитай `closes` ноды/требований и связанные issue через `get_issues({pid})`: текст проблемы и текущий статус берутся из Архитектора.
@@ -68,18 +72,18 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
    Уже сохранённый `done` — факт **статуса в Архитекторе**, а не прочитанный отчёт тестов. Если тестовые доказательства старой работы не проверялись, в summary укажи «статус done, доказательства в этом ходу не проверены»; не придумывай прежние прогоны. Исправление ошибочного `closed` на `open` не требует придумывать доказательства закрытой части.
 
-2. **Закрой выполненную ноду.** Если она ещё не `done`, вызвать:
+2. **Закрой обычную выполненную ноду.** Для самого managed epic этот legacy вызов запрещён: сначала шаги доказанных requirement updates ниже, затем `submit_review` с актуальными criteria/requirement IDs/artifact/evidence и подтверждение по принятой policy только при поддерживаемом verifier из [epic-flow.md](epic-flow.md). Missing policy/verifier и stale review остаются незавершёнными явно; не поднимай legacy status. Для обычной ноды, если она ещё не `done`, вызвать:
    ```
    mcp__my-architect__complete_task({
      pid, nodeId,
      summary: "<commit SHA> — <one-line outcome> — trace: <requirement IDs → permanent tests; gate/CI results; mutation red → restored green> — waivers/caveats: <list or none>"
    })
    ```
-   Проверь ответ. Каскадирует статус по предкам и возвращает `next_task`; **не меняет статусы требований или issue**. Не передавай ID требования как `nodeId` и не дублируй `update_node({status: "done"})`. Уже закрытая нода не требует повторного `complete_task` для ремонта прослеживаемости.
+   Проверь ответ. Каскад обычного прогресса останавливается до managed epic; **не меняет статусы требований или issue**. В managed проекте ответ `next_task:null, next_task_reason:EPIC_FLOW_SCOPE_REQUIRED` требует следующего scoped selection, не перехода к глобальной очереди. Legacy summary заменяет description обычной ноды: сохрани исходные scope/acceptance в итоговом тексте либо в прочитанном source doc, не уничтожай их коротким «Merged». Не передавай ID требования как `nodeId` и не дублируй `update_node({status: "done"})`. Уже закрытая обычная нода не требует повторного `complete_task` для ремонта прослеживаемости.
 
 3. **Явно обнови выполненные требования.** Только для ID с доказательствами из шага 1: `update_requirement({pid, requirementId: "<id>", status: "done"})`. Для 2+ требований — `bulk_update_requirements({pid, updates: [{id: "<id>", fields: {status: "done"}}, ...]})`; проверь `successful`/`failed`, повтори только неудачные обновления и перечитай статусы. Непроверенные требования сохраняют прежний статус. Если живая схема MCP не поддерживает `done`, требуется совместимое обновление backend/MCP: не подменяй его `approved` и не заявляй завершённую синхронизацию.
 
-4. **Синхронизируй issue в этом же ходу.** После записей обязательно заново вызови `get_issues({pid})`: `closedBy` содержит все закрывающие требования **и** узлы, включая другие ветки и предков после каскада. Для затронутых issue условие закрытия строгое: `closedBy.length > 0 && closedBy.every(link => link.status === "done")`. Условие выполнено → `update_issue({pid, issueId: "<id>", status: "closed"})`, если ещё открыт. Хотя бы один closing-элемент не `done` → проблема остаётся `open`; перечисли оставшиеся ID, не повышай им статусы ради закрытия. Если такой issue уже `closed`, верни `open` и укажи причину. Закрытый issue без связей также верни в `open` либо восстанови связь только по доказательствам. Не удаляй реальные `closes`, чтобы сделать условие истинным. Проверь ответы и перечитай issue; `closes` само не закрывает проблему.
+4. **Синхронизируй issue в этом же ходу.** После записей обязательно заново вызови `get_issues({pid})`: `closedBy` содержит все закрывающие требования **и** узлы, включая другие ветки. Для затронутых issue условие закрытия строгое: `closedBy.length > 0 && closedBy.every(link => link.kind === "node" && link.delivered !== undefined ? link.delivered : link.status === "done")`. У managed node используется явный `delivered`, даже если raw status равен `done` или `draft`; обычные узлы и требования требуют `done`. Если для известного managed epic сервер не возвращает delivery, это compatibility gap — не закрывай issue по raw status. Условие выполнено → `update_issue({pid, issueId: "<id>", status: "closed"})`, если ещё открыт. Хотя бы один closing-элемент не завершён → проблема остаётся `open`; перечисли оставшиеся ID, не повышай им статусы ради закрытия. Если такой issue уже `closed`, верни `open` и укажи причину. Закрытый issue без связей также верни в `open` либо восстанови связь только по доказательствам. Не удаляй реальные `closes`, чтобы сделать условие истинным. Проверь ответы и перечитай issue; `closes` само не закрывает проблему.
 
 5. **Обнови производные данные и проверь итог.** После изменения требований/issue выполни **ещё раз** команду синка из local `CLAUDE.md` (Архитектор → индекс), проверь сохранение набора ID и новые статусы/связи. Затем `validate_project({pid})`: `valid: true` и отсутствие ошибок прослеживаемости подтверждаются ответом. Ошибка API, синка или валидации — незавершённое закрытие; зафиксируй точный гэп и продолжай исправление в пределах доказанных данных. Локальный индекс или старый кеш `get_issues` не заменяет свежий ответ Архитектора.
 
@@ -119,7 +123,7 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
    Работа закрывает зарегистрированную проблему → укажи `closes: ["<issue-id>"]` на требовании или ноде через поддерживаемый create/update. Связь выводится из подтверждённой приёмки, не из похожего тайтла. Отсутствие закрывающего требования/узла и другие пропуски фиксируются явно по [traceability.md](traceability.md); причина неизвестна — уточни, не выдумывай.
 
-7. **Уже реализованное решение — тот же цикл закрытия.** Если при разборе проблемы найдено уже выполненное решение, сначала проверь Trace, затем выполни **Workflow A, шаги 2–5** в этом ходу: нода `done` → только доказанные требования явно `done` → свежий `get_issues` → `update_issue` по условию **все** closing-элементы `done` → синк индекса → `validate_project`. Не оставляй подтверждённо устаревший `open` «до следующего прохода». Если завершена лишь часть closing-элементов, issue остаётся `open` с конкретными оставшимися ID. Если работа только заведена, оставь её фактические статусы и после связывания выполни синк и `validate_project`; регистрация работы не является её исполнением.
+7. **Уже реализованное решение — тот же цикл закрытия.** Если при разборе проблемы найдено уже выполненное решение, сначала проверь Trace, затем выполни **Workflow A, шаги 2–5** в этом ходу: обычная нода `done` либо managed epic с подтверждённым flow delivery → только доказанные требования явно `done` → свежий `get_issues` → `update_issue` по условию завершения **всех** closing-элементов из шага A4 → синк индекса → `validate_project`. Не оставляй подтверждённо устаревший `open` «до следующего прохода». Если завершена лишь часть closing-элементов, issue остаётся `open` с конкретными оставшимися ID. Если работа только заведена, оставь её фактические статусы и после связывания выполни синк и `validate_project`; регистрация работы не является её исполнением.
 
 ## Workflow C — Authoring docs as source of truth
 
@@ -133,7 +137,7 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 ### Workflow
 
-1. **На старте задачи** — после `start_task` глянуть `get_node({pid, nodeId}).docIds` и прочитать каждый док через `get_doc({pid, docId})`. Это исток правды о фиче; не догадываться по title.
+1. **На старте задачи** — после проверки scope/claim (для managed epic) либо обычного `start_task` прочитать `get_node({pid, nodeId}).docIds` и нужные доки через `get_doc({pid, docId})`. Это исток правды о фиче; не догадываться по title. Правка scope/требований после review требует новой актуальной проверки; сохранение doc само по себе не свидетельство внешней поставки.
 
 2. **Авторинг** — `create_doc({pid, title, content, nodeId})`. Маркдаун; ведущий `# Title` добавляется автоматически, если его нет. Без `nodeId` — проектный док (PRODUCT, ARCHITECTURE и т.п.). Под одной нодой можно много доков.
 
