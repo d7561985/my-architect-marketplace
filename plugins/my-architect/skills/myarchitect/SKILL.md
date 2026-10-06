@@ -23,6 +23,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - [`references/initiative-gate.md`](references/initiative-gate.md) — свод правил инициатив: гейт 7 вопросов, правила текста, процесс «две корзины». Используют Workflow I / R и шаг 3 Workflow Z.
 - [`references/traceability.md`](references/traceability.md) — обязательная цепочка issue → требование → постоянный тест → CI: TDD, `covers`, проверка гейта мутацией, односторонний синк и явные waivers. Читать до реализации поведения и на шаге Trace.
 - [`references/product-catalog.md`](references/product-catalog.md) — поддержка формата удалённого сервера, дерево областей, глобальный поиск по названию/aliases/tags, связи с работой и запись полного каталога с revision. Читать в init и перед новой/связанной работой.
+- [`references/scoped-context.md`](references/scoped-context.md) — global discovery → явный feature/work target → полный обязательный manifest и точные детали → fresh snapshot при продолжении. Читать в Z/D; пробелы и неизвестная зрелость остаются явными.
 - [`references/product-migration.md`](references/product-migration.md) — inventory, dry run с источниками, решения владельца и checkpoint старого проекта. Полное apply/rollback не реализовано.
 - [`references/epic-flow.md`](references/epic-flow.md) — общая очередь эпиков, capability, compact/detail/history, claim, scoped child work, точные retries и review/delivery. Читать перед «что дальше», работой/закрытием управляемого эпика и аудитом прогресса.
 
@@ -54,13 +55,13 @@ Skill универсальный: project ID, эпики, релизы, уров
 
 ## Первый вызов с `pid` — после Setup
 
-После разрешения ID прочитай контекст, если он ещё не прочитан в этом ходу при Setup:
+При Setup прочитай общий контекст, если он ещё не проверен. При уже подтверждённой привязке и явном target переходи к [scoped-context.md](references/scoped-context.md) без повторного общего dump. При Setup используется:
 
 ```
 mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 ```
 
-Один вызов даёт `meta + hierarchy + backlog + diagrams + stats`. Кешировать ментально на остаток хода — не перевызывать пока не было create/update.
+Один вызов даёт `meta + hierarchy + backlog + diagrams + stats`. Это общий legacy overview, не обязательный полный аудит перед каждым изменением. Для уже подтверждённой привязки и выбранной работы используй [адресный контекст](references/scoped-context.md); возобновление проверяет свежий snapshot даже без собственных create/update. Не подменяй им полный migration inventory или подтверждение claim.
 
 Каталог продукта читается отдельно по [product-catalog.md](references/product-catalog.md), если новый MCP-инструмент доступен. Успешный удалённый `get_product_catalog` подтверждает чтение: недоступность не равна пустому каталогу. Нормализованный `catalog.schemaVersion: 2` не доказывает запись v2: сохрани `remoteSchemaVersion`, при 1/неизвестном останови такие записи. Поиск постоянной фичи по умолчанию глобальный через `search_product_features`; выбранная ветка UI не сужает контекст агента. Старый сервер сохраняет прежний workflow; записи каталога при ошибке чтения запрещены.
 
@@ -74,7 +75,7 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 
 0. **Decide → Workflow I** — структурная работа (не «две корзины»-мелочь: дольше пары недель или трогает межсервисные контракты)? Сначала ценность и «делать ли»: гейт 7 вопросов → спина из 7 ответов → апрув автора → эпик + ноды. Легитимные исходы: «не делаем» (Опция 0 / нет потребителя) и «не сейчас + триггер пересмотра». Мелкая работа идёт сразу в Workflow Z. Перед показом эпика бизнесу — **Workflow R** (`/my-architect:bo-review`, read-only, правки вносит автор).
 1. **Create → Workflow Z** — описать фичу ДО кода: дерево нод + upfront-требования (FR/NFR/SAR/CON) + (опц.) дока + релиз → `validate_project` + echo ID. **Каждый узел = building block** — вертикальный срез с наблюдаемым результатом («после поставки `<актор>` может `<X>`»), а НЕ задача по слоям кода («Коллекция X», «добавить поле»); прогони **merge-test + demo-test** перед `build_hierarchy`. Высота и дробление нод — [`references/forming-nodes.md`](references/forming-nodes.md). Shippable-фича **никогда** не заводится одиночной childless-нодой (≥1 дочерний срез).
-2. **Work → Workflow D** — проверить flow/claim по [epic-flow.md](references/epic-flow.md), затем `get_node` + доки + `get_requirements(inherited)` ДО кода; вести против ноды/доки и держать их актуальными по ходу.
+2. **Work → Workflow D** — проверить flow/claim по [epic-flow.md](references/epic-flow.md), затем discovery → явный work target → обязательные requirements/pages/details по [scoped-context.md](references/scoped-context.md) ДО кода. При возобновлении проверить fresh token, по ходу держать источники актуальными. Недоступный reader явно ограничивает fallback, не превращается в пустой успешный brief.
 3. **Trace → [traceability.md](references/traceability.md)** — постоянный тест декларирует требование, гейт видит эту связь и исполняется в CI; чувствительность проверена мутацией. Пропуски — явные waivers, не молчание. Команды берутся из local `CLAUDE.md`.
 4. **Close → Workflow A** — после Trace: обычная работа через `complete_task`, managed epic через review и поддерживаемую принятую delivery policy; затем подтверждённые требования/issue, validate и scan-for-gaps. Done детей не поставляет эпик.
 5. **File deferred → Workflow B** — каждый всплывший долг становится нодой: de-dup → parent epic → priority/release (rubric) → `build_hierarchy` → validate. Зарегистрированные проблемы хранятся как issue, связь решения — `closes`.

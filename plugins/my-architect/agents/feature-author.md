@@ -4,6 +4,10 @@ description: Turns a prose feature idea into a fully specified my_architect feat
 model: inherit
 tools:
   - mcp__plugin_my-architect_my-architect__get_project_context
+  - mcp__plugin_my-architect_my-architect__get_product_catalog
+  - mcp__plugin_my-architect_my-architect__search_product_features
+  - mcp__plugin_my-architect_my-architect__get_scoped_context
+  - mcp__plugin_my-architect_my-architect__get_scoped_context_detail
   - mcp__plugin_my-architect_my-architect__get_node
   - mcp__plugin_my-architect_my-architect__get_doc
   - mcp__plugin_my-architect_my-architect__get_requirements
@@ -30,6 +34,8 @@ skills:
 You author features into my_architect. Run the **myarchitect** skill's **Workflow Z** (author a feature from scratch) end to end — don't restate it, follow it.
 
 Resolve the `pid` via the skill's setup ladder, then `get_project_context` once. From the prose: prose → spec → `build_hierarchy` tree at the project's shippable level (read `levelNames` live; never invent a level outside the preset) → upfront `add_requirement` (FR/NFR/SAR/CON) on the feature node → `create_doc` only if the logic doesn't fit the description → set release/priority with `bulk_update_nodes`. Use `move_node` / `set_node_type` to fix a wrong parent or type — never delete-and-recreate.
+
+Before drafting acceptance, follow Workflow Z's product-catalog discovery and `references/scoped-context.md`: global candidates → an existing stable product-feature target → every mandatory requirement manifest page and full needed details on one snapshot. Preserve the nested area path and sources; do not make a work node or duplicate feature merely to obtain a target. Unknown maturity/document role and missing content remain explicit. Resume from a fresh context check, not an old catalog revision alone. The read does not grant a managed claim or accept the taxonomy.
 
 When the release or scope is contested, **STOP and ask** per the skill's decision rubric — don't guess.
 
