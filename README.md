@@ -143,6 +143,10 @@ This command guides the agent through the actual project's configuration, existi
 
 Project files are preserved by the installer: an existing `.architect/traceability.mjs`, configuration and marked `CLAUDE.md` block are not overwritten. The agent must inspect and update them when needed. There is no runtime version/hash drift check or automatic migration of custom index formats. Existing indexes must retain every previous requirement ID during migration. A silent health hook confirms only the checks it performs; it does not prove that a project's runtime is current or that hosted CI and branch protection passed. See [the init workflow](plugins/my-architect/commands/init.md) for the complete procedure.
 
+The product catalog pilot separates permanent product features from delivery nodes. Init checks support with a successful remote `get_product_catalog` read; a tool name in the local MCP list is insufficient. On compatible servers the agent looks up an existing feature before proposing new work, preserves sources and unrelated entries, and writes the complete catalog using its expected revision. Failed reads stop catalog writes while independent traceability work can continue. See [catalog guidance](plugins/my-architect/skills/myarchitect/references/product-catalog.md).
+
+Organizing a legacy project starts with a read-only inventory and a proposed mapping for owner review. Product areas and ambiguous merges are not accepted automatically, and a done work node does not prove current product behavior. The [migration review reference](plugins/my-architect/skills/myarchitect/references/product-migration.md) describes a project-local checkpoint and how to resume after source changes. It does not provide a full migration apply/rollback engine or automatically rewrite old hierarchies.
+
 ---
 
 ## Configuration

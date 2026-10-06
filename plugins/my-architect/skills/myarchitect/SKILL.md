@@ -1,6 +1,6 @@
 ---
 name: myarchitect
-description: Use when surfacing, working, or closing work in a project that uses the my_architect MCP server — deferred items, known issues, caveats, "to be tested when X", just-shipped features with follow-ups, scope questions about the backlog. Also when starting or implementing a tracked feature (start_task, "беру/реализую <фичу>"), forming a node tree from scratch ("как сформировать ноды", "опиши фичу"), or keeping a feature's doc/node current while working. Encodes the living-source-of-truth + proactive tracking rules + ask-when-ambiguous decision rubric. Triggers on words like "deferred", "отложил", "caveat", "known issue", "не подключено", "not yet wired", "could improve later", "is this tracked?", "мы это не потеряем?", "what's next?", or after any commit that closes a feature. Also fires for initiative formation/review — "заведи/оформи инициативу", "проверь эпик глазами бизнеса", "BO-ревью", "почему эпик вернули".
+description: Use when working with a my_architect project — starting or closing tracked work, deferred items, known issues, caveats, follow-ups, "is this tracked?", "what's next?", "отложил", "не подключено", "мы это не потеряем?". Also for feature authoring ("опиши фичу", "беру фичу"), keeping node/docs current, initiative formation or BO-review ("заведи инициативу", "проверь эпик глазами бизнеса"), product catalog/taxonomy, affected features, or organizing a legacy project without losing requirements and history.
 ---
 
 # myarchitect — proactive backlog tracker
@@ -22,6 +22,8 @@ Skill универсальный: project ID, эпики, релизы, уров
 - [`references/forming-nodes.md`](references/forming-nodes.md) — модель иерархии: пресеты/уровни, тест гранулярности, lint тайтлов, `build_hierarchy`, `move_node`/`set_node_type`.
 - [`references/initiative-gate.md`](references/initiative-gate.md) — свод правил инициатив: гейт 7 вопросов, правила текста, процесс «две корзины». Используют Workflow I / R и шаг 3 Workflow Z.
 - [`references/traceability.md`](references/traceability.md) — обязательная цепочка issue → требование → постоянный тест → CI: TDD, `covers`, проверка гейта мутацией, односторонний синк и явные waivers. Читать до реализации поведения и на шаге Trace.
+- [`references/product-catalog.md`](references/product-catalog.md) — проверка поддержки сервера, поиск постоянной фичи, связи с работой и запись полного каталога с revision. Читать в init и перед новой/связанной работой.
+- [`references/product-migration.md`](references/product-migration.md) — inventory, dry run с источниками, решения владельца и checkpoint старого проекта. Полное apply/rollback не реализовано.
 
 Карта ниже говорит, **когда** какой файл открыть. Не держи всё в голове — дошёл до Workflow → прочитал его тело.
 
@@ -59,9 +61,13 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 
 Один вызов даёт `meta + hierarchy + backlog + diagrams + stats`. Кешировать ментально на остаток хода — не перевызывать пока не было create/update.
 
+Каталог продукта читается отдельно по [product-catalog.md](references/product-catalog.md), если новый MCP-инструмент доступен. Только успешный ответ удалённого `get_product_catalog` подтверждает поддержку: недоступность не равна пустому каталогу. Старый сервер сохраняет прежний workflow; записи каталога при ошибке чтения запрещены.
+
 ## Feature lifecycle — the map (router)
 
 Жизненный цикл фичи, по порядку. Буквы воркфлоу исторические (на них ссылаются слэш-команды) — последовательность задаёт **эта карта, не алфавит**. Тела всех воркфлоу — в [`references/workflows.md`](references/workflows.md); открой нужный, когда дошёл до шага.
+
+Ниже feature означает **узел работы**. Постоянная product feature живёт в отдельном каталоге: сначала найди существующую возможность и опиши дельту эпика, затем декомпозируй работу. Новая задача не создаёт автоматически новую продуктовую фичу. `accepted`-классификация требует решения владельца, `available` — доказанного текущего поведения; статус done в дереве не заменяет ни одно из них.
 
 0. **Decide → Workflow I** — структурная работа (не «две корзины»-мелочь: дольше пары недель или трогает межсервисные контракты)? Сначала ценность и «делать ли»: гейт 7 вопросов → спина из 7 ответов → апрув автора → эпик + ноды. Легитимные исходы: «не делаем» (Опция 0 / нет потребителя) и «не сейчас + триггер пересмотра». Мелкая работа идёт сразу в Workflow Z. Перед показом эпика бизнесу — **Workflow R** (`/my-architect:bo-review`, read-only, правки вносит автор).
 1. **Create → Workflow Z** — описать фичу ДО кода: дерево нод + upfront-требования (FR/NFR/SAR/CON) + (опц.) дока + релиз → `validate_project` + echo ID. **Каждый узел = building block** — вертикальный срез с наблюдаемым результатом («после поставки `<актор>` может `<X>`»), а НЕ задача по слоям кода («Коллекция X», «добавить поле»); прогони **merge-test + demo-test** перед `build_hierarchy`. Высота и дробление нод — [`references/forming-nodes.md`](references/forming-nodes.md). Shippable-фича **никогда** не заводится одиночной childless-нодой (≥1 дочерний срез).
@@ -113,7 +119,7 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.20.0 (2026-09-13, aligned with plugin version). **Setup:** явный выбор/создание проекта, проверенная локальная привязка и повторное использование без нового вопроса; порядок/размер списка не доказывает связь с репозиторием. **Traceability:** обязательный TDD + Trace; явный requirement `done` после доказанного исполнения; issue закрывается при завершении **всех** closing-элементов; синк и валидация в том же ходу. **Compatibility:** issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; проверяй живую схему, не только номер версии. В `@my-architect/mcp` ≥ 1.8.2 также исправлена подсказка `list_projects` о выборе проекта.
+**Version:** 1.22.0 (2026-10-06, aligned with plugin version). **Product catalog pilot:** постоянные фичи отдельно от работы; проверка удалённого GET, reuse существующей фичи, предложенная классификация/источники, versioned replacement и повторное чтение при конфликте. Разбор старых проектов — inventory/dry run/checkpoint; full migration apply/rollback отсутствует. Подготовленная версия плагина не доказывает публикацию или поддержку backend. **Setup/Traceability:** сохранённая привязка, TDD + Trace, явный requirement `done`, issue закрывается только при завершении всех closing-элементов; синк и валидация в том же ходу. **Compatibility:** каталог требует успешного `get_product_catalog` и поддерживаемой схемы записи, без предположения о версии развёрнутого сервера. Issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; в ≥ 1.8.2 исправлена подсказка `list_projects`.
 
 **Prior:** 1.15 (2026-07-06). Bump: **Design-skill оверлей** (feature-013). Composes with: дизайн-сессии ведёт skill `design` (форк brainstorming) + таблица переопределений на случай срабатывания оригинала + мосты systematic-debugging Phase 4.5 → I/B и finishing-branch → ship=sync; Workflow I шаг 2 роутит в design (фолбэк — оригинал). (1.14 ниже.)
 

@@ -4,6 +4,19 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.22.0] — 2026-10-06
+
+### Added
+- Product catalog pilot guidance: verify remote read support, reuse a permanent product feature, preserve source requirements and relate delivery work through creates/changes/retires impacts.
+- Legacy-project review reference for source inventory, ID-set reconciliation, proposed mappings, owner decisions and a project-local checkpoint for continuation. Full migration apply/rollback is not implemented.
+- Behavioral scenarios for unsupported backends, empty legacy catalogs, existing-feature changes, concurrent writes, unknown write outcomes, corrupt/future formats, missing references and resumed reviews.
+
+### Changed
+- Setup/init inspects catalog support without treating a failed read as empty data or automatically classifying the old hierarchy. Independent traceability setup remains available on older servers.
+- Authoring, work, deferred-item and initiative workflows look up existing product features when supported. Delivery completion does not imply accepted classification or implemented source requirements.
+- Catalog writes preserve the full latest registry and use expectedRevision; conflicts require rereading and recomputing the intended change, while failed or ambiguous outcomes remain explicit.
+- Plugin/marketplace metadata is prepared at 1.22.0. Local metadata does not establish publication or deployment of compatible catalog tools/backend.
+
 ## [1.21.0] — 2026-09-24
 
 ### Changed
