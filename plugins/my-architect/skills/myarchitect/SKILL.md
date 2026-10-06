@@ -1,6 +1,6 @@
 ---
 name: myarchitect
-description: Use when working with a my_architect project — starting or closing tracked work, deferred items, known issues, caveats, follow-ups, "is this tracked?", "what's next?", "отложил", "не подключено", "мы это не потеряем?". Also for feature authoring ("опиши фичу", "беру фичу"), keeping node/docs current, initiative formation or BO-review ("заведи инициативу", "проверь эпик глазами бизнеса"), product catalog/taxonomy, affected features, or organizing a legacy project without losing requirements and history.
+description: Use when working with a my_architect project — starting or closing tracked work, deferred items, known issues, caveats, follow-ups, "is this tracked?", "what's next?", "отложил", "не подключено", "мы это не потеряем?". Also for feature authoring ("опиши фичу", "беру фичу"), keeping node/docs current, initiative formation or BO-review ("заведи инициативу", "проверь эпик глазами бизнеса"), product catalog/taxonomy, nested areas, category-independent feature lookup, affected features, or organizing a legacy project without losing requirements and history.
 ---
 
 # myarchitect — proactive backlog tracker
@@ -22,7 +22,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - [`references/forming-nodes.md`](references/forming-nodes.md) — модель иерархии: пресеты/уровни, тест гранулярности, lint тайтлов, `build_hierarchy`, `move_node`/`set_node_type`.
 - [`references/initiative-gate.md`](references/initiative-gate.md) — свод правил инициатив: гейт 7 вопросов, правила текста, процесс «две корзины». Используют Workflow I / R и шаг 3 Workflow Z.
 - [`references/traceability.md`](references/traceability.md) — обязательная цепочка issue → требование → постоянный тест → CI: TDD, `covers`, проверка гейта мутацией, односторонний синк и явные waivers. Читать до реализации поведения и на шаге Trace.
-- [`references/product-catalog.md`](references/product-catalog.md) — проверка поддержки сервера, поиск постоянной фичи, связи с работой и запись полного каталога с revision. Читать в init и перед новой/связанной работой.
+- [`references/product-catalog.md`](references/product-catalog.md) — поддержка формата удалённого сервера, дерево областей, глобальный поиск по названию/aliases/tags, связи с работой и запись полного каталога с revision. Читать в init и перед новой/связанной работой.
 - [`references/product-migration.md`](references/product-migration.md) — inventory, dry run с источниками, решения владельца и checkpoint старого проекта. Полное apply/rollback не реализовано.
 
 Карта ниже говорит, **когда** какой файл открыть. Не держи всё в голове — дошёл до Workflow → прочитал его тело.
@@ -61,7 +61,7 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 
 Один вызов даёт `meta + hierarchy + backlog + diagrams + stats`. Кешировать ментально на остаток хода — не перевызывать пока не было create/update.
 
-Каталог продукта читается отдельно по [product-catalog.md](references/product-catalog.md), если новый MCP-инструмент доступен. Только успешный ответ удалённого `get_product_catalog` подтверждает поддержку: недоступность не равна пустому каталогу. Старый сервер сохраняет прежний workflow; записи каталога при ошибке чтения запрещены.
+Каталог продукта читается отдельно по [product-catalog.md](references/product-catalog.md), если новый MCP-инструмент доступен. Успешный удалённый `get_product_catalog` подтверждает чтение: недоступность не равна пустому каталогу. Нормализованный `catalog.schemaVersion: 2` не доказывает запись v2: сохрани `remoteSchemaVersion`, при 1/неизвестном останови такие записи. Поиск постоянной фичи по умолчанию глобальный через `search_product_features`; выбранная ветка UI не сужает контекст агента. Старый сервер сохраняет прежний workflow; записи каталога при ошибке чтения запрещены.
 
 ## Feature lifecycle — the map (router)
 
@@ -119,7 +119,7 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.22.0 (2026-10-06, aligned with plugin version). **Product catalog pilot:** постоянные фичи отдельно от работы; проверка удалённого GET, reuse существующей фичи, предложенная классификация/источники, versioned replacement и повторное чтение при конфликте. Разбор старых проектов — inventory/dry run/checkpoint; full migration apply/rollback отсутствует. Подготовленная версия плагина не доказывает публикацию или поддержку backend. **Setup/Traceability:** сохранённая привязка, TDD + Trace, явный requirement `done`, issue закрывается только при завершении всех closing-элементов; синк и валидация в том же ходу. **Compatibility:** каталог требует успешного `get_product_catalog` и поддерживаемой схемы записи, без предположения о версии развёрнутого сервера. Issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; в ≥ 1.8.2 исправлена подсказка `list_projects`.
+**Version:** 1.22.0 (2026-10-06, aligned with plugin version). **Product catalog pilot:** постоянные фичи отдельно от работы; вложенные области v2, aliases/tags, глобальный поиск и stable ID при переносе; проверка remoteSchemaVersion до записи, versioned replacement и повторное чтение при конфликте. Разбор старых проектов — inventory/dry run/checkpoint; full migration apply/rollback отсутствует. Подготовленная версия плагина не доказывает публикацию или поддержку backend. **Setup/Traceability:** сохранённая привязка, TDD + Trace, явный requirement `done`, issue закрывается только при завершении всех closing-элементов; синк и валидация в том же ходу. **Compatibility:** каталог требует успешного `get_product_catalog` и поддерживаемой схемы записи, без предположения о версии развёрнутого сервера. Issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; в ≥ 1.8.2 исправлена подсказка `list_projects`.
 
 **Prior:** 1.15 (2026-07-06). Bump: **Design-skill оверлей** (feature-013). Composes with: дизайн-сессии ведёт skill `design` (форк brainstorming) + таблица переопределений на случай срабатывания оригинала + мосты systematic-debugging Phase 4.5 → I/B и finishing-branch → ship=sync; Workflow I шаг 2 роутит в design (фолбэк — оригинал). (1.14 ниже.)
 

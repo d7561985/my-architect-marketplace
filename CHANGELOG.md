@@ -7,13 +7,15 @@ This project follows [Semantic Versioning](https://semver.org/).
 ## [1.22.0] — 2026-10-06
 
 ### Added
+- Nested product areas with one primary location per feature, stable IDs across moves, project-specific aliases/tags and category-independent `search_product_features` guidance. Search pages expose candidates and provenance, not semantic-completeness or inventory guarantees.
 - Product catalog pilot guidance: verify remote read support, reuse a permanent product feature, preserve source requirements and relate delivery work through creates/changes/retires impacts.
 - Legacy-project review reference for source inventory, ID-set reconciliation, proposed mappings, owner decisions and a project-local checkpoint for continuation. Full migration apply/rollback is not implemented.
-- Behavioral scenarios for unsupported backends, empty legacy catalogs, existing-feature changes, concurrent writes, unknown write outcomes, corrupt/future formats, missing references and resumed reviews.
+- Behavioral scenarios for unsupported backends, empty legacy catalogs, existing-feature changes, concurrent writes, unknown write outcomes, corrupt/future formats, missing references, resumed reviews, normalized reads from old remotes, cross-category discovery, stable-ID moves and incomplete search pages.
 
 ### Changed
 - Setup/init inspects catalog support without treating a failed read as empty data or automatically classifying the old hierarchy. Independent traceability setup remains available on older servers.
 - Authoring, work, deferred-item and initiative workflows look up existing product features when supported. Delivery completion does not imply accepted classification or implemented source requirements.
+- Catalog v1 reads normalize to v2 without mutation; agents inspect remoteSchemaVersion and stop v2 writes against an old or unverified backend. V2 fields and migration checkpoints are documented without changing the prepared 1.22.0 release version.
 - Catalog writes preserve the full latest registry and use expectedRevision; conflicts require rereading and recomputing the intended change, while failed or ambiguous outcomes remain explicit.
 - Plugin/marketplace metadata is prepared at 1.22.0. Local metadata does not establish publication or deployment of compatible catalog tools/backend.
 

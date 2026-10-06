@@ -1,5 +1,7 @@
 # Product catalog pilot verification — 2026-10-06
 
+> Historical first-slice verification before the nested-taxonomy extension. Current v2 scenario/check counts and outstanding behavioral checks are recorded in [PRODUCT_TAXONOMY_RESULTS.md](PRODUCT_TAXONOMY_RESULTS.md). The earlier independent simulation below does not verify the changed taxonomy guidance.
+
 Scope: prepared plugin 1.22.0. These instructions describe the first catalog read/write workflow; full migration apply/rollback is not implemented. No live project migration, release, tag or publication is established by this report.
 
 ## Behavioral verification status

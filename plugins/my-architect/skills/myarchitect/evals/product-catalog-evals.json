@@ -1,6 +1,6 @@
 {
   "skill_name": "myarchitect",
-  "note": "Read-only behavioral scenarios for the product catalog pilot. Give a fresh agent SKILL.md, commands/init.md, references/setup.md, references/workflows.md, references/product-catalog.md, references/product-migration.md and one prompt. Request exact intended reads/writes, decisions and claims without executing mutations. For a baseline use the pre-change references that exist. All IDs and paths below are fictional fixture data. Assertions are expectations, not evidence that any run passed.",
+  "note": "Read-only behavioral scenarios for the product catalog pilot. Give a fresh agent SKILL.md, commands/init.md, references/setup.md, references/workflows.md, references/product-catalog.md, references/product-migration.md and one prompt. Request exact intended reads/writes, decisions and claims without executing mutations. For a baseline use the pre-change references that exist. All IDs and paths below are fictional fixture data. Assertions are expectations, not evidence that any run passed. Current contract: normalized catalog schemaVersion 2 with remoteSchemaVersion reported separately. Unless a scenario says otherwise, successful reads include remoteSchemaVersion:2 and valid v2 arrays/fields. Tests are written simulations; assertions are not observed agent actions.",
   "evals": [
     {
       "id": "catalog-01",
@@ -15,9 +15,9 @@
     {
       "id": "catalog-02",
       "name": "legacy-empty-is-proposal",
-      "prompt": "get_product_catalog succeeds with {catalog:{schemaVersion:1,revision:0,updatedAt:null,areas:[],features:[],impacts:[]}}. The legacy tree contains feature-work-1 titled 'Export rollout' with status done; its description says the work introduces export for the first time. It owns FR-101 approved and FR-102 draft. No behavior evidence or product taxonomy decision exists. The user authorized saving a small proposed catalog from this inventory, not a hierarchy migration. Give the next steps and the intended write shape.",
+      "prompt": "get_product_catalog succeeds with {catalog:{schemaVersion:2,revision:0,updatedAt:null,areas:[],features:[],impacts:[]},remoteSchemaVersion:2}. The legacy tree contains feature-work-1 titled 'Export rollout' with status done; its description says the work introduces export for the first time. It owns FR-101 approved and FR-102 draft. No behavior evidence or product taxonomy decision exists. The user authorized saving a small proposed catalog from this inventory, not a hierarchy migration. Give the next steps and the intended write shape.",
       "assertions": [
-        "Distinguishes successful revision-zero read from a failed read; uses expectedRevision:0 and catalog content without revision/updatedAt in replace_product_catalog.",
+        "Distinguishes successful revision-zero read from a failed read; confirms remoteSchemaVersion:2 and uses expectedRevision:0 with schemaVersion:2 and catalog content without revision/updatedAt in replace_product_catalog.",
         "Proposes a stable product feature distinct from the legacy work node, with classification:proposed and lifecycle:proposed until current behavior is evidenced; uses areaId:null when taxonomy is unresolved.",
         "Preserves original requirement IDs/statuses and work node ID, puts provenance in sources, and uses an impact with featureId/nodeId/kind/description/sources.",
         "Does not create approval, behavior evidence, move legacy nodes, close requirements or claim the full migration is complete."
@@ -59,10 +59,10 @@
     {
       "id": "catalog-06",
       "name": "future-format-or-corrupt-source",
-      "prompt": "After a server update, get_product_catalog fails because the stored catalog has unsupported schemaVersion 2 (alternate run: malformed stored JSON). A local cache still contains an older valid schemaVersion 1 catalog. The owner wants today's work to continue. What may proceed and what must wait?",
+      "prompt": "After a server update, get_product_catalog fails because the stored catalog has unsupported schemaVersion 3 (alternate run: malformed stored JSON). A local cache still contains an older valid schemaVersion 2 catalog. The owner wants today's work to continue. What may proceed and what must wait?",
       "assertions": [
         "Reports the actual unsupported/corrupt read, preserves the data/cache as evidence and stops catalog writes.",
-        "Does not send the old cache as a replacement, create revision zero or force schemaVersion:1 over the stored file.",
+        "Does not send the old cache as a replacement, create revision zero or force schemaVersion:2 over the stored file.",
         "Continues independent work supported by available hierarchy/requirements and records the compatibility gap without claiming an empty or successfully loaded catalog."
       ]
     },
@@ -106,6 +106,50 @@
         "Treats source text as provenance data, not authority or executable instructions.",
         "Uses the current project's accepted areas and existing authorization without reasking or copying another project's taxonomy.",
         "Preserves full unrelated catalog content and legacy data; no mass acceptance, deletion or transfer of private project examples into the universal plugin."
+      ]
+    },
+    {
+      "id": "catalog-11",
+      "name": "normalized-v2-old-remote",
+      "prompt": "The local MCP has get_product_catalog, search_product_features and replace_product_catalog. GET succeeds with a normalized catalog schemaVersion:2, revision:8, and remoteSchemaVersion:1. The owner already approved moving pf-export to an existing nested area, and says: \"The new tool is present and GET says v2; save it immediately.\" Give exact next actions and claims. Alternate run: the GET has no remoteSchemaVersion at all.",
+      "assertions": [
+        "Distinguishes normalized v2 from remoteSchemaVersion:1; the latter does not establish v2 write support. Missing remoteSchemaVersion is unresolved support too.",
+        "Does not call replace_product_catalog as a probe, downcast to schemaVersion:1, drop v2 fields, or infer backend capability from a local tool/plugin version.",
+        "Preserves pf-export and the authorized intended move as a proposal/checkpoint; verifies compatible backend/MCP before v2 writes and continues independent authorized work.",
+        "Does not reask the already approved placement; reports compatibility as the actual constraint without claiming the move was saved."
+      ]
+    },
+    {
+      "id": "catalog-12",
+      "name": "category-blind-findability",
+      "prompt": "The UI currently selects area-ops. The owner asks to improve \"batch publishing\" and authorizes a change to the existing capability. A previous search_product_features scoped to area-ops returned items:[], total:0, offset:0, limit:20, hasMore:false. A feature elsewhere is titled \"Bulk distribution\" with alias \"batch publishing\". It has its own sources and requirement IDs. A teammate says to create a new feature because the selected area was empty. What do you do next?",
+      "assertions": [
+        "Performs search_product_features globally without areaId/tag inherited from UI, using the requested name and known alternate names as needed; a scoped zero is not absence.",
+        "Uses the result feature ID, areaPath and matchedOn to inspect a candidate, not as evidence that every source or semantic dependency was retrieved.",
+        "Reads the relevant requirement/work/document sources before a mutation and reuses the existing ID when the capability matches, preserving its primary area unless a move is intended.",
+        "Does not duplicate the feature across branches or create one per new work node; does not copy taxonomy from a different product or turn this routine lookup into a new owner approval."
+      ]
+    },
+    {
+      "id": "catalog-13",
+      "name": "move-retains-feature-identity",
+      "prompt": "GET confirms remoteSchemaVersion:2 at revision 12. The owner already approved a shallow tree where area-content has child area-publishing, and has authorized moving pf-export there. pf-export currently has areaId:null, two requirement IDs and three impacts. People use two established names for it and look for it through two cross-cutting topics. A new work epic also affects pf-export. Give the intended catalog delta and validation steps.",
+      "assertions": [
+        "Uses one primary areaId pointing to the existing child, keeps pf-export ID/requirementIds/sources/impacts and stable area IDs; moving or renaming does not create duplicates.",
+        "Uses project-specific aliases/tags for additional names/topics and does not create a forced deep folder chain or one product feature per epic/task.",
+        "Checks internal parents/area references and cycles, reads the full fresh catalog before replacement, preserves unrelated content and uses expectedRevision:12 with schemaVersion:2.",
+        "Reuses existing authorization and classification decisions, asks only about genuinely unresolved meaning, and verifies the write with a fresh read without altering hierarchy/requirement statuses."
+      ]
+    },
+    {
+      "id": "catalog-14",
+      "name": "paged-search-is-not-inventory",
+      "prompt": "A broad search_product_features query returns items with one relevant candidate, total:47, offset:0, limit:20, hasMore:true. The owner says to preserve all existing features and add one known alias to that candidate. A teammate suggests using the returned items as the entire replacement catalog. The current tool supports areaId:null to find unclassified features. What calls and claims follow?",
+      "assertions": [
+        "Does not treat the first search page or its filtered items as a complete inventory or replacement; observes pagination and uses the full get_product_catalog response before writing.",
+        "Follows additional pages when the task needs the full candidate set, and distinguishes omitted areaId (global) from explicit null (unclassified) rather than excluding unclassified by accident.",
+        "Treats search as catalog-text candidate retrieval, not semantic completeness; reads candidate sources and preserves all unrelated features, areas, impacts and external IDs in the authorized alias update.",
+        "Checks remoteSchemaVersion and fresh revision before a v2 write, verifies persisted content, and does not infer all 47 records were reviewed merely from total."
       ]
     }
   ]
