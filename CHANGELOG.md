@@ -7,6 +7,7 @@ This project follows [Semantic Versioning](https://semver.org/).
 ## [1.22.0] — 2026-10-06
 
 ### Added
+- Prepared local-source workflow for the offline `my-architect-mcp local-migration` subcommand (preserving the existing single npm executable): actual capability discovery, saved operation IDs, same-ID recovery, isolated raw restore checks and explicit local/server/semantic coverage boundaries. No upload, release, installation or taxonomy acceptance is implied.
 - Epic-flow protocol for capability discovery, atomic ownership, scoped child work, waits/review, compact detail/history reads and exact operation retries. Current HTTP/MCP delivery verification remains unsupported, including automatic policies.
 - Fifteen fictional epic-flow evaluation scenarios and explicit baseline/updated intention records; simulations do not prove runtime execution or deployed support.
 - Nested product areas with one primary location per feature, stable IDs across moves, project-specific aliases/tags and category-independent `search_product_features` guidance. Search pages expose candidates and provenance, not semantic-completeness or inventory guarantees.

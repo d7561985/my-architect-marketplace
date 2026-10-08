@@ -4,6 +4,8 @@
 
 Для обычного изменения выбранной фичи/работы сначала используй [scoped-context.md](scoped-context.md), сохраняя глобальный discovery и вложенную Product Map. Новая задача не требует повторить весь migration audit. Адресный context не заменяет inventory/reconciliation старого проекта, полный экспорт или review таксономии; его token и record keys нельзя смешивать с audit token/keys.
 
+Для полного сохранения объявленного локального `.architect`/другого root используй [offline acquisition](local-migration-sources.md): все raw bytes и изолированный restore, без upload и parse/filter. Это отдельная квитанция, не полнота semantic reconciliation; bounded localSources ниже по-прежнему означает только переданные comparison records.
+
 ## 1. Inventory без мутаций источника
 
 Для строгого dry-run используй уже подтверждённый `pid` из привязки/поручения и проверь его через безопасный audit capability. Не повторяй обычный `get_project_context` только ради Setup, если тот читает legacy metadata с ремонтом. Если привязка отсутствует или конфликтует, сначала разреши точный ID по правилам Setup без пробной мутации; непроверенный проект не сканируй. Сохранённые источники для предложения не подменяют свежую проверку выбранного проекта.

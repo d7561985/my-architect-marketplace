@@ -26,6 +26,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - [`references/scoped-context.md`](references/scoped-context.md) — global discovery → явный feature/work target → полный обязательный manifest и точные детали → fresh snapshot при продолжении. Читать в Z/D; пробелы и неизвестная зрелость остаются явными.
 - [`references/product-migration.md`](references/product-migration.md) — inventory, dry run с источниками, решения владельца и checkpoint старого проекта. Полное apply/rollback не реализовано.
 - [`references/migration-backup.md`](references/migration-backup.md) — приватная копия только серверного проекта, stable operationId/readback и проверка изолированного восстановления. Не apply/rollback, не local `.architect` и не принятие Product Map.
+- [`references/local-migration-sources.md`](references/local-migration-sources.md) — offline CLI для всех raw файлов объявленного локального root: capability, сохранённый operationId, recovery и exact restore check. Не upload, semantic reconciliation или принятие Product Map.
 - [`references/epic-flow.md`](references/epic-flow.md) — общая очередь эпиков, capability, compact/detail/history, claim, scoped child work, точные retries и review/delivery. Читать перед «что дальше», работой/закрытием управляемого эпика и аудитом прогресса.
 
 Карта ниже говорит, **когда** какой файл открыть. Не держи всё в голове — дошёл до Workflow → прочитал его тело.

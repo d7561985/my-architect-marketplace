@@ -2,6 +2,8 @@
 
 Читать в [миграционном workflow](product-migration.md), когда требуется сохранить серверные источники перед дальнейшими изменениями. Это отдельный технический срез: приватный bundle и проверка его восстановления. **Apply, live overlay restore, rollback, writer fence и перенос локальных источников не реализованы этим контрактом.** Backup не принимает Product Map и не завершает миграцию.
 
+Полный локальный root собирается отдельно через [локальный CLI](local-migration-sources.md). Его receipt не расширяет scope этого серверного backup и не меняет `audit.fullExportComplete:false`.
+
 ## 1. Явный scope и фактическая capability
 
 Используй уже подтверждённый `pid`, не читай repairing legacy metadata только ради повторного Setup. Проверь реальный удалённый ответ:
