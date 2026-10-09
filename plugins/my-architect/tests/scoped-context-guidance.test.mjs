@@ -23,9 +23,9 @@ test('existing create/work entries route to bounded scoped context', () => {
 test('reference documents actual typed target, page and mandatory detail token contract', () => {
   const reference = read('references/scoped-context.md')
   for (const text of ['get_scoped_context(', 'get_scoped_context_detail(', "'product-feature' | 'work'", 'mandatoryRequirements', 'expectedSnapshotToken', 'nextOffset', 'CONTEXT_SNAPSHOT_STALE', 'CONTEXT_UNAVAILABLE']) assert.ok(reference.includes(text), text)
-  assert.match(reference, /specRevision: null/)
-  assert.match(reference, /maturity: 'unknown'/)
-  assert.match(reference, /canonicalDocRole: 'unknown'/)
+  assert.match(reference, /Без поддерживаемого evolution sidecar/)
+  assert.match(reference, /specRevision.*maturity.*canonicalDocRole.*null\/unknown/)
+  assert.match(reference, /current\/base\/proposed/)
 })
 
 test('written scenarios distinguish mandatory context, stale resume and unavailable support', () => {

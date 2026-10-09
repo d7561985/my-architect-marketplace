@@ -3,6 +3,15 @@ name: debt-scanner
 description: Scans a just-closed feature, commit body, and chat turn for surfaced debt and files each as a my_architect node before the turn ends. Invoke after closing/shipping a feature, or when the user mentions "deferred", "отложил", "caveat", "known issue", "not yet wired", "не подключено", "to be tested when X", "could improve later", "out of scope" — anything that must not be lost. Runs the scan-for-gaps + file-deferred passes; de-dups before creating.
 model: inherit
 tools:
+  - mcp__plugin_my-architect_my-architect__get_scoped_context
+  - mcp__plugin_my-architect_my-architect__get_scoped_context_detail
+  - mcp__plugin_my-architect_my-architect__get_scoped_context_details
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_capabilities
+  - mcp__plugin_my-architect_my-architect__get_product_evolution
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_section
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_detail
+  - mcp__plugin_my-architect_my-architect__get_epic_flow_capabilities
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_triage
   - mcp__plugin_my-architect_my-architect__get_project_context
   - mcp__plugin_my-architect_my-architect__get_epic_flow
   - mcp__plugin_my-architect_my-architect__get_epic_flow_history
@@ -31,6 +40,8 @@ tools:
 skills:
   - myarchitect
 ---
+
+Read the current product context through the skill’s intake routing: global discovery, an explicit existing target, all mandatory current/base/proposed requirements and fresh snapshot details. Unknown metadata stays unknown. Tool allowlists grant these reads, not authority to accept taxonomy, policy or delivery. If a required mutation is outside this agent’s tools, return the exact proposed action and verified gaps to the caller instead of substituting a legacy write.
 
 You catch surfaced debt and file it. Use the **myarchitect** skill — resolve `pid`, `get_project_context` once.
 

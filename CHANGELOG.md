@@ -8,14 +8,15 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ### Added
 - Prepared local-source workflow for the offline `my-architect-mcp local-migration` subcommand (preserving the existing single npm executable): actual capability discovery, saved operation IDs, same-ID recovery, isolated raw restore checks and explicit local/server/semantic coverage boundaries. No upload, release, installation or taxonomy acceptance is implied.
-- Epic-flow protocol for capability discovery, atomic ownership, scoped child work, waits/review, compact detail/history reads and exact operation retries. Current HTTP/MCP delivery verification remains unsupported, including automatic policies.
+- Epic-flow protocol for capability discovery, atomic ownership, scoped child work, waits/review, compact detail/history reads and exact operation retries. Compatible providers advertise automation or explicit account-session confirmation separately; active credential and accepted policy determine support.
 - Fifteen fictional epic-flow evaluation scenarios and explicit baseline/updated intention records; simulations do not prove runtime execution or deployed support.
 - Nested product areas with one primary location per feature, stable IDs across moves, project-specific aliases/tags and category-independent `search_product_features` guidance. Search pages expose candidates and provenance, not semantic-completeness or inventory guarantees.
 - Product catalog pilot guidance: verify remote read support, reuse a permanent product feature, preserve source requirements and relate delivery work through creates/changes/retires impacts.
-- Legacy-project review reference for source inventory, ID-set reconciliation, proposed mappings, owner decisions and a project-local checkpoint for continuation. Full migration apply/rollback is not implemented.
+- Legacy-project review reference for source inventory, ID-set reconciliation, proposed mappings, owner decisions and a project-local checkpoint for continuation. A separately capability-gated migration package supports exact review/apply/verify/resume/rollback of an additive catalog delta; it does not automatically reconcile every source or approve a taxonomy.
 - Behavioral scenarios for unsupported backends, empty legacy catalogs, existing-feature changes, concurrent writes, unknown write outcomes, corrupt/future formats, missing references, resumed reviews, normalized reads from old remotes, cross-category discovery, stable-ID moves and incomplete search pages.
 
 ### Changed
+- Entry routing, design and init follow global discovery, new/change/fix/technical intent, exact current/base/proposed context and explicit provider authority. Existing work IDs and applicable approval are reused. README records host and data-format compatibility separately from publication or installed-host acceptance.
 - Next/progress, completion/traceability and audit agents distinguish managed delivery from legacy status. Issue closure uses explicit managed `delivered` before raw node status. Missing capability, policy or verifier fails closed without blocking unrelated authorized work.
 - Init does not enroll/migrate epics or invent policy. Full transfers must preserve flow order, claims, policy and history or stop before lossy writes; permanent product IDs remain independent.
 - Setup/init inspects catalog support without treating a failed read as empty data or automatically classifying the old hierarchy. Independent traceability setup remains available on older servers.

@@ -149,7 +149,7 @@ Init verifies remote support with `get_product_catalog`. Its normalized `catalog
 
 Epic flow adds a shared queue with explicit claims, waits, review and delivery. The agent verifies the remote flow capability, claims authorized eligible work atomically, and selects children with the current `scopeEpicId`, `claimId` and `assignee`. Compact projections have bounded detail/history reads; they are not full snapshots. Unknown command outcomes use the exact saved operation request, while catalog replacement keeps its separate read-and-compare rule.
 
-On a compatible backend, `get_epic_flow_capabilities` reports whether the current credential can confirm delivery. A verified MCP key establishes an automation identity; a browser session or an `actor` string does not establish human approval. Confirmation still requires a recorded policy and current review with checks for its criteria. Project writers can change policy: credential attribution is not separation of approval authority, and external evidence content is not verified by this transport. Init does not invent policy or enroll epics. See [epic-flow guidance](plugins/my-architect/skills/myarchitect/references/epic-flow.md) and the [evaluation record](plugins/my-architect/skills/myarchitect/evals/EPIC_FLOW_RESULTS.md).
+On a compatible backend, `get_epic_flow_capabilities` reports whether the current credential can confirm delivery. A verified MCP key establishes an automation identity; an ordinary browser request or an `actor` string does not establish account approval. Confirmation still requires a recorded policy and current review with checks for its criteria. Policy acceptance and structured decision answers use the explicit authenticated account action; MCP cannot self-accept them. Account authentication does not prove physical human presence, and this transport does not verify external evidence content. Init does not invent policy or enroll epics. See [epic-flow guidance](plugins/my-architect/skills/myarchitect/references/epic-flow.md) and the [historical evaluation record](plugins/my-architect/skills/myarchitect/evals/EPIC_FLOW_RESULTS.md).
 
 Organizing a legacy project starts with a read-only inventory and a proposed Product Map: nested areas, primary feature placement, independent tags/aliases and preserved IDs. Agents discover the whole map before creating features and expose unresolved classification; a flat dump into Unclassified is not completed migration. Product boundaries and ambiguous merges are not accepted automatically. The [migration review reference](plugins/my-architect/skills/myarchitect/references/product-migration.md) separates source-preserving audit from authorized catalog edits and records how to resume after source changes. Compatible backends expose bounded `get_migration_audit` / `get_migration_audit_detail`; agents read the full proposal through `taxonomy.proposalDetailKey`, keep snapshot tokens across windows, and distinguish content hashes from metadata fingerprints. The report always returns `canApply:false` and `fullExportComplete:false`. It does not provide a full migration apply/rollback engine or automatically rewrite old hierarchies.
 
@@ -183,10 +183,21 @@ The skill description triggers on specific phrases (deferred, known issue, cavea
 
 ## Compatibility
 
-- Claude Code 2.0+
-- `@my-architect/mcp` ≥ 1.5.0
-- Epic flow: verify the connected schemas and a successful remote read. Local plugin/tool availability and HTTP 404 do not establish a usable empty queue. Delivery confirmation remains unsupported by the current transport.
-- Traceability in 1.19.0: `@my-architect/mcp` ≥ 1.8.0 and a compatible backend exposing issue tools, `closes`, explicit requirement `done`, and issue validation. Verify the connected schema before using these capabilities.
+The declared plugin host is **Claude Code 2.0+** (CLI or IDE extension). This marketplace does not declare a tested Codex, Cursor or Gemini plugin installation contract. Reading these skill files in another agent is distinct from loading the plugin's commands, hooks, agents and MCP configuration in that host.
+
+Baseline workflows require `@my-architect/mcp` ≥ 1.5.0. Traceability requires ≥ 1.8.0 plus a backend exposing issue tools, `closes`, explicit requirement `done` and issue validation. The prepared plugin 1.22.0 and prepared runtime currently numbered 1.8.2 are not proof that a published package or connected server contains Product Evolution. Inspect actual capabilities with the active provider and credential.
+
+| Client/provider combination | Supported behavior and boundary |
+|---|---|
+| Existing plugin 1.21.0 or older MCP/backend without the new tools | Existing legacy workflows only. Missing tools, 404 or a failed read do not mean an empty catalog/queue or permission to bypass managed work. New workflow instructions require the prepared plugin and compatible runtime/backend. |
+| Prepared plugin + new reader + catalog schema v1 | Normalize the read to v2 without rewriting source bytes/revision; retain `remoteSchemaVersion`. A remote v1 response does not authorize a v2 write. |
+| Prepared plugin + compatible v2 catalog provider | Global discovery, nested areas, stable IDs and full-replacement CAS writes after a successful supported read; never replace the catalog with a search page. |
+| Old strict v1 catalog reader + v2 data | Explicit unsupported-format failure; no lossy downgrade. Compatibility is not a promise that arbitrary historical clients safely roundtrip new data. |
+| Compatible server + flow/evolution capabilities | MCP automation confirmation or explicit authenticated account action only as advertised and allowed by accepted policy. Ordinary cookie requests and actor strings do not create account authority. Claims, review baselines and exact operation replay remain required. |
+| Browser/local provider | Supported local catalog/evolution/context reads use their provider contracts. Offline mode has no authenticated automation/account verifier. Server migration packages require the server provider; a matching local project ID must not select a remote project. |
+| Unknown/future or malformed catalog, flow or evolution sidecar | Preserve the payload and stop dependent reads/writes visibly. Full legacy transfer must stop before destination writes if it cannot preserve the sidecars and history. An absent supported sidecar is distinct from an unreadable one. |
+
+These are capability and data-preservation contracts, not a version-only rollout guarantee. Package validation is separate from an installed-host workflow smoke, and neither establishes production deployment. See [product evolution](plugins/my-architect/skills/myarchitect/references/product-evolution.md), [epic flow](plugins/my-architect/skills/myarchitect/references/epic-flow.md), and [migration package](plugins/my-architect/skills/myarchitect/references/migration-package.md) for the current protocols and limits.
 
 ---
 

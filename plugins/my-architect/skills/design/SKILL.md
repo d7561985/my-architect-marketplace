@@ -1,6 +1,6 @@
 ---
 name: design
-description: Architecture-aware design sessions for projects tracked in the my_architect MCP server. Use INSTEAD of superpowers:brainstorming whenever the project uses my_architect (pid in CLAUDE.md, my-architect MCP tools present) and creative work is proposed — new feature, component, functionality, behaviour change; «давай сделаем/спроектируем фичу X», «новая фича», "let's build/design X". Same one-question-at-a-time dialogue and hard design gate, but explores via get_project_context + local code graph + recursive-context facts, presents epic designs as Event Storming canvases, lands the spec as a doc on the my_architect node (never docs/superpowers/specs/), and terminates into Workflow Z + writing-plans (plan file + mirror doc on the node). Sketch mode produces an assessable solution variant for the Workflow I initiative gate on structural work.
+description: Architecture-aware design sessions for projects tracked in the my_architect MCP server. Use INSTEAD of superpowers:brainstorming whenever the project uses my_architect (pid in CLAUDE.md, my-architect MCP tools present) and creative work is proposed — new feature, component, functionality, behaviour change; «давай сделаем/спроектируем фичу X», «новая фича», "let's build/design X". Resolves setup, then global product discovery and complete addressed current/base/proposed context before design, with local code graph and recursive-context facts. Presents epic designs as Event Storming canvases, lands the spec in the project's canonical location, and continues through the existing or newly authorized work node and writing-plans. Sketch mode produces an assessable solution variant for the Workflow I initiative gate on undecided structural work.
 ---
 
 # design — architecture-aware дизайн-сессии
@@ -13,14 +13,16 @@ description: Architecture-aware design sessions for projects tracked in the my_a
 Никакой имплементации — ни кода, ни scaffold'а, ни implementation-skill'ов — пока дизайн не представлен и пользователь его не утвердил. Для КАЖДОГО проекта, независимо от кажущейся простоты.
 </HARD-GATE>
 
+Уже данное применимое одобрение дизайна/реализации сохраняется при продолжении: не запускай тот же gate заново. Сверь свежий контекст и показывай только изменившиеся решения; рутинные технические шаги внутри согласованного scope не требуют нового разрешения.
+
 ## Анти-паттерн: «это слишком просто для дизайна»
 
 Каждый проект проходит процесс — todo-лист, однострочная утилита, правка конфига. «Простые» проекты — где непроверенные допущения стоят дороже всего. Дизайн может быть коротким (пара предложений), но он ОБЯЗАН быть показан и утверждён.
 
 ## Checklist (task на каждый пункт, по порядку)
 
-0. **Setup + routing** — resolve pid + `get_project_context`; выбрать режим (sketch/full)
-1. **Explore** — backlog + граф кода + recursive-context, не голые файлы
+0. **Setup + routing** — подтверждённый pid → global discovery → new/change/fix/technical; выбрать режим (sketch/full)
+1. **Explore** — полный обязательный адресный контекст + граф кода + recursive-context
 2. **Clarifying questions** — по одному за раз; дырки, а не анкета
 3. **2–3 подхода** — trade-offs + рекомендация
 4. **Present design** — секциями; эпик/инициатива → Event Storming канвас
@@ -31,8 +33,8 @@ description: Architecture-aware design sessions for projects tracked in the my_a
 
 ## Шаг 0 — setup + режим
 
-- **pid:** лестница из myarchitect (паттерн `pid:` в local CLAUDE.md → `list_projects` → спросить). my_architect недоступен или проект не трекается → этот skill НЕ применяется — работай по `superpowers:brainstorming`.
-- **`get_project_context({pid})`** — дизайн ведётся против живой иерархии: проверь, нет ли уже ноды под эту идею (de-dup), в какой эпик она ляжет.
+- **pid:** следуй [setup.md](../myarchitect/references/setup.md): проверь согласованную связь в CLAUDE.md и `.architect/traceability.json`, повторно используй уже сделанный выбор. `get_project_context({pid})` нужен при проверке связи/схемы проекта; не повторяй полный dump при каждом продолжении. Недоступность MCP не означает отсутствие проекта: сохраняй ограничения и уже прочитанные источники.
+- **Контекст и тип работы:** прочитай [product-catalog.md](../myarchitect/references/product-catalog.md), [product-evolution.md](../myarchitect/references/product-evolution.md) и [scoped-context.md](../myarchitect/references/scoped-context.md). Сначала глобальный поиск независимо от выбранной UI-области, затем явный feature/work target и все обязательные current/base/proposed/global/inherited записи на свежем snapshot. Различи new/change/fix/technical, сохраняй существующие IDs и вложенный путь; техническая работа может иметь product/area/architecture scope без синтетической фичи/сценария. Неизвестные maturity, milestone и роли документов остаются явными. Недоступный reader не равен пустой успешной спецификации.
 - **Роутинг по размеру:** структурная работа (критерий «двух корзин» из initiative-gate.md: дольше пары недель ИЛИ трогает межсервисные контракты), для которой не решено «делать ли» → **sketch mode**. Всё остальное → **full mode**.
 
 ## Sketch mode — вход в гейт Workflow I
@@ -44,7 +46,7 @@ description: Architecture-aware design sessions for projects tracked in the my_a
 ## Full mode
 
 **Explore (переопределяет «files, docs, recent commits» оригинала):**
-- `get_project_context` уже в руках (шаг 0) — эпики, соседние фичи, требования, доки.
+- Адресный контекст из шага 0 прочитан полностью в обязательной части; summary не заменяет требования. Сравни действующую базу с предлагаемой дельтой и существующей работой. При возобновлении проверь свежесть и изменившиеся источники; source drift не переписывает подтверждённую версию.
 - Есть свежий локальный граф кода (Graphify-класс) → связи символов сперва у графа; факты — только после verify по файлам (правила и freshness-check — recursive-context, references/code-graph.md).
 - Репо oversized или задача «понять подсистему целиком» → skill recursive-context, рецепт requirements-mining: факты с путями `[факт: код <path>]`. Факт без пути — не факт.
 - **Пробы, которыми доказан дефект** (скрипты на реальных данных пользователя), сохраняй как приёмочную проверку: их же прогоняют после первой задачи, меняющей экран, — так видимое пользователю проверяется в начале реализации, а не в конце.
@@ -61,7 +63,7 @@ description: Architecture-aware design sessions for projects tracked in the my_a
 ## Спека и терминал
 
 - **Если CLAUDE.md проекта держит канон спеки в репо** (например RFC в `docs/rfc/`) — на узле карточка: итог, решения, требования, `**Source:** <путь>`. Дословную копию длинного текста не делать: две копии расходятся.
-- **Иначе канон спеки — док на узле:** фича ещё не заведена → сначала **Workflow Z** (дерево нод + FR/NFR/SAR/CON + `validate_project`), затем `create_doc({pid, nodeId, title, content})` (Workflow C). Локальный md-черновик допустим как промежуток, но итог переносится на узел **в том же ходу**. Никогда — `docs/superpowers/specs/` как канон.
+- **Иначе канон спеки — док на узле:** используй существующий подходящий work ID; только если работы ещё нет, сначала **Workflow Z** (дерево нод + FR/NFR/SAR/CON + `validate_project`), затем `create_doc({pid, nodeId, title, content})` (Workflow C). Документ сам по себе не выбирает current: proposal и точная база следуют product-evolution reference. Локальный md-черновик допустим как промежуток, но итог переносится на узел **в том же ходу**. Никогда — `docs/superpowers/specs/` как канон.
 - **Spec self-review (inline):** плейсхолдеры (TBD/TODO), внутренние противоречия, scope (один план или декомпозиция), двоякие формулировки. Чинить сразу, без повторного ревью.
 - **User review gate:** «Спека — док `<docId>` на узле `<nodeId>` (или `<путь>` в репо + карточка на узле). Посмотри; правки или переходим к плану?» **WAIT.**
 - **После одобрения — срок как договор, одной строкой:** срок, время первого показа (по часам владельца), каждая добавка сверх его минимума с ценой в часах, выбор «глубоко ~N ч / быстрее ~M ч». Добавки без названной цены — главный источник раздувания срока: пользователь одобряет их, не видя, во что они обходятся.

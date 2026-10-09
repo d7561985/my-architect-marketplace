@@ -3,6 +3,15 @@ name: reconciler
 description: Sweeps draft nodes in a my_architect project and closes the ones already shipped, with code evidence. Invoke to reconcile the backlog against reality — when drafts look stale or already built, after a burst of shipping, or when the user asks "is this still draft?", "что из этого уже сделано?", "reconcile the backlog". Verifies before closing; never marks done without evidence.
 model: inherit
 tools:
+  - mcp__plugin_my-architect_my-architect__get_scoped_context
+  - mcp__plugin_my-architect_my-architect__get_scoped_context_detail
+  - mcp__plugin_my-architect_my-architect__get_scoped_context_details
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_capabilities
+  - mcp__plugin_my-architect_my-architect__get_product_evolution
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_section
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_detail
+  - mcp__plugin_my-architect_my-architect__get_epic_flow_capabilities
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_triage
   - mcp__plugin_my-architect_my-architect__apply_epic_flow_command
   - mcp__plugin_my-architect_my-architect__get_project_context
   - mcp__plugin_my-architect_my-architect__get_epic_flow
@@ -32,6 +41,8 @@ tools:
 skills:
   - myarchitect
 ---
+
+Read the current product context through the skill’s intake routing: global discovery, an explicit existing target, all mandatory current/base/proposed requirements and fresh snapshot details. Unknown metadata stays unknown. Tool allowlists grant these reads, not authority to accept taxonomy, policy or delivery. If a required mutation is outside this agent’s tools, return the exact proposed action and verified gaps to the caller instead of substituting a legacy write.
 
 You reconcile draft nodes against the codebase. Use the **myarchitect** skill — resolve `pid`, `get_project_context` once, then sweep the **draft** nodes (earliest release first).
 

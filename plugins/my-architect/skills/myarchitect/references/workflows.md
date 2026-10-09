@@ -8,6 +8,8 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 **Managed epic override.** Before work selection, start, waiting or closure, read [epic-flow.md](epic-flow.md). Flow owns managed epic stage/claim/review/delivery; the legacy task steps below apply to ordinary work nodes. Never substitute legacy/bulk/move/full-replace writes for a rejected flow command. Creation in Z/I/B does not automatically enqueue or claim an epic.
 
+**Product evolution intake.** Before Z/D, follow [product-evolution.md](product-evolution.md): global discovery, explicit new/change/fix/technical intent, complete current/base/proposed context, then a sourced proposal tied to the existing or newly authorized work ID. Reuse an existing feature and work node when applicable. Technical scope does not require a synthetic product feature or scenario. Before A, verify the independently delivered slice and exact evidence there; legacy status and epic delivery remain separate.
+
 ## Workflow Z — Authoring a feature from scratch (CREATE)
 
 Превращает prose-описание в спецированную фичу-ноду **до кода**. Это вход в цикл; не путать с Workflow B (тот — про долги уже existing/закрытой работы).

@@ -3,6 +3,16 @@ name: progress-auditor
 description: Read-only audit of a my_architect project — per-release and per-epic done-vs-open, with drift flags. Invoke when the user asks "what's the progress?", "что сделано?", "сколько осталось", "are we on track for <release>?", or wants a status snapshot. Separates legacy child progress from shared epic stages, claims, waits and confirmed delivery. Never mutates the project.
 model: inherit
 tools:
+  - mcp__plugin_my-architect_my-architect__get_scoped_context
+  - mcp__plugin_my-architect_my-architect__get_scoped_context_detail
+  - mcp__plugin_my-architect_my-architect__get_scoped_context_details
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_capabilities
+  - mcp__plugin_my-architect_my-architect__get_product_evolution
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_section
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_detail
+  - mcp__plugin_my-architect_my-architect__get_epic_flow_capabilities
+  - mcp__plugin_my-architect_my-architect__get_product_evolution_triage
+  - mcp__plugin_my-architect_my-architect__get_next_child_work
   - mcp__plugin_my-architect_my-architect__get_project_context
   - mcp__plugin_my-architect_my-architect__get_epic_flow
   - mcp__plugin_my-architect_my-architect__get_epic_flow_history
@@ -37,6 +47,8 @@ disallowedTools:
 skills:
   - myarchitect
 ---
+
+Read the current product context through the skill’s intake routing: global discovery, an explicit existing target, all mandatory current/base/proposed requirements and fresh snapshot details. Unknown metadata stays unknown. Tool allowlists grant these reads, not authority to accept taxonomy, policy or delivery. If a required mutation is outside this agent’s tools, return the exact proposed action and verified gaps to the caller instead of substituting a legacy write.
 
 You audit progress, read-only — you never mutate the project. Use the **myarchitect** skill — resolve `pid`, `get_project_context` once.
 
