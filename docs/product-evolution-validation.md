@@ -1,0 +1,15 @@
+# Prepared product-evolution workflow: executed validation
+
+2026-10-09. Prepared plugin 1.22.0; no production release or live migration acceptance implied.
+
+The complete plugin test command passes 63 tests: 52 executable checks, including six real HTTP/subprocess export-helper cases, and 11 existing static guidance checks. GitHub Actions run 37889625345 verified all 63 against commit 07f5b6b. Written eval files (198 cases / 470 expected assertions) remain authored expectations, not executed model runs.
+
+A native Codex 0.160.1 run imported the prepared plugin through the supported local marketplace into a private temporary home. All 88 cache files matched the prepared source; the user's installed version and settings were unchanged. The model read the installed main skill and catalog/scoped-context/evolution references itself, then used the actual prepared MCP through a proxy restricted to nine read tools, one synthetic project and loopback HTTP.
+
+The first model invocation stopped at temporary tool-permission configuration, with zero forwarded MCP calls. A second invocation, with only those already-authorized read tools permitted, succeeded: 10 native MCP calls, global feature discovery without a category filter, pinned scoped sections and 28/28 exact detail records, including 3/3 mandatory records. The agent distinguished current, base and proposed state, retained both conflicting source variants, and correctly reported incomplete authoritative context due to source conflict and stale canonical documentation. Temporary authorization material was removed; the primary host configuration was unchanged.
+
+This is one actual native read workflow, not all eval cases, native hook/subagent/command behavior, write authorization or general performance acceptance. Its fixture has zero global/inherited counts; separate protocol trials test nonzero inheritance and pagination. The native run used prepared runtime initialize version 1.8.2, bundle SHA256 f849244c4f9c68043dd584cd0b87a64e208c9263d5f8126d74fd275efe59d644. Subsequent prepared app/MCP 1.9.0 packaging was checked separately by installing a private tarball and exercising its offline CLI, actual SDK initialize, 73-tool discovery and loopback capability reads. No published artifact was substituted for this evidence.
+
+Independent migration protocol trials exercised source inventory, exact account review, lost apply response, same-ID recovery/replay, export to the bundled offline projection and own-change rollback while preserving independent work. They are SDK/HTTP/CLI trials, separate from the native read scenario. The app's final local Trace gate passes 1874 tests across 158 files; explicit Trace exceptions do not close product requirements. Real taxonomy/policy choices, live migration, rollout availability and broader efficiency acceptance remain separate.
+
+Private transcripts, source payloads and credentials are not included in this repository. The detailed app review is linked from the coordinated draft PRs.
