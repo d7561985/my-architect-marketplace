@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "my-architect",
-      "version": "1.22.0",
+      "version": "1.23.0",
       "source": "./plugins/my-architect",
       "description": "Skill + auto-configured MCP server for working with the My Architect backlog from Claude Code. Tracks deferred items, caveats, and known issues as my_architect nodes; encodes the proactive tracking + ask-when-ambiguous decision rubric."
     }

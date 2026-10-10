@@ -4,6 +4,19 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.23.0] — 2026-10-10
+
+### Changed
+- Extends the existing scoped-context handoff with independent review behavior, so this release uses a minor version. The unpublished 1.22.1 r2/r3 trials remain preserved under their exact original versions and hashes.
+
+### Fixed
+- Scoped context avoids redundant server-detail requests only when a fully read manifest proves a missing record has no content and its compact provenance is complete. Every key, gap and partial-context limitation remains recorded; available, conflicting, invalid, omitted or deferred sources retain their required reads.
+- Missing server content does not imply absence from all project sources. Applicable local counterparts are read with separate origin, hashes and freshness; matching IDs or newer dates do not silently resolve the server gap or establish current behavior.
+- Scoped workflow checks every source-justified affected scope and applicable shared constraints, then reconciles read rules with the brief/next step, supported exclusions or explicit residuals. Search candidates and read ledgers alone do not establish semantic coverage.
+- Extracts a compact source-bound rule ledger as applicable records arrive, retaining triggers/timing, observable results, conditions and exceptions before final reconciliation. Equivalent actions under different events or source bindings remain separate obligations; no extra reads or external ledger file are required for already complete current evidence.
+- Adds a portable, bounded source-to-draft coverage review for complex briefs: a fresh read-only reviewer, one sourced repair and independent preservation verification. Host availability, full source provenance, partial results and total cost remain explicit; the Claude wrapper is not a claim of automatic registration in other hosts. Earlier single-pass and interrupted integration outcomes remain preserved. A bounded native verifier consumed the installed procedure and detected additional source-backed omissions in a recovered draft; this demonstrates detection and an honest partial result, not an automatically complete brief. The final ordinary integration correction is recorded separately from the frozen experiment.
+- Added written evaluation scenarios for complete versus truncated missing metadata, local counterpart conflicts, conservative exclusions, fresh-snapshot resume, cross-feature shared requirements, rules retained during synthesis, distinct temporal obligations, unsupported review hosts, incomplete/conflicting/untrusted handoffs, schema-valid omissions, unsupported reviewer demands, bounded stops and repair regressions. These are expected behaviors, not an executed agent validation or a performance claim. Earlier trials remain bound to their exact source revisions. Existing regression tests and official plugin validation pass; the measured comparisons do not establish lower cost or universal losslessness.
+
 ## [1.22.0] — 2026-10-06
 
 ### Prepared update — 2026-10-10
@@ -11,7 +24,7 @@ This project follows [Semantic Versioning](https://semver.org/).
 - Documented opt-in migration capability v2, explicit automation review, preserved legacy account-session behavior and source-based account review holds.
 - Added offline full-metadata compose and explicit authenticated prepare file bridge, preserving physical variants and immutable requests without dependencies, credential output or redirects. Full-result export accepts correctly attributed automation review only for explicit automation-mode packages.
 - Added complete post-catalog adoption guidance for current/proposed specifications, context/scenarios, active queue and scoped handoff, plus executable helper regressions and written first-session evaluation cases. Unknown current and missing delivery policy remain precise residuals; synthetic trials and catalog verification do not establish universal/live adoption.
-- This remains the unpublished prepared 1.22.0; prior trials retain their original commit/content hashes.
+- These changes were prepared as 1.22.0 and published on 2026-10-10; prior trials retain their original commit/content hashes and their stated validation limits.
 
 ### Added
 - Prepared local-source workflow for the offline `my-architect-mcp local-migration` subcommand (preserving the existing single npm executable): actual capability discovery, saved operation IDs, same-ID recovery, isolated raw restore checks and explicit local/server/semantic coverage boundaries. No upload, release, installation or taxonomy acceptance is implied.
