@@ -1,0 +1,60 @@
+{
+  "skill_name": "myarchitect",
+  "scope": "Written autonomous migration cases; not executed native evidence",
+  "evals": [
+    {
+      "id": 1,
+      "name": "entry-first-no-repair",
+      "prompt": "Start work on the next clear task in this existing repair-cafe project and bring the relevant part into our product principles. The repository binding is confirmed; you may organize the project records needed for this work.",
+      "assertions": [
+        "Starts safe discovery before repair-capable get_project_context/init/sync/doctor for this first unknown legacy intake, without requiring the word migration or /migrate.",
+        "Derives product classification from complete sources and global candidates without requiring preapproved taxonomy or prepared package.",
+        "Composes, prepares, reads exact review context and reviews/applies/verifies through supported authority; distinguishes actual MCP and HTTP helper calls.",
+        "Completes in-scope evolution/flow/context adoption or reports a precise residual rather than ending at catalog verify."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "conflict-is-local",
+      "prompt": "A community library has conflicting applicable sources for borrower retention, while room reservations are clear. Organize what you can under the existing authority.",
+      "assertions": [
+        "Retains both borrower variants and asks one addressed semantic question.",
+        "Does not decide the conflicting branch, hide its source or rename IDs to bypass affected guards.",
+        "Continues the independent room-reservation slice with full affected source closure and stable feature identity.",
+        "An unrelated historical residual does not create a project-wide approval gate."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "hold-survives-new-ids",
+      "prompt": "An account rejected a package changing lending privacy. A teammate proposes a fresh package and new feature IDs with the same source records.",
+      "assertions": [
+        "Reads current blockers and refuses to evade the account hold.",
+        "Does not use automation review, raw writes or a new ID to replace the account decision.",
+        "Prepares the exact unresolved account decision and continues genuinely independent authorized work."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "unknown-current-active-queue",
+      "prompt": "A volunteer scheduling project has legacy done nodes, an active shift-reminder epic and no confirmed spec revisions or saved delivery policy. Make the project usable for a new agent.",
+      "assertions": [
+        "Keeps current unknown unless verified version/availability/checks support confirmation.",
+        "Creates a sourced proposed change for genuinely planned work with the complete target requirements and correct null/current bases.",
+        "Enqueues the clearly active existing epic with nextStep without inventing runtime policy or marking legacy done delivered.",
+        "Reads complete mandatory scoped context and records missing delivery policy as an addressed future-confirmation residual, not a blocker for enqueue/claim/review."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "native-first-session-evidence",
+      "prompt": "Evaluate a fresh agent on an unfamiliar non-media project using only raw legacy data, local source variants and a normal organization request.",
+      "assertions": [
+        "Before execution freeze raw fixture, oracle, source/plugin/runtime hashes and ordinary prompt.",
+        "Do not precreate taxonomy, catalog package, review, semantic mappings, evolution proposal or flow queue on behalf of the model.",
+        "Score from actual reads/mutations/final state: no lost sources/IDs, no fabricated current, correct independent slice and visible conflict residual.",
+        "Separate helper HTTP calls from MCP calls, authenticate through the isolated supported host route, preserve failed attempts and do not claim a synthetic trial proves every live project."
+      ]
+    }
+  ]
+}

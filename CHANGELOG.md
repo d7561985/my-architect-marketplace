@@ -6,6 +6,13 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [1.22.0] — 2026-10-06
 
+### Prepared update — 2026-10-10
+- Added entry-first migration intake and `/my-architect:migrate`, with universal agent-led source classification and escalation for actual conflicts/authority boundaries instead of mandatory human taxonomy approval.
+- Documented opt-in migration capability v2, explicit automation review, preserved legacy account-session behavior and source-based account review holds.
+- Added offline full-metadata compose and explicit authenticated prepare file bridge, preserving physical variants and immutable requests without dependencies, credential output or redirects. Full-result export accepts correctly attributed automation review only for explicit automation-mode packages.
+- Added complete post-catalog adoption guidance for current/proposed specifications, context/scenarios, active queue and scoped handoff, plus executable helper regressions and written first-session evaluation cases. Unknown current and missing delivery policy remain precise residuals; synthetic trials and catalog verification do not establish universal/live adoption.
+- This remains the unpublished prepared 1.22.0; prior trials retain their original commit/content hashes.
+
 ### Added
 - Prepared local-source workflow for the offline `my-architect-mcp local-migration` subcommand (preserving the existing single npm executable): actual capability discovery, saved operation IDs, same-ID recovery, isolated raw restore checks and explicit local/server/semantic coverage boundaries. No upload, release, installation or taxonomy acceptance is implied.
 - Epic-flow protocol for capability discovery, atomic ownership, scoped child work, waits/review, compact detail/history reads and exact operation retries. Compatible providers advertise automation or explicit account-session confirmation separately; active credential and accepted policy determine support.

@@ -26,6 +26,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - [`references/scoped-context.md`](references/scoped-context.md) — global discovery → явный feature/work target → полный обязательный manifest и точные детали → fresh snapshot при продолжении. Читать в Z/D; пробелы и неизвестная зрелость остаются явными.
 - [`references/product-migration.md`](references/product-migration.md) — read-only inventory/dry run и разбор источников старого проекта.
 - [`references/migration-package.md`](references/migration-package.md) — поддерживаемый серверный пакет prepare/review/apply/verify/resume/rollback: exact proposal, полные сохранённые источники и additive catalog delta. Capability проверяется отдельно.
+- [`references/migration-adoption.md`](references/migration-adoption.md) — полный переход от сырого проекта к карте, current/proposed/specs и активной работе через существующие протоколы; явный остаток и границы rollback.
 - [`references/product-evolution.md`](references/product-evolution.md) — действующие версии спецификаций, предлагаемые изменения, зрелость/веха, роли документов и явный пользовательский сценарий. Читать при intake, продолжении и поставке среза.
 - [`references/migration-backup.md`](references/migration-backup.md) — приватная копия только серверного проекта, stable operationId/readback и проверка изолированного восстановления. Не apply/rollback, не local `.architect` и не принятие Product Map.
 - [`references/local-migration-sources.md`](references/local-migration-sources.md) — offline CLI для всех raw файлов объявленного локального root: capability, сохранённый operationId, recovery и exact restore check. Отдельная capability для полного bounded inventory всех вариантов; не upload, выбор семантического победителя или принятие Product Map.
@@ -33,14 +34,22 @@ Skill универсальный: project ID, эпики, релизы, уров
 
 Карта ниже говорит, **когда** какой файл открыть. Не держи всё в голове — дошёл до Workflow → прочитал его тело.
 
+## Первый вход — безопасный discovery и выбор масштаба
+
+**Для каждого впервые проверяемого/неизвестного legacy-проекта безопасное чтение предшествует общему `get_project_context` и init.** Установи точный pid по [setup.md](references/setup.md). Проверь доступный каталог/поддержку через безопасные readers; для legacy-источников используй [safe audit](references/product-migration.md). Обычный project/hierarchy GET на старом backend может ремонтировать storage; init/doctor/validate/sync не служат probe. Ошибка/404 не равна пустой структуре. При неизвестной поддержке сохрани partial context и точное ограничение, не подменяй безопасный intake ремонтом.
+
+Если discovery показывает несопоставленную работу, отсутствующие продуктовые области/связи или неразделённые current/proposed, самостоятельно выполни обоснованную **additive adoption в разрешённом scope текущей задачи** по [migration-adoption.md](references/migration-adoption.md). Отдельное слово «миграция» или `/migrate` не требуется. Это не поручение без разбора переделать весь live-проект: сохраняй чужие данные, broader scope и спорные источники как адресный остаток. При явно порученной организации всего проекта маршрут охватывает объявленный проект; read-only запрос всегда остаётся read-only.
+
+Маршрут: safe discovery → источники и глобальное сопоставление → самостоятельная классификация → [compose/prepare/review/apply/verify](references/migration-package.md) → спецификации, активная работа и scoped handoff. Агент выводит обоснованные области и соответствия из фактов; заранее утверждённая карта и готовый пакет от пользователя не обязательны. Эскалируй реальные смысловые конфликты, изменение целей/приоритетов или нехватку полномочий; независимую разрешённую часть продолжай. Runtime capability и сохранённые policy проверяются отдельно: согласие в разговоре не записывает их автоматически.
+
 ## Setup — выбрать проект и сохранить связь с репозиторием
 
-При первом обращении к проекту и в `/my-architect:init` прочитай [references/setup.md](references/setup.md).
+Для обычной работы (после выбора маршрута выше), при первом обращении к проекту и в `/my-architect:init` прочитай [references/setup.md](references/setup.md).
 
 1. Прочитай `CLAUDE.md` и `.architect/traceability.json`: используй согласованный явный `pid`/`projectId` или уже сделанный пользователем выбор. Конфликт ID требует уточнения до записи.
 2. Если связи нет, получи `list_projects` и предложи выбрать существующий проект или создать новый. Даже единственный или первый результат не доказывает связь с репозиторием. Ошибка запроса не означает пустой список.
 3. Создание выполняй по явному решению пользователя, с согласованными именем и `preset`, без sample content. Уже данное разрешение повторно не запрашивай.
-4. Проверь выбранный/возвращённый ID через `get_project_context`, сохрани его точно в локальной привязке и продолжи `/my-architect:init`. Пользователь не обязан знать `pid` заранее; для MCP-операций с проектом он обязателен. Полная процедура и обработка незавершённой настройки — в setup reference.
+4. Проверь выбранный/возвращённый ID безопасным фактическим reader (catalog/safe audit) по setup reference, сохрани его точно в локальной привязке и продолжи `/my-architect:init`. Пользователь не обязан знать `pid` заранее; для MCP-операций с проектом он обязателен. Полная процедура и обработка незавершённой настройки — в setup reference.
 
 Используй подтверждённую связь в следующих сессиях без повторного выбора. Отсутствие `.architect/` означает отсутствие локальной настройки, а не отсутствие проекта на сервере.
 
@@ -59,7 +68,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 
 ## Первый вызов с `pid` — после Setup
 
-При Setup прочитай общий контекст, если он ещё не проверен. При уже подтверждённой привязке и явном target переходи к [scoped-context.md](references/scoped-context.md) без повторного общего dump. При Setup используется:
+Первый/неизвестный legacy intake использует безопасный discovery из маршрута выше. Общий context не обязателен для проверки связи и допустим только при подтверждённом отсутствии repair side effects. Поручение на adoption не разрешает неявный ремонт исходника; для intake используй safe audit, для выбранной работы — адресные readers. При уже подтверждённой привязке и явном target переходи к [scoped-context.md](references/scoped-context.md) без повторного общего dump. При Setup используется:
 
 ```
 mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
@@ -75,7 +84,7 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 
 Жизненный цикл фичи, по порядку. Буквы воркфлоу исторические (на них ссылаются слэш-команды) — последовательность задаёт **эта карта, не алфавит**. Тела всех воркфлоу — в [`references/workflows.md`](references/workflows.md); открой нужный, когда дошёл до шага.
 
-Ниже feature означает **узел работы**. Постоянная product feature живёт в отдельном каталоге: сначала найди существующую возможность и опиши дельту эпика, затем декомпозируй работу. Новая задача не создаёт автоматически новую продуктовую фичу. `accepted`-классификация требует решения владельца, `available` — доказанного текущего поведения; статус done в дереве не заменяет ни одно из них.
+Ниже feature означает **узел работы**. Постоянная product feature живёт в отдельном каталоге: сначала найди существующую возможность и опиши дельту эпика, затем декомпозируй работу. Новая задача не создаёт автоматически новую продуктовую фичу. `accepted`-классификация требует обоснованного применимого решения в порученном scope (агента либо владельца), `available` — доказанного текущего поведения; статус done в дереве не заменяет ни одно из них.
 
 **Intake перед выбором workflow.** Прочитай [product-evolution.md](references/product-evolution.md): после глобального discovery различи `new` (новая возможность), `change` (изменение существующей), `fix` (исправление отклонения от подтверждённого поведения) и `technical` (техническая работа). Для существующей фичи сохраняй stable ID и дочитывай current/base/proposed и все обязательные ограничения по [scoped-context.md](references/scoped-context.md). `technical` может иметь product/area/architecture scope без выдуманной фичи или пользовательского сценария. Продолжение существующей работы не запускает повторное создание узлов или уже пройденное согласование; свежая сверка определяет изменившуюся дельту. До реализации свяжи разрешённое изменение с work ID и точной базой, при закрытии отдельно проверь поставку среза через evolution и поставку managed epic через flow.
 
@@ -129,7 +138,7 @@ Tie-break при сомнениях — лень в сторону STOP. Сто�
 
 ---
 
-**Version:** 1.22.0 (2026-10-06, aligned with plugin version). **Product catalog:** постоянные фичи отдельно от работы; вложенные области v2, aliases/tags, глобальный поиск и stable ID при переносе; проверка remoteSchemaVersion до записи, versioned replacement и повторное чтение при конфликте. Разбор старых проектов — inventory/dry run и отдельный exact migration package; capability, account review и writer fence проверяются перед apply. Пакет меняет каталог, сохраняет старые источники и имеет собственный inverse rollback. Подготовленная версия плагина не доказывает публикацию или поддержку backend. **Epic flow:** отдельная удалённая capability, compact/detail/history, claim и scoped children, точные operation retries; поддержка automation/account-session определяется удалённой capability и принятой policy; неподдержанная legacy human-only policy не обходится. Init не мигрирует очередь. **Setup/Traceability:** сохранённая привязка, TDD + Trace, явный requirement `done`, issue закрывается только при завершении всех closing-элементов; синк и валидация в том же ходу. **Compatibility:** каталог требует успешного `get_product_catalog` и поддерживаемой схемы записи, без предположения о версии развёрнутого сервера. Issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; в ≥ 1.8.2 исправлена подсказка `list_projects`.
+**Version:** 1.22.0 (2026-10-06, aligned with plugin version). **Product catalog:** постоянные фичи отдельно от работы; вложенные области v2, aliases/tags, глобальный поиск и stable ID при переносе; проверка remoteSchemaVersion до записи, versioned replacement и повторное чтение при конфликте. Разбор старых проектов — inventory/dry run и отдельный exact migration package; capability, выбранный authenticated review mode и writer fence проверяются перед apply. Пакет меняет каталог, сохраняет старые источники и имеет собственный inverse rollback. Подготовленная версия плагина не доказывает публикацию или поддержку backend. **Epic flow:** отдельная удалённая capability, compact/detail/history, claim и scoped children, точные operation retries; поддержка automation/account-session определяется удалённой capability и принятой policy; неподдержанная legacy human-only policy не обходится. Init не мигрирует очередь. **Setup/Traceability:** сохранённая привязка, TDD + Trace, явный requirement `done`, issue закрывается только при завершении всех closing-элементов; синк и валидация в том же ходу. **Compatibility:** каталог требует успешного `get_product_catalog` и поддерживаемой схемы записи, без предположения о версии развёрнутого сервера. Issue tools, `closes`, requirement `done` и проверки issue требуют совместимых backend + `@my-architect/mcp` ≥ 1.8.0; в ≥ 1.8.2 исправлена подсказка `list_projects`.
 
 **Prior:** 1.15 (2026-07-06). Bump: **Design-skill оверлей** (feature-013). Composes with: дизайн-сессии ведёт skill `design` (форк brainstorming) + таблица переопределений на случай срабатывания оригинала + мосты systematic-debugging Phase 4.5 → I/B и finishing-branch → ship=sync; Workflow I шаг 2 роутит в design (фолбэк — оригинал). (1.14 ниже.)
 

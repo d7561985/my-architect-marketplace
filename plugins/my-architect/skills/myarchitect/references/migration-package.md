@@ -1,20 +1,23 @@
 # Проверяемый пакет перехода: review → apply → verify → rollback
 
-Используй только при поручении разобрать/перевести действующий проект. Обычная новая задача работает с адресным контекстом и существующей Product Map; не запускай миграцию при init. Этот протокол дополняет [сохранение сервера](migration-backup.md), [локальные источники](local-migration-sources.md) и [dry-run](product-migration.md). Старый bounded audit остаётся `canApply:false` — его результат не становится пакетом автоматически.
+Используй для порученной организации проекта либо для обоснованной additive adoption в разрешённом scope текущей задачи, когда safe discovery выявил структурные пробелы. Отдельный запрос «мигрируй» не обязателен; обычная задача с полноценной Product Map использует адресный контекст без повторной миграции. Init сам по себе не разрешает массово переделать проект, а read-only поручение не разрешает prepare/apply. Этот протокол дополняет [сохранение сервера](migration-backup.md), [локальные источники](local-migration-sources.md) и [dry-run](product-migration.md). Старый bounded audit остаётся `canApply:false` — его результат не становится пакетом автоматически.
 
 ## Проверка возможностей и источников
 
-1. Установи точный `pid`. Вызови `get_migration_package_capabilities({pid})` и проверь **ответ backend**, а не только наличие имени инструмента. `supported:false`, 404, невалидный JSON, неизвестная схема или отсутствие private storage означают отсутствие возможности записи; не обходи это `replace_product_catalog`, ручным JSON или старым sync/doctor. Текущий протокол поддерживает **один серверный процесс**, который обслуживает всех согласованных writers. Несколько серверов и прямые записи файловой системы не защищены этим fence. Это ограничение deployment, не недостаток, который агент вправе молча игнорировать.
+1. Установи точный `pid`. Вызови `get_migration_package_capabilities({pid,protocolVersion:2})` и проверь **ответ backend**, а не только наличие имени инструмента. `supported:false`, 404, невалидный JSON, неизвестная схема или отсутствие private storage означают отсутствие возможности записи; не обходи это `replace_product_catalog`, ручным JSON или старым sync/doctor. Текущий протокол поддерживает **один серверный процесс**, который обслуживает всех согласованных writers. Несколько серверов и прямые записи файловой системы не защищены этим fence. Это ограничение deployment, не недостаток, который агент вправе молча игнорировать.
+Для automation нужны `schemaVersion:2`, `reviewAuthority:authenticated-principal`, `reviewModes` с `automation` и `automationGuards:{affectedSources:true,accountReviewHolds:true}`. Отсутствующий `protocolVersion`/v1 сохраняет старый account-only ответ. Неизвестная v2 не разрешает удалить mode и применить пакет другим путём. Совместимый v1 допускает старый account-session процесс при действительном выборе этого режима, но не impersonation и не скрытый downgrade. Capability удостоверяет поддержку, а не поручение на live-миграцию.
+
 2. Сохрани и свежо проверь полный server-project backup по прежнему протоколу. У пакета `serverBackup:{operationId,manifestDigest}`; backend сверяет raw manifest с текущим серверным деревом при prepare и повторно проверяет backup при apply. Успешная вчерашняя проверка не оправдывает повреждённый сегодня blob.
 3. Собери **все записи объявленных источников**, сохранив исходные файлы отдельно. `.architect`, curated/retained, тестовые ссылки, CI и другие объявленные roots не подменяются удобной выборкой. Полнота одного root не означает полноту продукта. Скрипты источников не исполняются. Test-reference — ссылка/аннотация, а не результат выполнения теста. Сохраняй каждый физический вариант одного ID с source ID, точным pointer и digest; ни сервер, ни индекс не выигрывают автоматически.
 4. Metadata источников передаётся только в разрешённый проект/среду. Локальные receipts имеют уровень **verified-client**, не server-verified. Private raw paths/credentials не помещаются в label/reference/публичный отчёт. Отсутствующие источники получают missing/unavailable и отдельный остаток. Передача нового private source на сервер — отдельное действие в рамках действительного поручения, не подразумеваемое read-only inventory.
 
 ## Подготовка конкретного diff
 
-Прежде чем предложить новый ID: прочитай существующее дерево областей и выполни **глобальный** поиск по названию, aliases/tags и другим веткам. Пустая scoped выдача не разрешает дубликат. Узлы текст/видео/аудио — пример подходящих вложенных областей, не универсальный шаблон. Лор может иметь более широкую родительскую область. Сквозная утилита получает одно основное размещение и отдельные теги/aliases, не копии в каждой категории. Перемещение сохраняет feature ID и связи.
+Прежде чем предложить новый ID: прочитай существующее дерево областей и выполни **глобальный** поиск по названию, aliases/tags и другим веткам. Пустая scoped выдача не разрешает дубликат. Названия и глубина областей выводятся из возможностей и языка конкретного продукта; отраслевые примеры не являются обязательной схемой. Сквозная утилита получает одно основное размещение и отдельные теги/aliases, не копии в каждой категории. Перемещение сохраняет feature ID и связи.
 
 ```ts
 prepare_migration_package({pid, package:{
+  reviewMode:'automation', // только после actual v2 discovery; отсутствие = legacy account-session
   packageId, // один стабильный ID; повтор допустим только для точного того же запроса
   scope:{label,nodeIds,completeProject:false},
   sources:[{id,kind,label,reference,status,sha256,recordCount,
@@ -31,7 +34,34 @@ prepare_migration_package({pid, package:{
 
 `proposals.role`: `product-feature | change | history | constraint | unresolved`; `status`: `proposed | conflict`. `sourceRefs` содержит точные `records[].key`, а не source ID или выдуманный URI. Каждый новый area/feature имеет собственное основание, разрешающееся в inventory. Все старые ID сохраняются. Local-only requirement не добавляется в серверный `requirementIds`, пока поддерживаемый серверный resolver его не знает: происхождение/остаток сохраняются отдельно, новая битая ссылка не является переносом.
 
-Кандидат содержит вложенные `parentId`, primary `areaId`, отдельные aliases/tags и stable IDs. Всё во flat/Unclassified не считается законченной классификацией. Простому продукту допустима обоснованная малая глубина через `flatReason`; это объяснение структуры, не approval за владельца. Существующая accepted classification не переносится на изменившуюся смысловую границу автоматически. У pending migration package можно явно предложить target `classification:accepted` для конкретных before/after: это запрашиваемый результат, а не уже полученное согласие. Prepare и account review не изменяют каталог; accepted попадает в каталог только при apply после принятия exact digest. Если target оставлен proposed, apply не повышает его молча. Старый read-only audit по-прежнему требует proposed для новых/изменённых границ. Lifecycle новой фичи остаётся proposed независимо от принятия таксономии — это не доказательство поставки поведения.
+Кандидат содержит вложенные `parentId`, primary `areaId`, отдельные aliases/tags и stable IDs. Всё во flat/Unclassified не считается законченной классификацией. Простому продукту допустима обоснованная малая глубина через `flatReason`; это объяснение структуры, не факт поставки продукта. Существующая accepted classification не переносится на изменившуюся смысловую границу автоматически. У pending migration package можно явно предложить target `classification:accepted` для конкретных before/after: это запрашиваемый результат, который агент проверит в порученном scope либо передаст на account review. Prepare и authenticated review не изменяют каталог; accepted попадает в каталог только при apply после принятия exact digest. Если target оставлен proposed, apply не повышает его молча. Старый read-only audit по-прежнему требует proposed для новых/изменённых границ. Lifecycle новой фичи остаётся proposed независимо от принятия таксономии — это не доказательство поставки поведения.
+
+### Полные metadata без переписывания моделью
+
+Семантический `plan.json` содержит все поля `package` из примера, включая `sources:[]`/`records:[]` для server metadata и явно отсутствующих источников. Это полная целевая карта с неизменёнными существующими записями, обоснованной дельтой и residual; helper не придумывает её.
+
+Для server audit сохраняй точные record `key/sourceId/kind/id`, `payloadDigest = hash` прочитанного record, `pointer = key` как адрес audit record, `contentReference = server-audit:<snapshotToken>#<recordKey>`. Source сохраняет фактический id/kind/path/sha256; `reference = server-source:<relative path>`, `recordCount` равен числу всех включённых metadata данного source. Успешно прочитанный audit — `captured-client`, missing → `missing`, недоступный/пропущенный → `unavailable`; server backup проверяется отдельно. Не хешируй усечённый preview вместо исходного hash, не считай contentStatus вне scope прочитанным. В plan не помещаются private absolute paths. Сохрани исходный report/snapshot и exact details, чтобы адрес оставался проверяемым.
+
+Полный local inventory получи по [local-migration-sources.md](local-migration-sources.md). Сохранённый metadata файл передаётся целиком; не копируй список из summary. Поставляемый helper соединяет его с планом **offline**:
+
+```sh
+node <plugin-root>/scripts/prepare-migration-package.mjs compose \
+  --pid <точный-pid> --plan-file <абсолютный-private-plan.json> \
+  --inventory-file <абсолютный-full-inventory.json> \
+  --output-file <абсолютный-new-private-request.json>
+```
+
+Повторяй `--inventory-file` для разных объявленных roots; без локальных источников опусти флаг. Проверяются pid, exact inventoryDigest, counts, уникальные identities, sourceRefs/residual и пределы. Каждая physical variant сохраняется; conflict не дедуплицируется. `reviewMode` не добавляется по умолчанию. Выход `{pid,package}` — точный вход `prepare_migration_package`, не разрешение на применение. Входные файлы/родители private, без symlinks, regular input 0600; output эксклюзивный 0600, точный offline повтор идемпотентен. Источники и проект не изменяются, скрипты источников не исполняются.
+
+Для небольшого запроса используй actual MCP prepare с этим полным содержимым. Когда metadata не помещается в надёжный tool input, отдельный явный сетевой шаг передаёт **сохранённый** файл без усечения:
+
+```sh
+node <plugin-root>/scripts/prepare-migration-package.mjs prepare \
+  --request-file <абсолютный-private-request.json> \
+  --output-file <абсолютный-new-private-prepared-result.json>
+```
+
+Это authenticated HTTP bridge существующего prepare API, не MCP вызов и не offline команда. Использует только настроенные `MA_API_URL`/`MCP_API_KEY` в окружении (shell может не наследовать MCP child env); не ищи чужие credentials. Перед POST проверяет actual capabilities выбранного режима. Запрос ограничен 16 MiB, каждый HTTP шаг 30 секундами, фактически прочитанный ответ 96 MiB; redirects запрещены, request/proposal hashes и точный pid/package проверяются, полный ответ хранится приватно, stdout содержит только compact receipt. Helper не review/apply/repair, не меняет mode при ошибке и не даёт authority через файл. При timeout сохрани input/output, прочитай тот же package ID через MCP до exact retry; новый output filename не означает новую logical operation.
 
 Ответ prepare компактен. Дочитай полный diff, source coverage, конфликты и остаток:
 
@@ -48,20 +78,38 @@ get_migration_package({pid,packageId,expectedProposalDigest,expectedSnapshotToke
 
 Каждая страница возвращает `snapshotToken` и связана одним proposalDigest. После первого чтения передавай `expectedSnapshotToken` в следующие страницы и exact windows. Для изменяемых `summary`/`reviewHistory` continuation требует этот pin; изменение состояния возвращает `MIGRATION_PACKAGE_SNAPSHOT_CHANGED` вместо смешанного ответа, отсутствие обязательного pin — `MIGRATION_PACKAGE_SNAPSHOT_REQUIRED`. В таком случае начни чтение текущего состояния заново и не объединяй куски разных snapshots. Верхний summary также ограничен: `truncatedFields` явно отмечает сокращённые scope/receipts/verification, `counts` сохраняет полные количества, `detail` указывает section:'summary', detailIndex:0 для точных окон. Текущий review не заменяет всю `reviewHistory`; история читается отдельной секцией. Для действий закрепи operationId и повторно сверь состояние/receipt после дочитывания: proposalDigest удостоверяет неизменный замысел, snapshotToken отдельно закрепляет review/history/receipts/verification в ходе чтения. Unknown/missing не становятся matching от отсутствия текста. Сохрани baseline находок; прежние нарушения не маскируются изменением статусов или уменьшением тестового набора.
 
-## Решение владельца и применение
+## Review в порученном scope и применение
 
-Человек видит конкретное before/after, вложенные пути, последствия и несколько смысловых границ. Отправь `reviewUrl` из ответа, либо страницу `#/project/<pid>/migration/<packageId>`. Surface принимает accept/reject/defer **точного digest** с объяснением от аутентифицированной учётной записи. Новый review-запрос содержит стабильный `operationId` и `expectedReviewRevision` (длина прочитанной `reviewHistory`). Сохрани точное тело при неизвестном результате. Повтор ID ищется во всей истории и возвращает текущее состояние без повторного применения старого решения: потерянный accept не отменит более поздний reject. Новый ID с устаревшей review revision отвергается. Старые исторические записи без этих полей остаются читаемыми. UI проверяет активный provider; локальный проект не может читать/одобрять одноимённый remote пакет. MCP credential не может притвориться человеком; `review_migration_package` в MCP отсутствует. Фикстурный account в тесте не является принятием таксономии Дмитрием.
+Для нового automation package агент сам проверяет exact before/after, все затронутые источники и physical variants, основное размещение, ссылки, конфликты и остаток. Поручение мигрировать включает это решение без отдельного человеческого accept каждой области или пакета. Режим не создаёт полномочий из воздуха: проверь фактическое поручение, проект и границы источников. Не подставляй actor, имя человека или `humanApproved`.
 
-Это не запрос одобрения каждой технической записи. Одно решение покрывает показанный пакет в его явных границах. Спорный остаток не мешает отдельному согласованному пакету. Разрешение разрабатывать механизм, успех backup, зелёный test и accepted classification другой версии — не acceptance этого diff и не разрешение применять его к live-проекту.
+Перед решением дочитай актуальный блокирующий остаток:
 
-После реального согласования и авторизации применения:
+```ts
+get_migration_package({pid,packageId,expectedProposalDigest,
+  section:'reviewBlockers',offset:0,limit:20})
+// {eligible,total,hasMore,blockers,snapshotToken,...}; limit<=20
+// offset>0: expectedSnapshotToken из первого ответа ЭТОЙ секции
+review_migration_package({pid,packageId,operationId,expectedReviewRevision,
+  expectedProposalDigest,decision:'accept',reason})
+// decision: accept | reject | defer; expectedReviewRevision = длина полной reviewHistory
+```
+
+`reviewBlockers` — свежая серверная оценка, её token отдельный от страниц immutable package. Это единственная секция с max20; остальные остаются max10. Сервер может уменьшить фактический limit по byte budget: следующий offset = текущий offset + blockers.length, не запрошенный limit. Дочитай все страницы; при смене snapshot начни assessment заново. `MIGRATION_PACKAGE_AUTOMATION_BLOCKED` возвращает bounded первую страницу details, а не полный остаток. Blocker codes различают `LEGACY_ACCOUNT_REVIEW_REQUIRED`, `AFFECTED_SOURCE_CONFLICT`, `AFFECTED_SOURCE_UNRESOLVED`, `AFFECTED_PROVENANCE_REQUIRED`, `AFFECTED_SERVER_VARIANT_MISSING`, `AFFECTED_SERVER_SOURCE_INVALID` и `ACCOUNT_REVIEW_HOLD`. Применимый конфликт, unresolved provenance или пропущенный доступный server variant блокирует затронутую часть; независимый исторический остаток сам по себе не запрещает другой чистый срез. Не скрывай источник и не меняй ID, чтобы искусственно вывести конфликт из scope. Сохрани спорную часть и сформулируй предметный вопрос; отдельно подготовь независимое изменение со всей его source closure.
+
+Сервер устанавливает principal из настоящего credential: automation означает `kind:automation`, `assurance:credential-assertion`, `humanPresenceVerified:false`. Это честная атрибуция агента, не account review. Если `reviewMode` отсутствует либо равен `account-session`, MCP не может принять такой пакет: используй настоящий `reviewUrl`/`#/project/<pid>/migration/<packageId>` и supported account action. Legacy mode не меняют в существующем immutable request. Account endpoint сохраняет возможность review для обоих режимов.
+
+Сохранённый account reject/defer защищает смысл и источники через новые package/feature IDs. Автоматика не разрешает такой hold. Account resolution относится к точному прежнему `packageId/proposalDigest/reviewRevision`; покажи это решение и его последствия в поддерживаемом UI. Не используй прямой HTTP, alternate writer или новую таксономию для обхода отказа. При неподтверждённом review сначала читай тот же package/history; exact operationId/payload повторяют без новых revision. Поздний reject не отменяется replay старого accept.
+
+После successful review и в разрешённом scope:
 
 ```ts
 apply_migration_package({pid,packageId,operationId,expectedProposalDigest})
 verify_migration_package({pid,packageId})
 ```
 
-Backend проверяет исходный fingerprint, catalog revision и account review, пишет только additive catalog. Старые дерево/описания/docs/diagrams/requirements/issues не переписываются. Каталог получает ровно классификацию из принятого exact diff (proposed или явно запрошенную accepted); package review не повышает её вне показанного target. Принятие таксономии отдельно от принятия текущей спецификации/доступности фичи. `SOURCE_CONFLICT` означает устаревший пакет: перечитай изменившиеся источники и создай явно новую редакцию/ID с новым review, не меняй expected revision вслепую.
+Backend повторно проверяет источник, catalog revision, exact review, применимые conflicts/holds и backup под writer fence. Запись только additive catalog: старые дерево/описания/docs/diagrams/requirements/issues не переписываются. Каталог получает ровно target classification из reviewed diff; lifecycle/current/поставка не повышаются автоматически. `SOURCE_CONFLICT` требует свежего разбора и новой явно названной редакции с review, а не подмены expected revision. Account hold требует действительного разрешения account, а не повторного automation accept.
+
+Успешная catalog verify — промежуточный результат. Продолжи [migration-adoption.md](migration-adoption.md): current/proposed/specs, активная очередь, полный адресный контекст и остаток через существующие отдельные команды. Общий запрос «организовать проект» не заканчивается одной картой, если эти шаги входят в порученный scope.
 
 ## Обрыв, повтор и откат
 
