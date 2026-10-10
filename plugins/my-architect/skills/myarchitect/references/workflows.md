@@ -6,9 +6,15 @@ The [Feature-lifecycle map in SKILL.md](../SKILL.md) routes here. The letters ar
 
 Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassification) live in [forming-nodes.md](forming-nodes.md).
 
+**Managed epic override.** Before work selection, start, waiting or closure, read [epic-flow.md](epic-flow.md). Flow owns managed epic stage/claim/review/delivery; the legacy task steps below apply to ordinary work nodes. Never substitute legacy/bulk/move/full-replace writes for a rejected flow command. Creation in Z/I/B does not automatically enqueue or claim an epic.
+
+**Product evolution intake.** Before Z/D, follow [product-evolution.md](product-evolution.md): global discovery, explicit new/change/fix/technical intent, complete current/base/proposed context, then a sourced proposal tied to the existing or newly authorized work ID. Reuse an existing feature and work node when applicable. Technical scope does not require a synthetic product feature or scenario. Before A, verify the independently delivered slice and exact evidence there; legacy status and epic delivery remain separate.
+
 ## Workflow Z — Authoring a feature from scratch (CREATE)
 
 Превращает prose-описание в спецированную фичу-ноду **до кода**. Это вход в цикл; не путать с Workflow B (тот — про долги уже existing/закрытой работы).
+
+0. **Существующая возможность продукта.** Выполни discovery/read из [product-catalog.md](product-catalog.md). При поддержке каталога сначала найди постоянную product feature и опиши, что работа создаёт/меняет/выводит; новый эпик или RFC не требует нового product feature ID. Если соответствие неясно — предложение с источниками, не принятая классификация. Каталог недоступен → обозначь ограничение и продолжай прежний workflow в разрешённом объёме, без каталожной записи. После глобального discovery прочитай адресный контекст найденной фичи по [scoped-context.md](scoped-context.md): весь обязательный manifest требований и точные записи с одним snapshot token до формирования новой приёмки. До появления work ID используй существующий product-feature target; если фичи ещё нет, не выдумывай ID ради reader. Вложенная Product Map, предлагаемое размещение и явные пробелы остаются обязательными.
 
 1. **Prose → spec.** Из описания вытащи: что существует, когда готово (исход); для какой роли; чем меряется приёмка; какие hard-ограничения. Не ясно — спроси (rubric ниже), не выдумывай.
 
@@ -38,7 +44,7 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 5. **Релиз + приоритет.** 2+ ноды — `bulk_update_nodes` (атомарно, проверь `successful`/`failed`). Релиз спорный → rubric (**STOP & ask**).
 
-6. **Проверить результат, не «записал молча».** `validate_project` → чисто; перечисли созданные ID (фича / стори / требования / док). Только после этого фича «заведена».
+6. **Проверить результат, не «записал молча».** `validate_project` → чисто; перечисли созданные ID (фича / стори / требования / док). Если каталог поддерживается и соответствие авторизовано, свяжи фактически созданные work node IDs с постоянными фичами через `impacts` по versioned write из [product-catalog.md](product-catalog.md), сохраняя остальные записи. Если запись не подтверждена, явно укажи неподтверждённую связь; существующую ноду не создавай повторно. Только после проверки фича работы «заведена»; это не статус available постоянной фичи.
 
 **Когда дробить:**
 
@@ -50,7 +56,9 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 Архитектор — то, против чего ведёшь работу и что держишь актуальным, а не запись постфактум.
 
-1. **Перед кодом** — `get_node({pid, nodeId})` + прочитать каждый док из `docIds` (`get_doc`) **и** `get_requirements({pid, nodeId, inherited: true})` (приёмка). Истина о фиче — в доке/требованиях, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове. В репо есть свежий локальный граф кода → связи затрагиваемых символов сперва у графа, потом точечный verify по файлам (правила и freshness-check — скил `recursive-context`, references/code-graph.md).
+0. **Scope и владение.** Проверь capability и текущее состояние flow. Продолжи разрешённый owned claim либо получи server recommendation и подтверждённый claim по [epic-flow.md](epic-flow.md). Дочерний `get_next_task` в managed проекте требует актуальные `scopeEpicId`, `claimId`, `assignee`; отсутствующий/чужой/waiting claim не разрешает глобальный fallback. Read-only discovery не требует claim, исполнение managed scope — требует. При ожидании используй wait с причиной/ответственным/следующим шагом, сохраняя stage и claim.
+
+1. **Перед кодом и при продолжении** — после глобального discovery по [product-catalog.md](product-catalog.md) прочитай выбранную работу через `{kind:'work',id:nodeId}` по [scoped-context.md](scoped-context.md). Дочитай все страницы обязательного requirements manifest, точные записи требований и относящиеся docs/impacts/issues через token-pinned detail windows; summary не является прочитанной приёмкой. При продолжении получи свежий snapshot, проверь сохранённые полные источники и остаток. Raw status, unknown maturity/canonical role и отсутствующие связи остаются явными; не объявляй current/base/proposed revision без такого контракта. Если reader недоступен, явно ограниченный прежний путь — `get_node({pid,nodeId})`, каждый `docIds` через `get_doc` и `get_requirements({pid,nodeId,inherited:true})`; он не строгий read-only audit и не единый snapshot. Отсутствующие данные не угадывай. Истина о фиче — в прочитанных источниках, не в title. Дока нет, а логика нетривиальна → первый шаг работы: завести её (Workflow C) из обсуждения/спеки, а не держать в голове. В репо есть свежий локальный граф кода → связи затрагиваемых символов сперва у графа, потом точечный verify по файлам (правила и freshness-check — скил `recursive-context`, references/code-graph.md).
 
    Прочитай [traceability.md](traceability.md): для реализации поведения обязателен `superpowers:test-driven-development`, постоянный тест декларирует ID требования. Прочитай `closes` ноды/требований и связанные issue через `get_issues({pid})`: текст проблемы и текущий статус берутся из Архитектора.
 
@@ -66,30 +74,30 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
    Уже сохранённый `done` — факт **статуса в Архитекторе**, а не прочитанный отчёт тестов. Если тестовые доказательства старой работы не проверялись, в summary укажи «статус done, доказательства в этом ходу не проверены»; не придумывай прежние прогоны. Исправление ошибочного `closed` на `open` не требует придумывать доказательства закрытой части.
 
-2. **Закрой выполненную ноду.** Если она ещё не `done`, вызвать:
+2. **Закрой обычную выполненную ноду.** Для самого managed epic этот legacy вызов запрещён: сначала шаги доказанных requirement updates ниже, затем `submit_review` с актуальными criteria/requirement IDs/artifact/evidence и подтверждение по принятой policy только при поддерживаемом verifier из [epic-flow.md](epic-flow.md). Missing policy/verifier и stale review остаются незавершёнными явно; не поднимай legacy status. Для обычной ноды, если она ещё не `done`, вызвать:
    ```
    mcp__my-architect__complete_task({
      pid, nodeId,
      summary: "<commit SHA> — <one-line outcome> — trace: <requirement IDs → permanent tests; gate/CI results; mutation red → restored green> — waivers/caveats: <list or none>"
    })
    ```
-   Проверь ответ. Каскадирует статус по предкам и возвращает `next_task`; **не меняет статусы требований или issue**. Не передавай ID требования как `nodeId` и не дублируй `update_node({status: "done"})`. Уже закрытая нода не требует повторного `complete_task` для ремонта прослеживаемости.
+   Проверь ответ. Каскад обычного прогресса останавливается до managed epic; **не меняет статусы требований или issue**. В managed проекте ответ `next_task:null, next_task_reason:EPIC_FLOW_SCOPE_REQUIRED` требует следующего scoped selection, не перехода к глобальной очереди. Legacy summary заменяет description обычной ноды: сохрани исходные scope/acceptance в итоговом тексте либо в прочитанном source doc, не уничтожай их коротким «Merged». Не передавай ID требования как `nodeId` и не дублируй `update_node({status: "done"})`. Уже закрытая обычная нода не требует повторного `complete_task` для ремонта прослеживаемости.
 
 3. **Явно обнови выполненные требования.** Только для ID с доказательствами из шага 1: `update_requirement({pid, requirementId: "<id>", status: "done"})`. Для 2+ требований — `bulk_update_requirements({pid, updates: [{id: "<id>", fields: {status: "done"}}, ...]})`; проверь `successful`/`failed`, повтори только неудачные обновления и перечитай статусы. Непроверенные требования сохраняют прежний статус. Если живая схема MCP не поддерживает `done`, требуется совместимое обновление backend/MCP: не подменяй его `approved` и не заявляй завершённую синхронизацию.
 
-4. **Синхронизируй issue в этом же ходу.** После записей обязательно заново вызови `get_issues({pid})`: `closedBy` содержит все закрывающие требования **и** узлы, включая другие ветки и предков после каскада. Для затронутых issue условие закрытия строгое: `closedBy.length > 0 && closedBy.every(link => link.status === "done")`. Условие выполнено → `update_issue({pid, issueId: "<id>", status: "closed"})`, если ещё открыт. Хотя бы один closing-элемент не `done` → проблема остаётся `open`; перечисли оставшиеся ID, не повышай им статусы ради закрытия. Если такой issue уже `closed`, верни `open` и укажи причину. Закрытый issue без связей также верни в `open` либо восстанови связь только по доказательствам. Не удаляй реальные `closes`, чтобы сделать условие истинным. Проверь ответы и перечитай issue; `closes` само не закрывает проблему.
+4. **Синхронизируй issue в этом же ходу.** После записей обязательно заново вызови `get_issues({pid})`: `closedBy` содержит все закрывающие требования **и** узлы, включая другие ветки. Для затронутых issue условие закрытия строгое: `closedBy.length > 0 && closedBy.every(link => link.kind === "node" && link.delivered !== undefined ? link.delivered : link.status === "done")`. У managed node используется явный `delivered`, даже если raw status равен `done` или `draft`; обычные узлы и требования требуют `done`. Если для известного managed epic сервер не возвращает delivery, это compatibility gap — не закрывай issue по raw status. Условие выполнено → `update_issue({pid, issueId: "<id>", status: "closed"})`, если ещё открыт. Хотя бы один closing-элемент не завершён → проблема остаётся `open`; перечисли оставшиеся ID, не повышай им статусы ради закрытия. Если такой issue уже `closed`, верни `open` и укажи причину. Закрытый issue без связей также верни в `open` либо восстанови связь только по доказательствам. Не удаляй реальные `closes`, чтобы сделать условие истинным. Проверь ответы и перечитай issue; `closes` само не закрывает проблему.
 
 5. **Обнови производные данные и проверь итог.** После изменения требований/issue выполни **ещё раз** команду синка из local `CLAUDE.md` (Архитектор → индекс), проверь сохранение набора ID и новые статусы/связи. Затем `validate_project({pid})`: `valid: true` и отсутствие ошибок прослеживаемости подтверждаются ответом. Ошибка API, синка или валидации — незавершённое закрытие; зафиксируй точный гэп и продолжай исправление в пределах доказанных данных. Локальный индекс или старый кеш `get_issues` не заменяет свежий ответ Архитектора.
 
 6. **Scan-for-gaps pass.** Перечитать commit body **и** текущий чат-ход. Помечать каждое вхождение: «deferred», «caveat», «known issue», «not yet wired», «to be tested when», «could improve later», «out of scope», «manual probes pending». Каждый помеченный айтем → Workflow B.
 
-7. **End-of-turn summary.** Укажи закрытые ноды и требования с доказательствами, issue ID → фактический статус (для открытых — remaining closing IDs), результат синка и валидации. Для каждого гэпа: «<X> уже отслеживается в `<node-id>`» либо «новая нода `<node-id>` создана под эпик `<epic-id>`, релиз `<release-id>`». Локально подготовленную или preview-версию не называй опубликованным релизом без фактической публикации.
+7. **Каталог и end-of-turn summary.** Если работа связана с доступным каталогом, обнови описание текущего поведения только в доказанно поставленном объёме по [product-catalog.md](product-catalog.md); не повышай все связанные требования или classification по факту done-ноды. Укажи закрытые ноды и требования с доказательствами, issue ID → фактический статус (для открытых — remaining closing IDs), результат синка и валидации, подтверждённую каталоговую revision или конкретный гэп. Для каждого гэпа: «<X> уже отслеживается в `<node-id>`» либо «новая нода `<node-id>` создана под эпик `<epic-id>`, релиз `<release-id>`». Локально подготовленную или preview-версию не называй опубликованным релизом без фактической публикации.
 
 ## Workflow B — Adding a deferred item
 
 0. **Проблема или работа?** Если surfaced gap — конкретная проблема, названная пользователем или мейнтейнером, сначала `get_issues({pid})`: проверь дубликат по смыслу и источнику. Нет дубликата → `add_issue({pid, title, description, source?, reported_at?})`; description — полный текст проблемы, source — ссылка на наблюдение, без переноса протокола интервью. Issue заводится сразу, без эпика и решения о приоритете. Если это долг/инфраструктура без зарегистрированной проблемы, не придумывай issue. Дальнейшие шаги — для планируемой работы по решению; записи о проблеме в производных документах ссылаются на её ID.
 
-1. **De-dup.** Keyword-поиск в кешированном `get_project_context`. Если нашёл draft/in-progress ноду с overlap по тайтлу/описанию ≥60% — **процитировать ID, не создавать**. Дубликаты ломают `get_next_task` (он leaf-first + alpha — дубль может опередить настоящую работу).
+1. **De-dup.** Keyword-поиск в кешированном `get_project_context`. Если нашёл draft/in-progress ноду с overlap по тайтлу/описанию ≥60% — **процитировать ID, не создавать**. Дубликаты ломают `get_next_task` (он leaf-first + alpha — дубль может опередить настоящую работу). При поддержке каталога также найди затронутую постоянную фичу глобально через `search_product_features` по [product-catalog.md](product-catalog.md), включая aliases и соседние ветки, без неявного фильтра текущего UI; новая нода долга не создаёт новую product feature автоматически. Подтверждённую/авторизованную связь с созданной работой сохрани через impacts после получения её реального ID.
 
 2. **Parent epic.** Из live-структуры проекта (`get_project_context` → top-level эпики). Tech-debt существующей фичи → тот же эпик. Cross-cutting вопрос (безопасность/инфра) → соответствующий cross-cutting эпик если есть, иначе спросить.
 
@@ -117,7 +125,7 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
    Работа закрывает зарегистрированную проблему → укажи `closes: ["<issue-id>"]` на требовании или ноде через поддерживаемый create/update. Связь выводится из подтверждённой приёмки, не из похожего тайтла. Отсутствие закрывающего требования/узла и другие пропуски фиксируются явно по [traceability.md](traceability.md); причина неизвестна — уточни, не выдумывай.
 
-7. **Уже реализованное решение — тот же цикл закрытия.** Если при разборе проблемы найдено уже выполненное решение, сначала проверь Trace, затем выполни **Workflow A, шаги 2–5** в этом ходу: нода `done` → только доказанные требования явно `done` → свежий `get_issues` → `update_issue` по условию **все** closing-элементы `done` → синк индекса → `validate_project`. Не оставляй подтверждённо устаревший `open` «до следующего прохода». Если завершена лишь часть closing-элементов, issue остаётся `open` с конкретными оставшимися ID. Если работа только заведена, оставь её фактические статусы и после связывания выполни синк и `validate_project`; регистрация работы не является её исполнением.
+7. **Уже реализованное решение — тот же цикл закрытия.** Если при разборе проблемы найдено уже выполненное решение, сначала проверь Trace, затем выполни **Workflow A, шаги 2–5** в этом ходу: обычная нода `done` либо managed epic с подтверждённым flow delivery → только доказанные требования явно `done` → свежий `get_issues` → `update_issue` по условию завершения **всех** closing-элементов из шага A4 → синк индекса → `validate_project`. Не оставляй подтверждённо устаревший `open` «до следующего прохода». Если завершена лишь часть closing-элементов, issue остаётся `open` с конкретными оставшимися ID. Если работа только заведена, оставь её фактические статусы и после связывания выполни синк и `validate_project`; регистрация работы не является её исполнением.
 
 ## Workflow C — Authoring docs as source of truth
 
@@ -131,7 +139,7 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 ### Workflow
 
-1. **На старте задачи** — после `start_task` глянуть `get_node({pid, nodeId}).docIds` и прочитать каждый док через `get_doc({pid, docId})`. Это исток правды о фиче; не догадываться по title.
+1. **На старте задачи** — после проверки scope/claim (для managed epic) либо обычного `start_task` прочитать `get_node({pid, nodeId}).docIds` и нужные доки через `get_doc({pid, docId})`. Это исток правды о фиче; не догадываться по title. Правка scope/требований после review требует новой актуальной проверки; сохранение doc само по себе не свидетельство внешней поставки.
 
 2. **Авторинг** — `create_doc({pid, title, content, nodeId})`. Маркдаун; ведущий `# Title` добавляется автоматически, если его нет. Без `nodeId` — проектный док (PRODUCT, ARCHITECTURE и т.п.). Под одной нодой можно много доков.
 
@@ -151,6 +159,8 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 Оформляет **ценность и решение «делать ли»** структурной работы — до того, как она станет эпиком/фичей. Правила (гейт 7 вопросов, правила текста, процесс) — в [initiative-gate.md](initiative-gate.md); этот workflow — процедура их применения. Разграничение: skill `design` (форк brainstorming) проектирует **решение** (как строить), initiative — **ценность** (зачем, что теряем, почём).
 
+При доступном каталоге найди существующие возможности глобально (выбранная UI-ветка не ограничивает поиск) и прочитай их источники по [product-catalog.md](product-catalog.md) до интервью: покажи, какие фичи инициатива создаёт/изменяет/выводит, и какой наблюдаемый результат меняется. Предложенные новые фичи/области не считай принятыми; повторно не спрашивай уже принятые решения.
+
 1. **Вход-фильтр «две корзины»** — критерий корзин читай в [initiative-gate.md](initiative-gate.md) → Процесс, не по памяти. Мелкая корзина → ответить «это себестоимость команды, инициатива не оформляется» и **остановиться** — это успешный исход, не сбой. Не ясно из запроса (объём? межсервисные контракты?) → задать один уточняющий вопрос до фильтра, не угадывать. Если работу всё равно нужно трекать — указать на `/my-architect:feature` (Workflow Z).
 
 2. **Решение ещё не спроектировано?** Нет варианта решения, который можно оценить аппетитом и обратимостью → отправить в skill `design` (этот плагин; sketch mode даёт ровно оцениваемый вариант) и остановиться. Плагин-skill design недоступен → фолбэк `superpowers:brainstorming`. Не проектировать решение самому.
@@ -163,7 +173,7 @@ Node-forming mechanics (preset levels, title lint, `build_hierarchy`, reclassifi
 
 6. **Канон текста — один.** По умолчанию: файл эпика в репо автора (артефакт для CTO/BO; путь — конвенция репо, иначе спросить один раз), док на my_architect-ноде — та же структура с `**Source:** <путь файла>`, обновляется в том же ходу (тот же принцип, что ship = sync). Файл не нужен (у инициативы нет репо, или автор явно отказался) → канон сразу док на ноде. Выбор пути и канона спросить один раз и зафиксировать в CLAUDE.md проекта (как Workflow B шаг 4). Никогда не два независимых канона.
 
-7. **Ноды в my_architect:** `build_hierarchy` по живым `levelNames` (как Workflow Z шаг 2); `add_requirement` на эпик-ноду — проверяемое «станет» → `FR`, kill-критерий → `CON`; `create_doc({nodeId})` из шага 6.
+7. **Ноды в my_architect:** `build_hierarchy` по живым `levelNames` (как Workflow Z шаг 2); `add_requirement` на эпик-ноду — проверяемое «станет» → `FR`, kill-критерий → `CON`; `create_doc({nodeId})` из шага 6. При поддержке каталога свяжи полученный ID эпика с принятыми соответствиями product features через impacts по versioned write; незавершённые предложения и ошибку записи покажи явно. Старое дерево ради этой связи не перестраивается.
 
 8. **Финальный самопроход + verify.** Текст против [initiative-gate.md](initiative-gate.md) → Правила текста: стоп-лист, тест переворачиваемости, модальность ЦЕЛЬ/СЕЙЧАС. Незакрытые `[факт: …]` перечислить в выдаче явно — это блокеры публикации. `validate_project` → чисто; echo созданных ID.
 

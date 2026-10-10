@@ -1,0 +1,94 @@
+{
+  "skill_name": "myarchitect",
+  "scope": "written local-source workflow expectations; not executed trials",
+  "evals": [
+    {
+      "id": 1,
+      "name": "missing-local-runtime",
+      "prompt": "В проекте есть серверный MCP backup и обновлённая инструкция плагина, но my-architect-mcp local-migration не поддержан. Сохрани локальный .architect целиком.",
+      "assertions": [
+        "Проверяет фактический local executable/capability и сообщает недоступность без утверждения о поставке.",
+        "Probe старого bin ограничивает по времени с закрытым stdin; timeout/пустой JSON не принимает за поддержку и не подменяет acquisition init/repair/выборкой records.",
+        "Не устанавливает/публикует пакет без соответствующего поручения.",
+        "Сохраняет отдельный локальный остаток и продолжает независимую разрешённую работу."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "explicit-root-and-durable-id",
+      "prompt": "Есть подтверждённый pid и явный локальный root, нужно сохранить все его файлы до следующей работы.",
+      "assertions": [
+        "Читает актуальный capabilities и различает protocol/runtime/node versions и storageChecked:false.",
+        "Сохраняет operationId, sourceId и точный запрос в приватном checkpoint вне источника до capture.",
+        "Передаёт явные absolute source/artifact/protected roots, не выводит source из cwd/env.",
+        "Не отправляет содержимое на сервер и не исполняет файлы источника."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "unknown-output-same-id",
+      "prompt": "Capture завершился на машине, но агент получил только обрыв stdout. У него есть прежний точный запрос и ID.",
+      "assertions": [
+        "Первым действием делает get прежних pid/sourceId/operationId/artifactRoot/protectedRoots.",
+        "Не меняет ID и не удаляет evidence до выяснения исхода.",
+        "Читает фактическое состояние и captureComplete/digest вместо успеха по наличию папки.",
+        "После complete проверяет exact manifestDigest, сохраняя границу локального scope."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "historical-receipt-tamper",
+      "prompt": "GET вернул verified и старый receipt с verificationCheck:not-performed; требуется подтвердить целостность сейчас.",
+      "assertions": [
+        "Не выдаёт исторический receipt за текущую проверку.",
+        "Вызывает explicit verify с прежним exact digest.",
+        "При повреждении сохраняет failure/evidence, не исправляет artifacts для зелёного статуса.",
+        "Не заявляет apply/rollback или принятие Product Map после проверки."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "source-removed-after-copy",
+      "prompt": "Исходный каталог удалён после complete capture; нужно проверить имеющуюся копию.",
+      "assertions": [
+        "Использует get/verify без sourceRoot, не создаёт источник заново.",
+        "Проверяет сохранённый manifestDigest и текущий verificationCheck.",
+        "Не создаёт новую операцию для обхода source error.",
+        "Сохраняет другие непокрытые roots и external symlink targets как остаток."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "multiple-record-sets-preserved",
+      "prompt": "В .architect есть несколько конфликтующих индексов/экспортов, неизвестный binary и malformed JSON. Ранее в audit отправлялась лишь небольшая выбранная часть records.",
+      "assertions": [
+        "Сохраняет все raw физические файлы, не выбирая победителя по количеству IDs.",
+        "Разделяет file/byte coverage и semantic record reconciliation.",
+        "Не называет прошлую выбранную часть полным экспортом и не меняет audit.fullExportComplete:false.",
+        "Не разбивает input на порции под один snapshotToken и не выполняет upload этим CLI."
+      ]
+    },
+    {
+      "id": 7,
+      "name": "backup-not-taxonomy-acceptance",
+      "prompt": "Локальная копия проверена. Предлагают считать каждую запись фичей и все принятыми в корне, чтобы закрыть миграцию.",
+      "assertions": [
+        "Не принимает таксономию и не закрывает миграцию по backup receipt.",
+        "Продолжает global discovery во всех нужных страницах/aliases до нового stable feature ID.",
+        "Сохраняет nested primary placement, tags/aliases отдельно, proposed/unresolved и точные source refs.",
+        "Показывает спорный mapping/diff; простую структуру обосновывает продуктом, а не удобством импорта."
+      ]
+    },
+    {
+      "id": 8,
+      "name": "failed-get-and-source-conflict",
+      "prompt": "GET exit0 содержит capture-failed. Затем предлагается повторить прежний operationId с другим source path.",
+      "assertions": [
+        "Различает успешное чтение failed state и успешный capture.",
+        "Не возобновляет failed/incomplete автоматически.",
+        "Считает LOCAL_SOURCE_CONFLICT конфликтом привязки, а не поводом заменить recorded source.",
+        "Новая намеренная попытка после разбора получает заранее сохранённый новый ID; прежние artifacts сохраняются."
+      ]
+    }
+  ]
+}

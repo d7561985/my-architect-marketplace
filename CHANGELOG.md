@@ -4,6 +4,34 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.22.0] — 2026-10-06
+
+### Prepared update — 2026-10-10
+- Added entry-first migration intake and `/my-architect:migrate`, with universal agent-led source classification and escalation for actual conflicts/authority boundaries instead of mandatory human taxonomy approval.
+- Documented opt-in migration capability v2, explicit automation review, preserved legacy account-session behavior and source-based account review holds.
+- Added offline full-metadata compose and explicit authenticated prepare file bridge, preserving physical variants and immutable requests without dependencies, credential output or redirects. Full-result export accepts correctly attributed automation review only for explicit automation-mode packages.
+- Added complete post-catalog adoption guidance for current/proposed specifications, context/scenarios, active queue and scoped handoff, plus executable helper regressions and written first-session evaluation cases. Unknown current and missing delivery policy remain precise residuals; synthetic trials and catalog verification do not establish universal/live adoption.
+- This remains the unpublished prepared 1.22.0; prior trials retain their original commit/content hashes.
+
+### Added
+- Prepared local-source workflow for the offline `my-architect-mcp local-migration` subcommand (preserving the existing single npm executable): actual capability discovery, saved operation IDs, same-ID recovery, isolated raw restore checks and explicit local/server/semantic coverage boundaries. No upload, release, installation or taxonomy acceptance is implied.
+- Epic-flow protocol for capability discovery, atomic ownership, scoped child work, waits/review, compact detail/history reads and exact operation retries. Compatible providers advertise automation or explicit account-session confirmation separately; active credential and accepted policy determine support.
+- Fifteen fictional epic-flow evaluation scenarios and explicit baseline/updated intention records; simulations do not prove runtime execution or deployed support.
+- Nested product areas with one primary location per feature, stable IDs across moves, project-specific aliases/tags and category-independent `search_product_features` guidance. Search pages expose candidates and provenance, not semantic-completeness or inventory guarantees.
+- Product catalog pilot guidance: verify remote read support, reuse a permanent product feature, preserve source requirements and relate delivery work through creates/changes/retires impacts.
+- Legacy-project review reference for source inventory, ID-set reconciliation, proposed mappings, owner decisions and a project-local checkpoint for continuation. A separately capability-gated migration package supports exact review/apply/verify/resume/rollback of an additive catalog delta; it does not automatically reconcile every source or approve a taxonomy.
+- Behavioral scenarios for unsupported backends, empty legacy catalogs, existing-feature changes, concurrent writes, unknown write outcomes, corrupt/future formats, missing references, resumed reviews, normalized reads from old remotes, cross-category discovery, stable-ID moves and incomplete search pages.
+
+### Changed
+- Entry routing, design and init follow global discovery, new/change/fix/technical intent, exact current/base/proposed context and explicit provider authority. Existing work IDs and applicable approval are reused. README records host and data-format compatibility separately from publication or installed-host acceptance.
+- Next/progress, completion/traceability and audit agents distinguish managed delivery from legacy status. Issue closure uses explicit managed `delivered` before raw node status. Missing capability, policy or verifier fails closed without blocking unrelated authorized work.
+- Init does not enroll/migrate epics or invent policy. Full transfers must preserve flow order, claims, policy and history or stop before lossy writes; permanent product IDs remain independent.
+- Setup/init inspects catalog support without treating a failed read as empty data or automatically classifying the old hierarchy. Independent traceability setup remains available on older servers.
+- Authoring, work, deferred-item and initiative workflows look up existing product features when supported. Delivery completion does not imply accepted classification or implemented source requirements.
+- Catalog v1 reads normalize to v2 without mutation; agents inspect remoteSchemaVersion and stop v2 writes against an old or unverified backend. V2 fields and migration checkpoints are documented without changing the prepared 1.22.0 release version.
+- Catalog writes preserve the full latest registry and use expectedRevision; conflicts require rereading and recomputing the intended change, while failed or ambiguous outcomes remain explicit.
+- Plugin/marketplace metadata is prepared at 1.22.0. Local metadata does not establish publication or deployment of compatible catalog tools/backend.
+
 ## [1.21.0] — 2026-09-24
 
 ### Changed

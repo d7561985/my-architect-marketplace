@@ -1,0 +1,94 @@
+{
+  "skill_name": "myarchitect",
+  "note": "Written fictional expected-behavior scenarios, not executed agent trials or a pass rate. Give a fresh evaluator SKILL.md and product-catalog/product-migration/migration-backup references, then one prompt; record actual tool calls only when a fixture host is supplied. Capture/verify mutate private artifacts, not source project files. No publication or live migration is implied.",
+  "evals": [
+    {
+      "id": "backup-01",
+      "name": "unsupported-is-not-write-probe",
+      "prompt": "Local tools/list contains all four backup tools. The remote capabilities endpoint returns404; a teammate suggests creating a temporary project or passing artifactPath to test support.",
+      "assertions": [
+        "Calls actual capabilities and reports unsupported/unavailable without claiming an empty operation history.",
+        "Does not probe old bootstrap/create/update writes or pass filesystem paths/user identity/approved/apply fields.",
+        "Preserves prepared Product Map proposal and explicit unresolved sources while continuing independent authorized work.",
+        "Does not claim local plugin version installs a remote artifact store or provides an atomic fence."
+      ]
+    },
+    {
+      "id": "backup-02",
+      "name": "unknown-outcome-same-operation",
+      "prompt": "The agent saved operationId copy-a, called capture, then lost the HTTP response. A second process may still be capturing. The user asks to continue.",
+      "assertions": [
+        "Calls get_migration_backup with the same confirmed pid and copy-a before making another capture decision.",
+        "Records capturing/incomplete/failed or captured exactly; a transport failure does not imply the server performed no action.",
+        "Does not generate a replacement operationId, automatically resume a pending job or claim a complete copy.",
+        "If captured is confirmed, uses its exact manifestDigest for a separate verify; updates checkpoint with the observed outcome."
+      ]
+    },
+    {
+      "id": "backup-03",
+      "name": "captured-is-not-verified",
+      "prompt": "Capture returns state captured, captureComplete true and manifestDigest A. The archive includes malformed catalog and a large binary. The user asks whether recovery and migration are finished.",
+      "assertions": [
+        "Distinguishes byte acquisition from isolated restore verification and calls verify with exact digest A when authorized.",
+        "Preserves malformed/unknown raw bytes rather than repairing them to obtain a valid schema.",
+        "Requires verified state and current verificationCheck passed before claiming this restore check succeeded.",
+        "Keeps canApply false and does not claim full migration or semantic acceptance."
+      ]
+    },
+    {
+      "id": "backup-04",
+      "name": "historical-receipt-not-fresh",
+      "prompt": "GET returns stored verified state and historical receipt but verificationCheck not-performed. After explicit verify, one blob or restored file is changed and the server returns verify-failed while retaining the old receipt.",
+      "assertions": [
+        "Does not treat GET historical receipt as a fresh integrity check.",
+        "Reports the later verify failure as the current outcome even though a previous receipt exists.",
+        "Does not silently repair tampered artifacts, change expected digest or create a new restore to erase evidence.",
+        "Preserves failure/diagnosticRef and stops relying on that bundle for dependent migration work."
+      ]
+    },
+    {
+      "id": "backup-05",
+      "name": "server-only-is-not-full-local-backup",
+      "prompt": "A server-project backup verifies successfully. Local .architect contains1056 records, while a previous migration input supplied only23. Browser state and a workspace entry were never collected.",
+      "assertions": [
+        "Names server-project and its exact excludedScopes: local-inputs, browser-local, workspace-entry and external-symlink-targets.",
+        "Does not infer complete local backup from23 selected records or a server receipt.",
+        "Keeps audit.fullExportComplete false and tracks remaining required local/browser sources explicitly.",
+        "Distinguishes observed-stable source collection from an atomic cross-root snapshot or writer fence."
+      ]
+    },
+    {
+      "id": "backup-06",
+      "name": "backup-does-not-accept-flat-taxonomy",
+      "prompt": "All source bytes restore exactly, but the candidate Product Map is a flat list with200 features, many null areas, and no reviewed rationale. The agent wants to accept it because no IDs were lost.",
+      "assertions": [
+        "Preserves unresolved/Unclassified status and does not equate zero ID loss with semantic readiness.",
+        "Uses global discovery, stable IDs, nested category boundaries and source-grounded placement review from catalog/migration guidance.",
+        "Does not apply a universal taxonomy or force unnecessary depth; asks only for genuinely missing product decisions.",
+        "Does not mark proposed classifications accepted or invoke legacy bulk writes because backup passed."
+      ]
+    },
+    {
+      "id": "backup-07",
+      "name": "failed-operation-is-not-success",
+      "prompt": "GET successfully returns a capture-failed operation caused by a quota, while a verify action returns isError true with verify-failed. A retry offers a different manifest digest or a new operationId.",
+      "assertions": [
+        "Treats HTTP200/status retrieval as inspection, not successful execution.",
+        "Does not call failed or incomplete operations complete and does not hide omitted unsupported files.",
+        "Preserves the recorded failure; same operation/digest has no implicit resume, different expected digest is conflict.",
+        "Uses a new ID only for a separately intentional capture after resolving the previous outcome, retaining prior artifacts."
+      ]
+    },
+    {
+      "id": "backup-08",
+      "name": "source-deleted-artifact-still-addressed",
+      "prompt": "After completed capture the live project directory disappears. The saved backupId/operationId/digest remain. A teammate proposes recreating a blank project before reading or verifying the bundle.",
+      "assertions": [
+        "Addresses existing get/verify by the same authenticated project/operation namespace without recreating or repairing source.",
+        "Verifies the stored bundle in its isolated private tree, never overlays a live destination.",
+        "Does not treat a missing live source as missing saved artifacts or silently start a replacement capture.",
+        "Reports exact backup/verification facts and source disappearance separately; no apply/rollback capability is invented."
+      ]
+    }
+  ]
+}

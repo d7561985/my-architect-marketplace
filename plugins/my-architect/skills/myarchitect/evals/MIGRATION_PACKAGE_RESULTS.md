@@ -1,0 +1,17 @@
+# Migration package workflow — executed evidence and limits
+
+2026-10-09. Prepared plugin instructions, not a release or installation.
+
+App focused suite currently passes 34 tests: 23 filesystem/domain workflow tests, 5 HTTP boundary tests, 3 MCP adapter tests, 2 rendered UI behavior tests, and 1 real MCP SDK protocol → loopback authenticated HTTP → durable filesystem integration. Six additional local projection tests exercise additive sidecars, drift refusal, exact replay, tamper/symlink rejection and rollback receipt preservation. Counts are included in the app suite, not additional model trials.
+
+The actual runtime scenario executes capability, raw server backup and verification, package preparation, account-session digest-bound review, apply, intentionally lost completed HTTP response, same-ID GET/replay, fresh integrity check, immutable record page and rollback. It validates original project bytes, empty own projection after rollback, and actual WebSocket catalog events observed by a subscribed client; current catalog HTTP reads reflect the commit. The account is an isolated fixture account, never a claim of Dmitry accepting live taxonomy.
+
+Domain cases exercise nested and justified shallow catalogs, stale source refusal, two accepted packages racing, own-object rollback conflict, newer evolution/legacy references, unrelated catalog work preserved by rollback, current versus historical verification, required fresh backup integrity, and interruption immediately after catalog atomic rename followed by recovery before the next ordinary catalog writer. This is fault injection at a controlled filesystem boundary, not a physical power-loss/fsync test.
+
+Initial RED logs and actual focused results are retained by the coordinator outside the repository. Production implementation is deliberately limited to single-server-process writers and configured private package storage. Raw filesystem or multi-server writers are not covered. No live source upload/apply, feature availability assertion, global migration completion or plugin installation is implied.
+
+`migration-package-evals.json` contains 6 written scenarios / 22 expected assertions. These are not executed model trials. A fresh-agent consuming-instructions trial and independent review must be recorded separately with actual calls and resulting data; no agent pass rate or speedup is inferred from tests or prose.
+
+Integration baseline (not final gate): bare app test run while another owner was implementing returned 1825 passed / 1 failed / 2 skipped / 38 todo across 155 files. The sole failure was product evolution’s new stored-confirmed-snapshot regression, outside this contribution. Coordinator owns the final suite after all owners freeze; do not report the interim baseline as green.
+
+Network-to-offline bridge: `scripts/export-migration-package.mjs` has 6 executed real HTTP/subprocess tests. They cover authenticated explicit verify, exact binding and immutable payload hashes, fresh receipt checks, private exclusive export/exact-byte replay, wrong-project/changed-content/historical-response refusal, no overwrite or symlink following, credential-safe redirect refusal, and the actual 96 MiB streamed body boundary without relying on Content-Length. This helper performs binding/receipt validation; the offline projection runtime repeats the full package schema validation. It is a declared network bridge, not part of the offline acquisition command. A new verification timestamp generally needs a new output filename; existing evidence is retained.
