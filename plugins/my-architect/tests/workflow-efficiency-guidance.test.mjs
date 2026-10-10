@@ -30,6 +30,34 @@ test('decomposition permits a single supported result without removing old nodes
   assert.match(ref('forming-nodes'), /не удаляй/);
 });
 
+test('decomposition preserves useful ownership boundaries without mandating PR-sized children', () => {
+  const forming = ref('forming-nodes');
+  assert.doesNotMatch(forming, /один коммит\/PR|оправдан только отдельно-демонстрируемым|\(живёт в acceptance\/доке, не в дереве\)/);
+  for (const section of [forming.split('**Merge-test**')[1].split('\n')[0], forming.split('**Где живёт «как».**')[1].split('\n')[0]]) {
+    assert.match(section, /приёмк/);
+    assert.match(section, /владен/);
+  }
+  assert.match(forming, /не добавляй|Не добавляй/);
+});
+
+test('future enhancements retain a trigger without inventing nodes or release commitments', () => {
+  const lane = skill.split('| **Future enhancement')[1].split('\n')[0];
+  assert.doesNotMatch(lane, /последний\/будущий релиз/);
+  assert.match(lane, /существующ/);
+  assert.match(lane, /новый узел.*полезн/);
+  assert.match(lane, /согласованн/);
+  assert.match(lane, /не назначен/);
+  assert.match(lane, /Триггер observable/);
+});
+
+test('initiative discovery routes solution design to the bundled skill', () => {
+  const author = read('agents/initiative-author.md');
+  const frontmatter = author.split('---')[1];
+  assert.doesNotMatch(frontmatter, /→ brainstorming/);
+  assert.match(frontmatter, /my-architect:design/);
+  assert.match(author, /external brainstorming skill is optional/);
+});
+
 test('diagram choice follows unresolved flow risk rather than epic status', () => {
   assert.doesNotMatch(skill, /Event Storming как контроль последовательности \(сильный default\)/);
   assert.match(skill, /WBS.*USM/);

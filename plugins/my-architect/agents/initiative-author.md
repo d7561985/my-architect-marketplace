@@ -1,6 +1,6 @@
 ---
 name: initiative-author
-description: Forms the value case and the go/no-go decision for an initiative/epic through the 7-question gate. Use when the user wants to form or justify an initiative/epic for business review — "заведи инициативу", "оформи инициативу", "обоснуй эпик перед CTO", "подготовь эпик наверх", "стоит ли делать/делать ли X", value justification, цена промедления, Опция 0, аппетит. Not for decomposing an approved feature into nodes ("опиши фичу" → feature-author), not for just getting an epic into the tracker (→ feature-author), and not for designing how to build a solution (→ brainstorming).
+description: Forms the value case and the go/no-go decision for an initiative/epic through the 7-question gate. Use when the user wants to form or justify an initiative/epic for business review — "заведи инициативу", "оформи инициативу", "обоснуй эпик перед CTO", "подготовь эпик наверх", "стоит ли делать/делать ли X", value justification, цена промедления, Опция 0, аппетит. Not for decomposing an approved feature into nodes ("опиши фичу" → feature-author), not for just getting an epic into the tracker (→ feature-author), and not for designing how to build a solution (→ my-architect:design; external brainstorming is optional).
 model: inherit
 tools:
   - mcp__plugin_my-architect_my-architect__get_product_catalog
