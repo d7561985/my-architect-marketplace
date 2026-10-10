@@ -254,6 +254,17 @@
         "Can combine equivalent rules concisely without adding unsupported behavior or presenting proposed behavior as confirmed current.",
         "Distinguishes unread evidence from delivered-but-not-yet-accounted-for rules and makes no claim of native validation from this written scenario."
       ]
+    },
+    {
+      "id": "context-24",
+      "name": "incremental-ledger-preserves-trigger-and-timing",
+      "prompt": "A read-only library lending brief uses complete applicable sources delivered in separate batches. One rule says that a returned copy becomes selectable at the desk immediately after it passes inspection; a damaged copy remains unavailable until repair. A second source requires the nightly reconciliation to update aggregate availability. Both records include their own source identity and status. The draft only says that inventory updates during nightly reconciliation and lists both source IDs. No further source fetch is needed.",
+      "assertions": [
+        "Extracts each independent obligation into a compact source/status-bound rule ledger as its complete record arrives, preserving trigger/timing, action or observable result, preconditions and exceptions rather than waiting until all reads are over.",
+        "Keeps the immediate post-inspection selectable state, damaged-copy exception and nightly aggregate update distinct; similar inventory actions in different moments or sources are not merged as equivalent.",
+        "Reconciles the final brief/next step against those obligations, preserving the positive immediate transition or stating an explicit residual; a later scheduled update and source-ID list do not cover the earlier trigger.",
+        "Can keep the compact ledger in context without creating a required external artifact, dumping every source or making extra MCP reads for already complete current records. Unknown current implementation stays unknown; this written case is not executed native validation."
+      ]
     }
   ]
 }
