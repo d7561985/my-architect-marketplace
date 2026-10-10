@@ -177,6 +177,83 @@
         "Does not claim the new batch path reduced498calls until the same task, mandatory selection and lossless oracle have actually been executed.",
         "Separates written expectations, static checks, deterministic protocol execution and blind installed-agent-host evaluation; does not invent a pass rate."
       ]
+    },
+    {
+      "id": "context-17",
+      "name": "known-missing-server-record-keeps-ledger",
+      "prompt": "A fully paginated mandatory manifest contains FR-present and CON-missing under one pid/target/token. FR-present has state:read/contentAvailable:true and a long value. CON-missing has state:missing/contentAvailable:false, truncatedFields:[], includedBecauseCount:2 with both reasons present, sourceRef:unresolved:requirement:CON-missing and a SOURCE_NOT_READ gap. The batch endpoint is supported. The owner asks for a complete requirements decision.",
+      "assertions": [
+        "Reads every manifest page and retains both exact keys, source metadata, raw states, inclusion reasons/count and the missing gap under the same binding.",
+        "Requests all FR-present content windows and parses the complete record; does not request CON-missing server detail merely to rediscover its already established absent content.",
+        "Keeps CON-missing unresolved and unread after the detail queue empties. Does not call the manifest fully read, accepted or lossless complete; dependent decisions remain limited.",
+        "Does not delete references, change selection/inheritance or infer that the source is absent everywhere."
+      ]
+    },
+    {
+      "id": "context-18",
+      "name": "missing-server-has-distinct-local-counterpart",
+      "prompt": "The server manifest has an applicable CON-missing with complete compact metadata and no content. A frozen local requirements-index has the exact same ID with a source hash and an older description; another local snapshot has a conflicting limit. An unrelated local requirement has a similar title. No source declares which variant supersedes another.",
+      "assertions": [
+        "Avoids repeating the absent server content request and performs targeted reads of the applicable exact-ID local counterparts.",
+        "Preserves each local source/hash/freshness and both conflicting values separately from the unresolved server source, rather than replacing it or choosing a winner from dates.",
+        "Does not resolve the gap from the similarly titled unrelated requirement or invent current behavior/canonical precedence.",
+        "Keeps dependent decisions partial and continues only independently justified work; no full local dump per missing key."
+      ]
+    },
+    {
+      "id": "context-19",
+      "name": "unavailable-content-is-not-a-universal-skip",
+      "prompt": "One mandatory manifest has state:conflict/contentAvailable:false with variants, an invalid record, an omitted record, a source-claim, an unsupported record and a read record with contentAvailable:true. Another item lacks contentAvailable. A received detail batch also has a deferred window. The caller suggests filtering every false-or-empty contentAvailable value out of the queue.",
+      "assertions": [
+        "Rejects the broad filter: none of these records is a proven missing record with complete compact metadata.",
+        "Reads needed exact variants/metadata and available content, preserves raw states and every manifest key, and does not silently select a conflict winner.",
+        "Follows exact deferred nextRequests and complete windows under the same token; a deferred item is not missing.",
+        "Leaves invalid/unsupported/omitted/claim/unknown sources and incomplete content explicitly unresolved, rather than declaring a complete context."
+      ]
+    },
+    {
+      "id": "context-20",
+      "name": "missing-record-truncated-provenance-needs-detail",
+      "prompt": "A missing mandatory record has contentAvailable:false but includedBecauseCount:7 with only five reasons and truncatedFields:[includedBecause]. A second missing record has truncatedFields:[variants]. Both have detail keys, and a third ordinary record has different current/base/proposed detail keys sharing one requirement ID.",
+      "assertions": [
+        "Does not apply the compact-missing exclusion to either truncated record; obtains the necessary full metadata through the existing detail route or records it explicitly unread if unavailable.",
+        "Preserves all inclusion reasons and variant provenance without claiming the absent content was recovered.",
+        "Reads each required current/base/proposed detail key independently and does not deduplicate by requirement ID.",
+        "Keeps the complete manifest and gaps even when all available metadata has been read."
+      ]
+    },
+    {
+      "id": "context-21",
+      "name": "missing-ledger-invalidated-by-fresh-snapshot",
+      "prompt": "The checkpoint records a complete missing-server compact item and its unresolved gap at token-a, with no redundant detail request. On resume token-b differs; the same exact ID is now state:read/contentAvailable:true with a changed source hash. Catalog revision is unchanged.",
+      "assertions": [
+        "Gets a fresh summary and rereads the mandatory manifest under token-b rather than reusing the old missing classification.",
+        "Reads the newly available exact content and all continuations under token-b; never concatenates token-a windows or claims old absence proves current absence.",
+        "Preserves old/new provenance and separately re-evaluates any local counterpart or dependent conclusion.",
+        "Does not claim measured efficiency or native-agent validation from these written cases or documentation checks."
+      ]
+    },
+    {
+      "id": "context-22",
+      "name": "affected-scopes-include-shared-constraints",
+      "prompt": "A read-only request concerns a team calendar change. Sources justify affected booking and notification features; search also returns a similarly named billing feature without an impact link. The booking context does not contain a shared accessibility requirement inherited by notifications. Its ID appears in ancestor metadata, and the notification context can deliver its body. The draft already lists notifications as affected.",
+      "assertions": [
+        "Justifies each affected feature/work relationship from sources and reads the needed notification scope and exact shared requirement rather than treating booking as complete for both.",
+        "Keeps each target bound to its own snapshot and follows required manifest/detail continuations; an ID or snippet is not the shared requirement body.",
+        "Does not read billing or every search candidate without a supported relationship, and does not infer direct impact from ancestry alone.",
+        "Carries the applicable shared accessibility rule into the brief or an explicit residual if it cannot be read; does not claim complete coverage from the primary read ledger."
+      ]
+    },
+    {
+      "id": "context-23",
+      "name": "read-rules-survive-brief-synthesis",
+      "prompt": "Complete source records for an inventory handoff have been delivered and parsed. They require a specified user activation action, a destination choice, a preview of consequences, an access restriction and a localization obligation. The proposed short answer mentions only preservation and the preview; it lists the remaining requirement IDs under related work. The task asks for a brief and the next step, with no writes.",
+      "assertions": [
+        "Checks the actual applicable rules against the draft before answering; delivered content and a list of IDs do not demonstrate semantic coverage.",
+        "Reflects each applicable activation/choice/access/localization rule in the brief or next step, or gives a source-supported exclusion or explicit residual; does not drop UX/common constraints to keep only the main scenario.",
+        "Can combine equivalent rules concisely without adding unsupported behavior or presenting proposed behavior as confirmed current.",
+        "Distinguishes unread evidence from delivered-but-not-yet-accounted-for rules and makes no claim of native validation from this written scenario."
+      ]
     }
   ]
 }
