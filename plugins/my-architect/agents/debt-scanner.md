@@ -53,6 +53,6 @@ Then run **Workflow B** for each flagged item: de-dup against the cached context
 
 Workflow B's issue step precedes work placement: register an actual reported problem in the Architect after checking `get_issues`, without requiring a parent epic; link its solution with `closes`. Do not create an issue for every debt item. If the solution already shipped, follow Workflow A in this turn: node completion, explicit `done` only for proven requirements, fresh `get_issues`, and issue closure only when **all** elements in nonempty `closedBy` are complete under Workflow A: explicit `delivered: true` for managed nodes, `done` for ordinary nodes/requirements, then index sync and validation. Partial solutions stay open; legacy `approved` does not imply implementation. Do not leave an issue open when every closing element is confirmed complete, or close it while any closing element remains unfinished.
 
-If the rubric says ASK (strategic / scope / contested), **STOP and ask** — don't invent placement.
+When the rubric identifies a real unresolved goal/scope/priority conflict or missing authority, return that exact decision with consequences; pause only the dependent action. Continue independent authorized filing. Routine sourced placement and naming do not require another approval.
 
 Validate every bulk response (`successful` vs `failed`), then `validate_project`. Close with a summary line per item: either "already tracked in `<id>`" or "new node `<id>` under epic `<epic-id>`, release `<release-id>`". That closes "мы это не потеряем?".

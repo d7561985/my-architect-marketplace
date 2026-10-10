@@ -1,6 +1,6 @@
 {
   "skill_name": "myarchitect",
-  "note": "Behavioral decomposition evals (story-076) — the regression net for altitude. Given a prose feature, the skill must decompose into BUILDING BLOCKS (vertical, independently-demonstrable slices, may cross services), NOT task-slices by code layer (collection/field/endpoint/hook/migration). Grade the proposed build_hierarchy TREE (node titles + where the 'how' lives), not the prose around it. Guards story-074 (altitude guidance) + story-075 (altitude_warnings lint). Run by giving an agent the skill + the prompt, capturing the build_hierarchy it WOULD call (dry-run, no mutations), then checking the assertions.",
+  "note": "Behavioral decomposition evals (story-076) — the regression net for altitude. Given a prose feature, the skill must decompose into BUILDING BLOCKS (vertical, independently-demonstrable slices, may cross services), NOT task-slices by code layer (collection/field/endpoint/hook/migration). Grade the proposed build_hierarchy TREE (node titles + where the 'how' lives), not the prose around it. Guards story-074 (altitude guidance) + story-075 (altitude_warnings lint). Run by giving an agent the skill + the prompt, capturing the build_hierarchy it WOULD call (dry-run, no mutations), then checking the assertions. Version 2.0.0 explicitly permits one supported work node for one outcome; no prior result is rescored.",
   "evals": [
     {
       "id": 1,
@@ -41,7 +41,8 @@
       "assertions": [
         "This is ONE building block (one observable outcome: a user gets an SVG file) — the merge-test collapses serializer+button+endpoint into it; they are NOT separate sibling nodes.",
         "Crossing front+back (button + endpoint + serializer) is NOT a reason to split — number of touched components is not a granularity signal.",
-        "Steps go into the description; a child node appears only if there is a separately-demonstrable sub-result."
+        "Steps go into the description; a child node appears only if there is a separately-demonstrable sub-result.",
+        "When the live preset supports a single shippable node, does not add a child repeating the same outcome; preserves old IDs and any genuinely required preset container."
       ]
     },
     {

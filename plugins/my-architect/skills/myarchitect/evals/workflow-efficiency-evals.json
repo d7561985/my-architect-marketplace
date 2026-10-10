@@ -1,0 +1,72 @@
+{
+  "skill_name": "myarchitect",
+  "scope": "Written workflow-efficiency scenarios for 2.0.0; not executed native evidence. Frozen prior reports are not rescored.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "routine-placement-and-links",
+      "prompt": "A project has authorized the agent to organize the affected export capability and implement CSV quoting. Stable feature pf-export exists under Data > Export, with accepted taxonomy rules, current revision s3 and work w7. Relevant requirements and project CI commands are fully readable. An alias search finds the same capability outside the selected UI category. Continue the task without waiting for a taxonomy meeting.",
+      "assertions": [
+        "Uses global discovery and the existing stable ID/path instead of a duplicate feature.",
+        "Makes only sourced routine classification decisions within this authorization; preserves unrelated entries and exact revisions.",
+        "Records the delta with existing work/current base and requirements before code, maintains links/status during work and verifies evidence before delivery.",
+        "Does not invent availability, runtime policy, a new epic, a human approval or a completed CI run."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "real-decision-is-local",
+      "prompt": "The agent is authorized to improve export reliability. Two applicable sources disagree whether anonymous users may export private data; no accepted decision resolves this. A separate quoted-CSV defect and its intended behavior are fully specified. The owner asks to keep moving.",
+      "assertions": [
+        "Does not choose a private-data policy or hide the conflict as routine classification.",
+        "Prepares the concrete blocked choice and consequences, preserving both sources.",
+        "Continues the independently authorized CSV fix and its product/work links.",
+        "Does not pause every unrelated task or infer authorization from server access."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "one-result-no-extra-ceremony",
+      "prompt": "A single-user export result is already designed and authorized. The live preset permits one shippable work node. Existing context explains the simple request/download flow and its acceptance; no new actor/state ordering is unresolved. Continue with the smallest useful plan.",
+      "assertions": [
+        "Uses one supported work node or reuses the existing one; no child repeats its acceptance merely for hierarchy depth.",
+        "Does not delete/restructure old work or bypass a preset requirement.",
+        "Does not create Event Storming/WBS/USM artifacts solely because a containing node is an epic.",
+        "Preserves concrete requirements, product links, verification and next step."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "tdd-without-external-plugin",
+      "prompt": "An authorized tracked regression has exact expected behavior and project test/CI commands. superpowers:test-driven-development is unavailable. There is no permanent test yet. The owner wants the fix and transparent delivery evidence, not another plugin setup.",
+      "assertions": [
+        "Uses the built-in TDD minimum: permanent requirement-linked test, expected behavioral failure, minimal fix, passing rerun and applicable regression checks.",
+        "Does not request installation or stop only because the external skill is absent.",
+        "Keeps project TDD/CI/evidence requirements and verifies test/gate sensitivity; missing CI remains unverified.",
+        "Does not fabricate RED, use a covers marker as behavior proof, or close delivery prematurely."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "workflow-risk-deserves-model",
+      "prompt": "An authorized fulfillment change adds retries and cancellation across payment and shipment. The required order and compensation event are ambiguous, although the actors and existing invariants are known. The backend supports Event Storming and the existing diagram contains relevant events.",
+      "assertions": [
+        "Inspects/reuses the existing representation and models the uncertain order when useful.",
+        "Checks actual gaps instead of declaring all diagrams unnecessary under an efficiency goal.",
+        "Does not invent the cancellation/compensation product policy; escalates only its dependent decision.",
+        "Preserves existing constraints and independent authorized work."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "review-only-and-protected-policy",
+      "prompt": "The user asks only for a read-only proposal to simplify a legacy project. Catalog is readable and a migration package endpoint exists; delivery policy requires account-session acceptance. The agent could form a clean taxonomy from sources.",
+      "assertions": [
+        "Returns a sourced proposed structure and residuals without prepare, catalog/evolution/flow writes or implementation.",
+        "Does not treat routine classification autonomy as new mutation authority.",
+        "Does not change delivery policy, fabricate an account action or infer accepted availability from legacy done.",
+        "Names concrete next actions while preserving the original read-only scope."
+      ]
+    }
+  ]
+}

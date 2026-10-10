@@ -91,7 +91,7 @@ plugins/my-architect/
 
 **MCP server (auto-configured):** `npx -y @my-architect/mcp@latest` with `MCP_API_KEY` from your shell env and `MA_API_URL=https://my-architect.app`.
 
-**Commands** (type `/my-architect:<name>`): **init** (install or repair project traceability and verify tests/CI), **feature** (author a feature from scratch — propose a node tree, then write nodes + requirements + doc), **next** (claim an eligible epic, then work within its scope), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped), **design** (architecture-aware design session — dialogue to an approved spec on a node, then Workflow Z + plan), **initiative** (form an initiative through the 7-question gate), **bo-review** (read-only Business-Owner review of an epic).
+**Commands** (type `/my-architect:<name>`): **init** (install or repair project traceability and verify tests/CI), **feature** (author permitted work with minimal useful decomposition, product links and requirements), **next** (claim an eligible epic, then work within its scope), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped), **design** (address actual design uncertainty within the authorized scope and keep one project canon), **initiative** (evaluate an undecided initiative or record its authorized value case), **bo-review** (read-only Business-Owner review of an epic).
 
 **Agents** (dispatched by the commands/skill, run in their own context): **feature-author** (prose → spec'd feature node, the engine behind `/feature`), **reconciler** (verify drafts against code, close what shipped — with evidence), **debt-scanner** (scan a closed feature + commit + chat for deferred/caveat/known-issue items and file them), **progress-auditor** (read-only status audit with drift flags).
 
@@ -103,24 +103,30 @@ plugins/my-architect/
 - `SessionStart` code-graph context — if the project root has `graphify-out/graph.json`, the session starts already knowing the index exists, when it was built, whether it is `fresh` or `STALE` relative to HEAD, and the composition rule (graph → verify against live files → Workflow/agents for what the graph cannot know). **No graph → the hook prints nothing**, so non-graphified projects pay zero. This exists because a skill description cannot express "fire when `graphify-out/` exists": only skill *descriptions* are in context at decision time, and checking the disk requires already deciding to look. A fact in context cannot be forgotten; a trigger has to be remembered.
 
 **Skill `myarchitect`:** triggers when you (or Claude) say "deferred", "known issue", "caveat", "not yet wired", "to be tested when…", "could improve later", or after closing a feature. Encodes the workflow:
-- Resolve the project through Setup first, then use `get_project_context` to load its live state.
+- Resolve the project through safe intake/Setup, discover affected product capabilities globally, then read the required addressed context on a fresh snapshot.
 - Closing work → Trace → ordinary child `complete_task` or managed epic review/delivery → proven requirements explicitly `done` → fresh issue links → close issues only when every closing element is complete → sync index → validate → scan commit/chat for surfaced gaps.
-- Each gap → de-dup against backlog → file via `build_hierarchy` + assign release via `bulk_update_nodes` (validate `successful` vs `failed`).
-- Decision rubric: tech-debt → no ask, future-with-trigger → no ask, strategic/scope → **ask before filing**.
+- Each gap → de-dup → record the actual issue or authorized work with sourced placement and product links; preserve unknown release/priority rather than inventing it. Verify each write.
+- Routine sourced decisions stay with the agent inside authorized scope. Ask only for unresolved goal, semantic conflict, material scope/priority/UX tradeoff or authority; pause the dependent action while independent work continues. Assessment-only stays read-only.
 
-**Skill `design` (design sessions):** дизайн-сессии в проектах, трекаемых в my_architect, ведёт skill `design` — форк `superpowers:brainstorming` v5.1.0 (MIT, github.com/obra/superpowers), осведомлённый об архитекторе: explore через `get_project_context` + локальный граф кода + recursive-context, спека — доком на узле (не `docs/superpowers/specs/`), терминал — Workflow Z → writing-plans (план-файл + зеркальный док). superpowers отключать **не нужно** — skills сосуществуют; в проектах без my_architect продолжает работать оригинальный brainstorming.
+**Skill `design` (design sessions):** uses global product discovery and complete addressed current/base/proposed context. The agent chooses a proportionate explanation, diagram and plan, reuses applicable decisions and asks about real unresolved product choices. Specs follow one project canon with a Source summary on the work node; simple work does not require a separate plan file. The skill is derived from `superpowers:brainstorming` v5.1.0 (MIT), but external planning/testing skills are optional extensions.
 
 Дополнительные инструкции в проектный `CLAUDE.md` (имеют высший приоритет и усиливают выбор нужного skill'а). Строку `pid` ниже агент сохраняет при `/my-architect:init`; вручную искать ID не требуется:
 
 ```
 - Дизайн-сессии: skill my-architect:design (не superpowers:brainstorming); спеки дизайна — доками на узлах my_architect.
-- Планы имплементации: файл в docs/plans/ + зеркальный док на ноде с Source (канон один).
+- Планы имплементации: по сложности задачи; один канон и связанный Source на ноде, без дублирующего полного текста.
 - my_architect pid: "<your-pid>"
 ```
 
 Если установлено много плагинов и описания skills обрезаются (проверьте `/doctor`) — поднимите бюджет описаний: `"skillListingBudgetFraction": 0.02` в settings.json.
 
 ---
+
+## Workflow defaults in 2.0.0
+
+This is a major release because the decision rubric and authoring defaults change. Agents autonomously maintain authorized product/work links and sourced classification; they no longer request approval for every routine placement or repeated design step. One outcome may use one work node when the live preset supports it. Event Storming, WBS and USM are chosen for actual uncertainty or usefulness, rather than created for every epic. Existing nodes and IDs are preserved.
+
+TDD/Trace now includes its own test-first procedure; missing `superpowers` skills alone do not block implementation. Project-specific TDD, permanent regression tests, requirement links, CI and evidence obligations remain. Read-only scope, real product decisions, account policy/review holds, claims, current/proposed, CAS, exact retries and migration history are unchanged. This release does not automatically migrate projects, remove old work or establish cost savings. Behaviour trials and runtime verification must be reported separately from static guidance checks.
 
 ## Updating
 
@@ -185,7 +191,7 @@ The skill description triggers on specific phrases (deferred, known issue, cavea
 
 The declared plugin host is **Claude Code 2.0+** (CLI or IDE extension). This marketplace does not declare a tested Codex, Cursor or Gemini plugin installation contract. Reading these skill files in another agent is distinct from loading the plugin's commands, hooks, agents and MCP configuration in that host.
 
-Baseline workflows require `@my-architect/mcp` ≥ 1.5.0. Traceability requires ≥ 1.8.0 plus a backend exposing issue tools, `closes`, explicit requirement `done` and issue validation. Product Evolution workflows were released in plugin 1.22.0 and MCP 1.9.0. Package versions alone do not establish support in the connected backend or authority for the current credential: inspect actual capabilities before using the catalog, queue, evolution or migration protocols.
+Baseline workflows require `@my-architect/mcp` ≥ 1.5.0. Traceability requires ≥ 1.8.0 plus a backend exposing issue tools, `closes`, explicit requirement `done` and issue validation. Product Evolution workflows were released in plugin 1.22.0 and MCP 1.9.0. Plugin 2.0.0 changes agent defaults without requiring a new API or schema: inspect existing capabilities and authority. MCP 1.9.2 aligns the catalog tool description with delegated routine classification; this wording correction is not a reason to reject otherwise compatible 1.9.1 APIs. Package versions alone do not establish support in the connected backend or authority for the current credential: inspect actual capabilities before using the catalog, queue, evolution or migration protocols.
 
 | Client/provider combination | Supported behavior and boundary |
 |---|---|

@@ -4,6 +4,20 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] — 2026-10-10
+
+### Changed
+- Major version: routine sourced classification, placement and design inside an existing authorized scope no longer require blanket owner confirmation or a default STOP. Real unresolved goals, semantic conflicts, material scope/priority/UX choices and missing authority still require an addressed decision; independent work can continue. Commands and agent/design wrappers follow the same rule.
+- Decomposition follows independently useful acceptance, delivery or ownership. One outcome can be one supported node; no duplicate child is required for ceremony. Existing IDs, work and live preset constraints remain intact.
+- Event Storming, WBS and USM are selected for actual flow risk or usefulness. An epic label alone no longer forces a new diagram, extra review or duplicated plan/spec file.
+- TDD/Trace is self-contained, including expected failing behavior, minimal correction, permanent requirement-linked tests, CI and evidence checks. External skills are optional extensions; project-specific requirements are preserved.
+- The skill core links to release history rather than embedding superseded defaults. Updated written scenarios and cross-entry consistency checks are not claims of native-agent success or reduced cost.
+
+### Preserved
+- Global discovery, nested product areas, aliases, stable feature/work IDs, current/base/proposed and ordinary lifecycle synchronization.
+- Actual user scope, read-only requests, unresolved product decisions, account-only policy/review holds, claims, evidence, CAS/exact retries, safe migration, backups and historical records. No automatic global adoption or deletion of previous work.
+- Existing compatible APIs remain usable; actual capabilities and authority determine support. MCP 1.9.2 corrects stale owner-only catalog guidance without introducing a new API requirement.
+
 ## [1.23.0] — 2026-10-10
 
 ### Changed

@@ -1,16 +1,15 @@
 ---
-description: Form an initiative through the 7-question gate — spine first, then epic text + nodes
+description: Evaluate an undecided initiative or record its authorized value case and product impact
 argument-hint: "[initiative description]"
 ---
 
-Use the **myarchitect** skill, **Workflow I** (Authoring an initiative). Resolve the project `pid` via the skill's setup ladder, then:
+Use **myarchitect**, **Workflow I**, and `references/initiative-gate.md`. Resolve `pid` safely and discover affected product capabilities globally.
 
-1. **Filter first.** Dispatch the **initiative-author** agent on the `$ARGUMENTS` prose. The agent applies the two-buckets filter (small bucket → "team cost, no initiative", STOP — a successful outcome; point to `/my-architect:feature`) and the brainstorming boundary (solution not designed yet → hand off to `superpowers:brainstorming`).
-2. **Gate interview.** One question at a time, only the gaps — prose answers are decomposed by the agent and never re-asked. Facts rule: every answer marked fact / estimate (whose) / goal; a missing answer becomes a literal `[факт: <вопрос>]` placeholder, never plausible filler.
-3. **PROPOSE-then-CONFIRM gate.** The agent presents the spine — 7 answers, one sentence each — and **WAITS for confirmation**. "Option 0 wins — don't do it" and "not now + review trigger" are legitimate endings, not failures.
-4. **On confirm — write it:** epic text with the fixed section structure; nodes + requirements + doc in my_architect (live `levelNames`, single text canon); final self-pass against the stop-list from `references/initiative-gate.md`.
-5. **Verify, don't claim silently.** `validate_project` → clean; echo created IDs and every unclosed `[факт: …]` placeholder as a publication blocker.
+1. Check whether the request is an assessment, an undecided initiative or already authorized work. Ordinary authorized work continues in Z/D without an artificial initiative. Assessment-only remains read-only.
+2. Gather the known value, consumers, alternatives, constraints and reversibility from sources. Mark fact / attributed estimate / goal; retain missing facts instead of plausible filler. Use the plugin’s `design` sketch mode if a solution option is needed; external skills are optional.
+3. Present only unresolved goal, scope, priority, material UX tradeoff or authority decisions with consequences. Wait for the decision before its dependent action; continue independent authorized work. The seven questions guide reasoning, not a repeated interview or approval of already authorized work.
+4. Record the authorized result with one canon, minimal preset-compatible work, upfront requirements and real product links. Validate and read back before claiming completion; identify unresolved facts and the claims they prevent.
 
-Never invent facts — a gap is a literal `[факт: …]` placeholder, not plausible filler. Keep this a thin wrapper; the logic lives in Workflow I and the rules in `references/initiative-gate.md`.
+The `initiative-author` wrapper may assist when available. Its presence is not required to follow the same workflow directly. A proposal does not accept account policy or deliver an epic.
 
 $ARGUMENTS
