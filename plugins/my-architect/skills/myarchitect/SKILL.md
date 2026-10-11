@@ -1,6 +1,6 @@
 ---
 name: myarchitect
-description: Use when working with a my_architect project — tracked work, deferred items, known issues, "what's next?", "отложил", "мы это не потеряем?", feature authoring, initiative or BO-review, current node/docs, user-facing reports/research/demos/artifacts on their epic, epic queue/claim/review/delivery or resuming work, product catalog/taxonomy, nested areas, affected-feature lookup, or organizing a legacy project without losing requirements and history.
+description: Use when working with a my_architect project — tracked work, deferred items, known issues, "what's next?", "отложил", "мы это не потеряем?", feature authoring, initiative or BO-review, current node/docs, user-facing reports/research/demos/artifacts on their epic, epic queue/claim/review/delivery or resuming work, product catalog/taxonomy, nested areas, affected-feature lookup, ambiguous requirement IDs/copies or organizing a legacy project without losing requirements and history.
 ---
 
 # myarchitect — proactive backlog tracker
@@ -27,6 +27,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - [`references/solution-discovery.md`](references/solution-discovery.md) — существующее внутреннее/платформенное/внешнее решение целиком или по частям до выбора подхода и плана; критерии, build/adopt/extend/fork/buy и соразмерный поиск. Читать при новом существенном выборе в design/Z/D/I; применимое основание переиспользовать.
 - [`references/user-artifacts.md`](references/user-artifacts.md) — значимые отчёты, исследования, сравнения, дизайн и демо Claude/Codex: доступный оригинал, предпочтительно HTML в viewer, один канон и обнаружение из эпика. Читать при создании/обновлении результата в design/C/D, не только при закрытии.
 - [`references/product-migration.md`](references/product-migration.md) — read-only inventory/dry run и разбор источников старого проекта.
+- [`references/requirement-copies.md`](references/requirement-copies.md) — `REQUIREMENT_ID_AMBIGUOUS`, несовпадающее чтение после записи или копии, найденные миграцией: безопасная inspection и ограниченное восстановление только полностью равных копий. Не обязательный аудит каждого хода.
 - [`references/migration-package.md`](references/migration-package.md) — поддерживаемый серверный пакет prepare/review/apply/verify/resume/rollback: exact proposal, полные сохранённые источники и additive catalog delta. Capability проверяется отдельно.
 - [`references/migration-adoption.md`](references/migration-adoption.md) — полный переход от сырого проекта к карте, current/proposed/specs и активной работе через существующие протоколы; явный остаток и границы rollback.
 - [`references/product-evolution.md`](references/product-evolution.md) — действующие версии спецификаций, предлагаемые изменения, зрелость/веха, роли документов и явный пользовательский сценарий. Читать при intake, продолжении и поставке среза.
@@ -74,6 +75,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - Починил случайный баг по дороге, не зафайлив его.
 - **Берёшься за работу по трекаемой ноде** (`start_task`, «беру/реализую <фичу>»), по ходу поменялось понимание фичи, или формируешь новую фичу/эпик с нуля.
 - Создал или существенно обновил значимый пользовательский артефакт для трекаемой работы — сохрани доступный результат и ссылку из эпика по [user-artifacts.md](references/user-artifacts.md) в том же ходу.
+- Чтение/запись требования вернуло `REQUIREMENT_ID_AMBIGUOUS` или не совпало с подтверждённой записью — следуй [requirement-copies.md](references/requirement-copies.md); не повторяй update/bulk/delete вслепую.
 - Обсуждается структурная работа, для которой не решено «делать ли» — гейт (шаг 0), не молчаливое оформление.
 
 **Когда НЕ загружать.** Чисто разговорный ход или тривиальная правка, не связанная ни с одной трекаемой нодой.
@@ -152,4 +154,4 @@ Authoring **ведёт** цикл — фичу формируешь ДО код�
 
 ---
 
-**Version:** 2.2.0 (2026-10-11). Добавлено сохранение пользовательских артефактов на работе/эпике через доступный reference или HTML-обзор; соразмерный solution discovery до выбора реализации сохраняется; применимые прежние решения переиспользуются. Рутинные решения в scope автономны; декомпозиция и диаграммы соразмерны задаче; TDD/Trace самодостаточен. Current/proposed, проверка evidence, guards полномочий, миграции и recovery сохранены. Поддержка определяется живыми capabilities, а не версией плагина. История прежних defaults — в CHANGELOG репозитория; она не переопределяет текущие правила.
+**Version:** 2.3.0 (2026-10-11). Добавлен адресный разбор неоднозначных ID требований: remote inspection, восстановление только полностью равных копий и exact retry с сохранением оригиналов; конфликт смысла/статуса не разрешается автоматически. Пользовательские артефакты, соразмерный solution discovery и самостоятельные рутинные решения в scope сохраняются. Декомпозиция и диаграммы соразмерны задаче; TDD/Trace самодостаточен. Current/proposed, evidence, guards полномочий, миграции и recovery сохранены. Поддержка определяется живыми capabilities, а не версией плагина. История прежних defaults — в CHANGELOG репозитория; она не переопределяет текущие правила.
