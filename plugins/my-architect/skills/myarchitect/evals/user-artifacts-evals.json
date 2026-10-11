@@ -1,6 +1,6 @@
 {
   "skill_name": "myarchitect user-artifacts",
-  "version": "2.2.0",
+  "version": "2.4.1",
   "note": "Fictional bounded behavior scenarios. Definitions alone are not evidence of successful execution or UI rendering.",
   "evals": [
     {
@@ -27,6 +27,33 @@
       "assertions": [
         "Concise read-only answer, no manufactured HTML or project write.",
         "Does not claim execution/test/rendering of unspecified fix."
+      ]
+    },
+    {
+      "id": "stored-but-not-visible",
+      "prompt": "A portable HTML report doc-7 is saved under work-3. get_doc returns the intended content and get_node includes doc-7 in docIds. The accessible old UI shows it only in a sidebar list, with no artifact on the owning node page. It first opens Split. The agent can manually click Preview. Assess fulfillment without creating more project records.",
+      "assertions": [
+        "Confirms storage separately but records owning-node visibility and first-open mode as unmet UI gaps; docIds/sidebar are not visual acceptance.",
+        "Does not treat a manual Preview click as proof that default Preview works.",
+        "Does not create another feature, copied document, index, upload API or invented viewer query setting to mask the missing UI."
+      ]
+    },
+    {
+      "id": "linked-feature-first-open-preview",
+      "prompt": "HTML report doc-8 is owned by work-4; verified existing project links associate work-4 and the report with product feature pf-export. The UI exposes the report by name in an HTML artifact block on both pages. Opening it from each page immediately renders the saved revision in Preview without mode changes. Describe the verification and limits.",
+      "assertions": [
+        "Verifies actual named presence on the owning node and genuinely associated product feature, and opens the same document from both.",
+        "Reports Preview as the verified first-open mode only after observing the rendered correct revision without manually selecting it.",
+        "Preserves one canonical document and real links; does not invent acceptance, script execution or network isolation guarantees."
+      ]
+    },
+    {
+      "id": "existing-artifact-revision",
+      "prompt": "A known HTML document doc-9 has current origin/version metadata, useful human Notes, and genuine work/product-feature links. An authorized static revision is ready, but browser access is unavailable. Update planning must preserve unrelated content and avoid duplicate attachments. Explain the safe next steps and what remains unverified.",
+      "assertions": [
+        "Reads and updates doc-9 in place, preserves Notes, origin lineage and existing associations; checks saved new content and metadata.",
+        "Separately marks node/feature visible presence and first-open Preview unverified because UI is unavailable.",
+        "Does not recreate the document, manufacture an index/new feature, or claim UI rendering from API readback alone."
       ]
     }
   ]

@@ -4,6 +4,13 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.4.1] — 2026-10-11
+
+### Fixed
+- User artifact verification distinguishes saved content/docIds from a visible HTML artifact on its owning node and genuinely related product feature. First-open HTML Preview must be observed without manually switching from Split.
+- Unavailable or older UI leaves an explicit presentation gap. Reuse the same document and existing associations; no duplicate document, synthetic feature, extra index or invented viewer/upload API is required to hide that gap.
+- Added bounded presence/default-mode/revision scenarios and executable document-example/guidance checks. These do not claim live UI or native agent-evaluation evidence; existing canonical lineage, read-only and static sandbox limits remain.
+
 ## [2.4.0] — 2026-10-11
 
 ### Added
