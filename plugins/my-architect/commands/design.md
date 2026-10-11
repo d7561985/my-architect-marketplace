@@ -11,4 +11,6 @@ Choose the smallest useful explanation or diagram for the actual uncertainty; an
 
 Keep the spec in the project’s one canonical location with a linked summary on its work node. Create only missing authorized work through Workflow Z, then continue D or return the requested design. A separate plan file and external planning skill are optional unless the project requires them.
 
+Save and present meaningful design/research/demo artifacts through `myarchitect/references/user-artifacts.md` as they appear, with a verified accessible result discoverable from the owning epic.
+
 $ARGUMENTS

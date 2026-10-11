@@ -1,6 +1,6 @@
 ---
 name: myarchitect
-description: Use when working with a my_architect project — tracked work, deferred items, known issues, "what's next?", "отложил", "мы это не потеряем?", feature authoring, initiative or BO-review, current node/docs, epic queue/claim/review/delivery or resuming work, product catalog/taxonomy, nested areas, affected-feature lookup, or organizing a legacy project without losing requirements and history.
+description: Use when working with a my_architect project — tracked work, deferred items, known issues, "what's next?", "отложил", "мы это не потеряем?", feature authoring, initiative or BO-review, current node/docs, user-facing reports/research/demos/artifacts on their epic, epic queue/claim/review/delivery or resuming work, product catalog/taxonomy, nested areas, affected-feature lookup, or organizing a legacy project without losing requirements and history.
 ---
 
 # myarchitect — proactive backlog tracker
@@ -25,6 +25,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - [`references/product-catalog.md`](references/product-catalog.md) — поддержка формата удалённого сервера, дерево областей, глобальный поиск по названию/aliases/tags, связи с работой и запись полного каталога с revision. Читать в init и перед новой/связанной работой.
 - [`references/scoped-context.md`](references/scoped-context.md) — global discovery → явный feature/work target → полный обязательный manifest и точные детали → fresh snapshot при продолжении. Читать в Z/D; пробелы и неизвестная зрелость остаются явными.
 - [`references/solution-discovery.md`](references/solution-discovery.md) — существующее внутреннее/платформенное/внешнее решение целиком или по частям до выбора подхода и плана; критерии, build/adopt/extend/fork/buy и соразмерный поиск. Читать при новом существенном выборе в design/Z/D/I; применимое основание переиспользовать.
+- [`references/user-artifacts.md`](references/user-artifacts.md) — значимые отчёты, исследования, сравнения, дизайн и демо Claude/Codex: доступный оригинал, предпочтительно HTML в viewer, один канон и обнаружение из эпика. Читать при создании/обновлении результата в design/C/D, не только при закрытии.
 - [`references/product-migration.md`](references/product-migration.md) — read-only inventory/dry run и разбор источников старого проекта.
 - [`references/migration-package.md`](references/migration-package.md) — поддерживаемый серверный пакет prepare/review/apply/verify/resume/rollback: exact proposal, полные сохранённые источники и additive catalog delta. Capability проверяется отдельно.
 - [`references/migration-adoption.md`](references/migration-adoption.md) — полный переход от сырого проекта к карте, current/proposed/specs и активной работе через существующие протоколы; явный остаток и границы rollback.
@@ -72,6 +73,7 @@ Skill универсальный: project ID, эпики, релизы, уров
 - Упомянул будущий триггер («at scale», «when paid users arrive», «next tier»).
 - Починил случайный баг по дороге, не зафайлив его.
 - **Берёшься за работу по трекаемой ноде** (`start_task`, «беру/реализую <фичу>»), по ходу поменялось понимание фичи, или формируешь новую фичу/эпик с нуля.
+- Создал или существенно обновил значимый пользовательский артефакт для трекаемой работы — сохрани доступный результат и ссылку из эпика по [user-artifacts.md](references/user-artifacts.md) в том же ходу.
 - Обсуждается структурная работа, для которой не решено «делать ли» — гейт (шаг 0), не молчаливое оформление.
 
 **Когда НЕ загружать.** Чисто разговорный ход или тривиальная правка, не связанная ни с одной трекаемой нодой.
@@ -106,7 +108,7 @@ mcp__my-architect__get_project_context({ pid: "<resolved-pid>" })
 3. **Trace → [traceability.md](references/traceability.md)** — постоянный тест декларирует требование, гейт видит эту связь и исполняется в CI; чувствительность проверена мутацией. Пропуски — явные waivers, не молчание. Команды берутся из local `CLAUDE.md`.
 4. **Close → Workflow A** — после Trace: обычная работа через `complete_task`, managed epic через review и поддерживаемую принятую delivery policy; затем подтверждённые требования/issue, validate и scan-for-gaps. Done детей не поставляет эпик.
 5. **File deferred → Workflow B** — каждый всплывший долг становится нодой: de-dup → parent epic → priority/release (rubric) → `build_hierarchy` → validate. Зарегистрированные проблемы хранятся как issue, связь решения — `closes`.
-- **Docs → Workflow C** — сквозной источник истины; вплетается в Z (создание) и D (работа).
+- **Docs → Workflow C** — сквозной источник истины; вплетается в Z (создание) и D (работа). Значимые пользовательские артефакты сохраняются по [user-artifacts.md](references/user-artifacts.md) сразу по мере появления и доступны из owning epic.
 
 Authoring **ведёт** цикл — фичу формируешь ДО кода, а не дописываешь ноды постфактум.
 
@@ -150,4 +152,4 @@ Authoring **ведёт** цикл — фичу формируешь ДО код�
 
 ---
 
-**Version:** 2.1.0 (2026-10-11). Добавлен соразмерный solution discovery до выбора реализации; применимые прежние решения переиспользуются. Рутинные решения в scope автономны; декомпозиция и диаграммы соразмерны задаче; TDD/Trace самодостаточен. Current/proposed, проверка evidence, guards полномочий, миграции и recovery сохранены. Поддержка определяется живыми capabilities, а не версией плагина. История прежних defaults — в CHANGELOG репозитория; она не переопределяет текущие правила.
+**Version:** 2.2.0 (2026-10-11). Добавлено сохранение пользовательских артефактов на работе/эпике через доступный reference или HTML-обзор; соразмерный solution discovery до выбора реализации сохраняется; применимые прежние решения переиспользуются. Рутинные решения в scope автономны; декомпозиция и диаграммы соразмерны задаче; TDD/Trace самодостаточен. Current/proposed, проверка evidence, guards полномочий, миграции и recovery сохранены. Поддержка определяется живыми capabilities, а не версией плагина. История прежних defaults — в CHANGELOG репозитория; она не переопределяет текущие правила.

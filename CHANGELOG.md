@@ -4,6 +4,19 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] — 2026-10-11
+
+### Added
+- Keep meaningful user-facing reports, research, designs and demos discoverable from their work and epic through existing node-bound documents. Prefer portable single-page HTML/CSS when useful; retain a real accessible original reference.
+- Shared artifact guidance covers source/version/status, updates without duplicate canons, child-to-epic links, readback and actual UI checks.
+
+### Changed
+- Route ordinary work, handoff, document authoring and design through the artifact guidance without requiring HTML for trivial replies or code edits.
+- Explain static versus JavaScript-dependent previews, local-only access gaps and authorized publishing boundaries. No upload API or broader sandbox permission is introduced.
+
+### Fixed
+- Remove the inaccurate claim that the existing iframe sandbox prevents all network requests. Self-contained artifact authoring forbids remote assets; viewer network enforcement is a separate capability.
+
 ## [2.1.0] — 2026-10-11
 
 ### Added
