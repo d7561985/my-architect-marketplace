@@ -1,0 +1,33 @@
+{
+  "skill_name": "myarchitect user-artifacts",
+  "version": "2.2.0",
+  "note": "Fictional bounded behavior scenarios. Definitions alone are not evidence of successful execution or UI rendering.",
+  "evals": [
+    {
+      "id": "local-static-child",
+      "prompt": "Authorized tracked work on child story-c in epic-e, report locally at /work/report.html contains portable full HTML + inline CSS; only current-chat local link exists. No related doc on story/epic. Describe next steps and payload plan so user can review from epic; do not execute fixture writes.",
+      "assertions": [
+        "Uses existing work, reads real IDs/documents, preserves full inspected HTML in node-bound doc with metadata; no made-up upload API/URL.",
+        "Makes child artifact discoverable from epic, uses returned IDs and verified UI base or explicit opening path.",
+        "Readback content/docIds/link and UI where available; keeps execution/permission limits explicit."
+      ]
+    },
+    {
+      "id": "interactive-revision-gap",
+      "prompt": "Existing report-7 belongs to epic-e, with verified accessible fixture source https://reports.example/report/v1 and unrelated human Notes. New interactive React v2 is local-only, no share URL or screenshot. User asks to show result; saving in same project authorized, external publication not authorized. Describe update and unresolved gap without live actions.",
+      "assertions": [
+        "Reuses report-7, preserves unrelated Notes and accessible v1 history; targeted update with real section after read.",
+        "Does not claim v1 link or localhost is shared v2; marks interactive/static limitations and access gap.",
+        "No invented screenshot/content/working interactive preview, sandbox relaxation or public publishing; source-supported static export only if possible."
+      ]
+    },
+    {
+      "id": "read-only-small-explanation",
+      "prompt": "User asks read-only explanation of a two-line typo fix. No artifact requested and no writes authorized. Describe next step only.",
+      "assertions": [
+        "Concise read-only answer, no manufactured HTML or project write.",
+        "Does not claim execution/test/rendering of unspecified fix."
+      ]
+    }
+  ]
+}
