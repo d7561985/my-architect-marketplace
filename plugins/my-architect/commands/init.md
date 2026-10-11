@@ -51,3 +51,7 @@ Local contract (`.architect/traceability.json`):
 The installed runtime requires Node.js 18+ and no packages. Health runs locally, without network, test execution, source mutation, or automatic repair.
 
 $ARGUMENTS
+
+## Workflow upgrade across hosts
+
+Read `references/work-visibility.md` and perform its bounded local instruction review after resolving the binding. Reconcile only evidenced stale generated rules; preserve actual owner restrictions. Persist `.architect/agent-workflow.json` with the real authority source and reviewed instruction hashes. The installer does not acknowledge this semantic review on your behalf. Codex uses the same skill/check as Claude even when SessionStart hooks are unavailable. Accepted implementation includes proportional registration/enqueue/claim without another owner instruction; init alone never activates the historical backlog.

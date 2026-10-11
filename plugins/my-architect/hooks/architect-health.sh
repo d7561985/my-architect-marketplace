@@ -50,6 +50,7 @@ is_architect() {
   [ -f "$1/.mcp.json" ] && grep -Eq '"my[_-]architect"[[:space:]]*:' "$1/.mcp.json" && return 0
   # A declaration can identify usage before pid/init; a brand mention cannot.
   [ -f "$1/CLAUDE.md" ] && declares_architect_usage "$1/CLAUDE.md" && return 0
+  [ -f "$1/AGENTS.md" ] && declares_architect_usage "$1/AGENTS.md" && return 0
   return 1
 }
 if ! is_architect "$root"; then
@@ -61,5 +62,9 @@ if ! command -v node >/dev/null 2>&1; then
   exit 0
 fi
 plugin_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CLAUDE_PROJECT_DIR="$root" node "$plugin_root/scripts/traceability.mjs" health
+if [ "${1:-}" = "--workflow" ]; then
+  CLAUDE_PROJECT_DIR="$root" node "$plugin_root/scripts/workflow-contract.mjs" check
+else
+  CLAUDE_PROJECT_DIR="$root" node "$plugin_root/scripts/traceability.mjs" health
+fi
 exit 0

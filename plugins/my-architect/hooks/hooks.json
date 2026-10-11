@@ -2,7 +2,7 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|clear|compact",
+        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
@@ -13,6 +13,12 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/architect-health.sh\"",
+            "async": false,
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/architect-health.sh\" --workflow",
             "async": false,
             "timeout": 10
           }
