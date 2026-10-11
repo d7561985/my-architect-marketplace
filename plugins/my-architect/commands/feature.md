@@ -1,17 +1,16 @@
 ---
-description: Author a feature from scratch — propose a node tree, then write nodes + requirements + doc
+description: Author authorized feature work with product links, requirements and minimal useful decomposition
 argument-hint: "[feature description]"
 ---
 
-Use the **myarchitect** skill, **Workflow Z** (Authoring a feature from scratch). Resolve the project `pid` via the skill's setup ladder, then:
+Use the **myarchitect** skill, **Workflow Z**. Resolve the exact `pid` through safe intake/setup and read the global product discovery and addressed context references before proposing acceptance. Preserve stable feature IDs, nested placement, current/base/proposed and every mandatory requirement. A prose idea is not an existing target ID.
 
-Before proposing new acceptance, preserve Workflow Z's global product discovery and addressed context read (`references/product-catalog.md` and `references/scoped-context.md`): stable feature/path, all mandatory requirements and exact needed source details. An unavailable reader or unresolved placement remains explicit; a prose idea is not an existing target ID.
+1. Establish the authorized scope from the request and existing decisions. A read-only/draft request returns a proposal without writes. Authoring permission does not by itself authorize implementation.
+2. Reuse existing work or prepare the smallest structure supported by the live preset: one outcome can be one node; children represent independent acceptance, delivery or ownership. Use the available `feature-author` wrapper when useful; otherwise perform Workflow Z directly.
+3. For routine sourced classification/placement and unchanged authorized goals, proceed without another confirmation. Escalate only an unresolved semantic conflict, material goal/scope/priority/UX choice or missing authority; continue independent authorized work. Do not infer availability or accept runtime policy from classification.
+4. Write the authorized nodes, applicable requirements and only needed docs. Set known release/priority values, verify responses, then link real work IDs to product features and the sourced change through the existing catalog/evolution contracts. A restricted subagent returns required actions to its caller rather than bypassing its tool allowlist.
+5. Read back the result and validate; report actual IDs, affected feature paths, status, residual decisions and next step. Creation is not delivery.
 
-1. **Propose, don't write yet.** Dispatch the **feature-author** agent to turn the `$ARGUMENTS` prose into a proposed `build_hierarchy` tree — one shippable top-level node plus a child per independent acceptance slice — using the project's **live** `levelNames` preset from `get_project_context` (never hardcode levels). Alongside the tree, draft the upfront requirements (`FR` behaviour, `NFR` quality/SLO, `SAR` arch constraint, `CON` hard constraint) and an optional doc outline if the logic is non-trivial.
-2. **PROPOSE-then-CONFIRM gate.** Present the proposed tree + upfront FR/NFR/SAR/CON + optional doc to the user and **WAIT for confirmation**. Don't write anything until they approve (adjust on feedback). If the release/priority is contestable, apply the rubric (STOP & ask).
-3. **On confirm — write it:** `build_hierarchy` for the tree; `add_requirement` on the feature node for each agreed requirement; `create_doc({ pid, nodeId })` if the logic is non-trivial (lead with the fact, add a **Source**); `bulk_update_nodes` to set release/priority across the new nodes (check the `successful` / `failed` arrays).
-4. **Verify, don't claim silently.** `validate_project({ pid })` → clean, then echo the created IDs (feature / stories / requirements / doc). Only then is the feature authored.
-
-Authoring leads the lifecycle — the tree is formed and confirmed *before* code, not backfilled. Keep this a thin wrapper; the logic lives in Workflow Z.
+Keep this wrapper thin: detailed contracts and the lifecycle live in the skill. Sources and links lead the code and stay current during work.
 
 $ARGUMENTS

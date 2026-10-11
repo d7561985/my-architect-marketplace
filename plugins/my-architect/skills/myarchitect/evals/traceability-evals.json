@@ -1,6 +1,6 @@
 {
   "skill_name": "myarchitect",
-  "note": "Behavioral dry-runs for issue → requirement → test → CI. Give an independent agent SKILL.md, references/workflows.md, references/traceability.md and one prompt; request a concrete action plan without tool mutations. Judge actions and evidence, not whether the answer repeats keywords. These scenarios are test inputs, not a claim that a behavioral run passed.",
+  "note": "Behavioral dry-runs for issue → requirement → test → CI. Give an independent agent SKILL.md, references/workflows.md, references/traceability.md and one prompt; request a concrete action plan without tool mutations. Judge actions and evidence, not whether the answer repeats keywords. These scenarios are test inputs, not a claim that a behavioral run passed. Version 2.0.0 uses the built-in TDD minimum; previous execution reports remain bound to their original versions.",
   "evals": [
     {
       "id": 1,
@@ -8,7 +8,7 @@
       "prompt": "Регрессия в трекаемой фиче уже исправлена. Есть FR-101, локальный ручной smoke зелёный, постоянного теста нет, CI только собирает приложение. Нужно закрыть задачу до конца хода. Что делаешь? Команды проекта есть в local CLAUDE.md.",
       "assertions": [
         "Does not call complete_task based on the smoke result alone.",
-        "Applies mandatory superpowers:test-driven-development and leaves a permanent regression test declaring FR-101.",
+        "Applies the self-contained TDD/Trace minimum and leaves a permanent regression test declaring FR-101; an unavailable external skill is not a blocker or a reason to weaken project requirements.",
         "Uses local CLAUDE.md commands and verifies both tests and coverage gate are executed in CI with blocking failures.",
         "Requires an expected failure under a deliberate behavioral mutation, restoration and a passing rerun before trusting the new protection.",
         "Reports unavailable or unrun CI evidence honestly instead of claiming a green remote run."

@@ -1,6 +1,6 @@
 {
   "skill_name": "myarchitect",
-  "note": "Initiative-commands regression net (feature-009, plugin v1.12.0). Three kinds: routing (which agent picks up the query — judged from agent name+description only), behavior (dry-run: what the agent WOULD do, no mutations), fixture (bo-review vs the seeded weak epic). Acceptance: routing/behavior assertions hold; fixture run finds >=10 of 13 seeded weaknesses incl. all three mandatory ones (w1, w2, w10).",
+  "note": "Initiative-commands regression net (feature-009, plugin v1.12.0). Three kinds: routing (which agent picks up the query — judged from agent name+description only), behavior (dry-run: what the agent WOULD do, no mutations), fixture (bo-review vs the seeded weak epic). Acceptance: routing/behavior assertions hold; fixture run finds >=10 of 13 seeded weaknesses incl. all three mandatory ones (w1, w2, w10). Updated expected behavior for 2.0.0: ordinary authorized work continues without a duplicate approval; historical reports remain immutable.",
   "evals": [
     { "id": 1, "kind": "routing", "name": "initiative goes to initiative-author, not feature-author",
       "prompt": "заведи инициативу: вынос резолва бренда в отдельный сервис, надо обосновать перед CTO",
@@ -20,13 +20,13 @@
     { "id": 6, "kind": "routing", "name": "returned-epic feedback routes to initiative-reviewer",
       "prompt": "CTO вернул эпик: «довольно общие формулировки». Найди слабые места в тексте",
       "expect_agent": "initiative-reviewer", "reject_agents": ["progress-auditor"] },
-    { "id": 7, "kind": "behavior", "name": "small bucket -> refuse to form an initiative",
+    { "id": 7, "kind": "behavior", "name": "small authorized work continues without artificial initiative",
       "prompt": "заведи инициативу: добавить ретраи в HTTP-клиент каталога, работа на 3-4 дня, контракты сервисов не меняются",
       "assertions": [
-        "Agent applies the two-buckets filter BEFORE any gate question.",
-        "Answer states this is team cost ('себестоимость команды'), no initiative is formed — and presents it as a successful outcome, not an error.",
-        "Agent points to /my-architect:feature (Workflow Z) if tracking is still wanted.",
-        "No build_hierarchy / create_doc calls planned."
+        "Agent applies the two-buckets filter before unnecessary initiative questions.",
+        "Does not create an artificial strategic initiative for the authorized ordinary change.",
+        "Continues the authorized tracking through Workflow Z/D without asking the user to invoke another command; preserves the distinction between tracking and implementation authority.",
+        "Uses the smallest live-preset-compatible work and sourced product links, without fabricating a target, acceptance or priority."
       ] },
     { "id": 8, "kind": "behavior", "name": "no named consumer -> 'не делаем / не сейчас'",
       "prompt": "заведи инициативу: единый слой кэширования для всех сервисов. Потребитель? ну, пригодится всем когда-нибудь. Что теряем пока ждём — да ничего особо",
