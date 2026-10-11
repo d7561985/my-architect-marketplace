@@ -4,6 +4,17 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.5.0] — 2026-10-11
+
+### Added
+- Capability-gated explicit requirement conflict recovery: read every same-snapshot full-source detail window, bind each output or archived source to an accepted decision, preserve original bytes and review references after splitting IDs. Applicable existing decisions are reused without asking the owner again for each ID.
+- Opt-in requirements/issues availability readers retain accessible facts and explicit conflicts. Partial results cannot replace the full registry/index, prove absence, or satisfy readiness/closure with missing required evidence.
+- Bounded conflict, status-drift, source-window, reference-review, unknown-outcome and partial-read scenarios plus executable documentation payload checks. These are not claims of live project repair or universal agent reliability.
+
+### Changed
+- Keep existing identical-only inspection/consolidation and strict default readers unchanged. New resolution requires observed app/MCP support; plugin installation does not hot-update an existing process or authorize replay of old status plans.
+- Local continuation guidance distinguishes unresolved semantic choices from already authorized recovery, preserving read-only scope, real owner constraints, exact-request retry and recovery conflicts.
+
 ## [2.4.1] — 2026-10-11
 
 ### Fixed

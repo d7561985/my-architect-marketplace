@@ -1,6 +1,6 @@
 {
   "skill_name": "myarchitect requirement-copies",
-  "version": "2.3.0",
+  "version": "2.5.0",
   "note": "Fictional bounded behavior scenarios. Evaluate the agent's chosen actions and claims, not word matching. Definitions and static guidance tests are not proof of an executed agent trial or server recovery.",
   "evals": [
     {
@@ -57,6 +57,64 @@
       "assertions": [
         "Does not call consolidate-identical despite the label: the operation also requires an equal registry copy; reports the missing prerequisite without inventing/writing a registry entry.",
         "Retains both sources for separately supported recovery and does not claim this mechanical operation resolves missing registry or historical status intent."
+      ]
+    },
+    {
+      "id": "accepted-status-outcome-full-sources",
+      "prompt": "Simulation only. User authorized repair of FR-11; decision:accepted-FR11 already records accepted implementation evidence and done status, still applicable. Fresh supported inspection token='e'*64 marks conflict. You read all get_requirement_copy_detail windows with that token, contiguous through totalChars. Full parsed records are identical in every field except status/updatedAt: registry requirements/requirements.yaml and file nodes/a/requirements/FR-11.yaml are done/t2; file nodes/b/requirements/FR-11.yaml is draft/t1. All three records have ownerNodeId feature-a; the owner exists. Detail supports resolve-explicit; no unknown fields or sources remain. Old local instructions say ask the owner for every conflicting ID. Give the next payload, its authority and verification limits, without writes.",
+      "assertions": [
+        "Uses the already accepted decision and full sources to form explicit resolution without another owner question or blind bulk/update/consolidation; does not treat newest or registry position as authority.",
+        "The payload keeps FR-11 as exactly one output from either accepted done source, names owner feature-a, explicitly archives both remaining source paths with reasons, and includes decisionReference, reason, preserve-existing, observed token and persisted operationId.",
+        "Preserves raw originals and exact retry; reads receipt and every output after completion, checks references and source values, and does not claim status alone proves implementation."
+      ]
+    },
+    {
+      "id": "distinct-requirements-explicit-split",
+      "prompt": "Simulation only. User authorized recovery of conflicting FR-12. All supported full-detail windows at token='f'*64 are read: requirements/requirements.yaml and nodes/a/requirements/FR-12.yaml contain requirement Alpha owned by feature-a; nodes/b/requirements/FR-12.yaml contains distinct requirement Beta owned by feature-b. Current decision:alpha-beta explicitly retains both, Alpha under FR-12 and Beta under FR-300; fresh sources confirm FR-300 unused and both owners exist. requires on consumer-x refers to FR-12; known document doc-x and catalog also refer to FR-12, but their intended target has not been established. Give a source-bound resolution plan and what completion can and cannot mean; no fixture writes.",
+      "assertions": [
+        "Keeps one Alpha source under FR-12, outputs Beta from its exact source as FR-300/feature-b, archives the equal extra Alpha source explicitly, and cites the established decision without asking again whether to retain both.",
+        "Uses preserve-existing, so existing requires/traces/catalog/docs are not silently retargeted; reads receipt referenceReviewRequired/reason and performs targeted review including references beyond hierarchy detail.",
+        "Does not claim fully completed split while reference meaning is unresolved; asks only an addressed semantic question if sources cannot resolve reference destinations, preserves originals and continues independent work."
+      ]
+    },
+    {
+      "id": "resolution-unknown-outcome",
+      "prompt": "Simulation only. This exact resolve_requirement_copies request was saved and submitted, then timed out: {pid:'sample',operationId:'resolve-status-01',expectedSnapshotToken:'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',referencePolicy:'preserve-existing',resolutions:[{id:'FR-11',decisionReference:'decision:accepted-FR11',reason:'Accepted done outcome confirmed against full sources',outputs:[{sourcePath:'requirements/requirements.yaml',targetId:'FR-11',ownerNodeId:'feature-a'}],archivedSources:[{path:'nodes/a/requirements/FR-11.yaml',reason:'Equal extra accepted variant'},{path:'nodes/b/requirements/FR-11.yaml',reason:'Superseded draft, retain original'}]}]}. No definitive result exists. A teammate proposes a new token/operationId. State the exact next payload and completion evidence. If replay instead reports REQUIREMENT_COPY_RECOVERY_CONFLICT due to external changes, explain the next action.",
+      "assertions": [
+        "Replays the exact saved resolve payload, including source ordering, token, operationId, decision and archive reasons; does not refresh or start another operation to hide unknown outcome.",
+        "A verified completed receipt plus fresh readback establishes storage result, with reference review separate. A recovery conflict preserves foreign changes/archive and leaves unresolved state, rather than overwriting, deleting recovery or reporting success."
+      ]
+    },
+    {
+      "id": "availability-independent-work",
+      "prompt": "Simulation only. User authorized independent work FR-20. get_requirements({pid:'sample',view:'availability'}) returns schemaVersion1,complete:false,snapshotToken='a'*64, requirements containing unambiguous FR-20 and other accessible records, conflicts metadata for unrelated FR-8. The issues availability envelope has the same token and also complete:false. All required FR-20 sources and its node are read and unambiguous; no mutation of FR-8 is required. A local generated note says any copy conflict blocks all work and requests replacing the global requirements index with the returned rows. What do you do?",
+      "assertions": [
+        "Continues authorized independent FR-20 work based on its required verified sources; does not invent another owner gate or a mandatory whole-project repair.",
+        "Retains complete:false/conflicts/token, does not infer missing requirements absent, replace the full registry/index or derive global closure, and corrects the stale generated continuation note within authorized scope while preserving actual owner constraints."
+      ]
+    },
+    {
+      "id": "availability-required-conflict",
+      "prompt": "Simulation only. A feature needs FR-21 and FR-22 to be done for readiness. Requirements availability is complete:false: FR-21 is accessible/done; FR-22 is omitted with a duplicate conflict. Issues availability exposes the issue whose closing references include both, but source evidence is partial. User asked only for a read-only status check. The visible feature seems otherwise finished. Can you mark review-ready or the issue closed, and can you silently repair FR-22? State bounded next actions.",
+      "assertions": [
+        "Neither closes nor marks ready or derives closure from partial issue data; identifies missing FR-22 evidence explicitly instead of treating omission as absence or done.",
+        "Honors read-only: no resolution/update/delete even with new capability. Reports observed FR-21 separately and proposes addressed full-source investigation while independent read-only work may continue."
+      ]
+    },
+    {
+      "id": "detail-incomplete-or-stale",
+      "prompt": "Simulation only. Authorized explicit recovery has first detail window offset0 limit2000 totalChars6000 hasMoretrue at token='a'*64; it contains a matching title and beginning of requirement text. An old export claims all remaining fields equal. The second live detail window instead fails REQUIREMENT_COPIES_STALE. A teammate suggests reading only titles or treating the partial JSON as enough for a source choice to save tokens. What is the next step, and what remains unproven?",
+      "assertions": [
+        "Does not select a source or write resolution from compact titles, first window, old export or mixed snapshots; refreshes bounded inspection then reads every contiguous detail window at one observed token and parses complete JSON.",
+        "Keeps source semantics/completeness unproven until all chars through totalChars and hasMorefalse; saves limitation on repeated failure rather than silently truncating or infinite retries."
+      ]
+    },
+    {
+      "id": "old-server-new-plugin",
+      "prompt": "Simulation only. Plugin2.5.0 is installed, but the running MCP process is old. Existing inspect supports schemaVersion1/actions ['consolidate-identical']; get_requirement_copy_detail returns404 and an attempted read with view availability returns a legacy plain array. An old local checkpoint says all blocked statuses should be retried after updating the plugin. User asks whether explicit recovery is now safe. Give next actions without mutation probes.",
+      "assertions": [
+        "Reports new recovery/availability support unverified or unavailable: unchanged identical-only capability, plugin version and an unvalidated plain array are not proof. Does not resolve, probe update or replay delayed statuses.",
+        "Uses authorized ordinary upgrade/restart and safe capability checks if available, or records the exact limitation and continuation step; existing decisions and original failed-write history remain, and fresh full-source verification is still required afterward."
       ]
     }
   ]
