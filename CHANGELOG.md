@@ -4,6 +4,18 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] — 2026-10-11
+
+### Added
+- Proportional solution discovery before a new implementation choice: check native host capabilities, existing code, community plugins, OSS and services for the whole outcome or a component.
+- Compare fit, integration and continuing ownership: prefer a suitable maintained upstream plus thin integration; make copying, forks and custom implementation deliberate decisions.
+- Compact sourced rationale, refresh triggers and written behavioral scenarios; scenario definitions alone do not establish executed agent behavior or savings.
+
+### Changed
+- Route design, feature authoring, ordinary work/resume and initiative sketches through one shared procedure, including thin command/agent wrappers.
+- Reuse decisive requirements and accepted choices; ask only material missing questions, and do not run a market survey for each small fix. Restricted tools produce a precise caller research gap rather than a false claim that no solution exists.
+- Existing authorization, delivery, migration and source-preservation contracts remain unchanged; discovery grants no additional installation, purchase or data-transfer authority.
+
 ## [2.0.0] — 2026-10-11
 
 ### Changed
