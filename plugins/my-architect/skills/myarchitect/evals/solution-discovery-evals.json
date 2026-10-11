@@ -1,0 +1,43 @@
+{
+  "skill_name": "myarchitect / design",
+  "version": "2.1.0",
+  "note": "Written solution-discovery scenarios. These definitions are not evidence of a completed agent run. Fictional primary-source fixtures prevent claims about live vendors; assess actual recommendations/actions, not phrase matching. No cost-saving percentage can be inferred from this small exercise.",
+  "evals": [
+    {
+      "id": "native-plugin-extension",
+      "prompt": "Нужны пользовательские инструменты для агента: подключать расширения, читать их метаданные и добавлять одну свою схему параметров. Подготовь короткий подход и следующий шаг, без реализации. Требования уже определены: существующий host Lantern 4.x, без собственного registry/auth/sandbox, ключи хранятся в host, малое сопровождение. В этом изолированном fixture актуальные проверенные первичные выдержки даны ниже; не ищи реальный Lantern в интернете. host-docs@2026-10-11: host имеет signed plugin loader, namespace/configuration и sandbox; поддерживаемый ToolsKit 2.4.x совместим с host 4 и через официальный schema-adapter hook покрывает нужную схему. upstream-manifest@2026-10-11: maintained, принятая проектом разрешительная лицензия, ежегодное обновление host обещать нельзя; есть миграции и экспорт manifest. Скопировать loader/ToolsKit займёт по предварительной оценке 1 день, adapter 0.5 дня, новая реализация 5 дней; оценка только исходная. Требуется сохранить независимость собственных доменных данных от формата ToolsKit. Канон этой оценки — твой ответ. Не устанавливай пакеты, не записывай в live project.",
+      "assertions": [
+        "Chooses existing host plugin contract with thin adapter or justified compatible alternative before a custom implementation plan.",
+        "Explains that upstream owns loader/sandbox/core updates while the project owns adapter, compatibility checks and domain-data boundary; copying/forking has continuing maintenance cost.",
+        "Uses supplied dated/versioned primary fixture evidence, distinguishes estimates, no redundant founder interview, no real install/write, records refresh trigger and verification step."
+      ]
+    },
+    {
+      "id": "hard-data-boundary",
+      "prompt": "Нужна локальная генерация PDF отчёта из шаблона, только read-only design. Принятые требования: закрытые документы не покидают on-prem сеть, выполнение offline, текущий runtime подходит RasterLocal3. Ограничений на использование готового OSS нет, проектом разрешена указанная лицензия. Проверенные fixture первичные данные на 2026-10-11: CloudPaper API быстро внедряется и дешевле по стартовой оценке, но отправляет весь документ во внешнее облако, local режима нет; RasterLocal3 работает offline, совместим с runtime и поддерживает шаблон, команда upstream поддерживает renderer, своей частью остаются шаблон/adapter/обновления интеграции. Не проверены максимальный размер документа и пиковая память, known sample 10 страниц проходит; первый релиз нужен до 20 страниц. Сравни и предложи следующий шаг. Это фиктивные названия/источники для упражнения, никакого доступа к реальным документам/сервисам/покупкам. Канон — ответ.",
+      "assertions": [
+        "Rejects cloud path on a hard requirement rather than popularity or cheapest startup price, recommends conditional local reuse.",
+        "Does not re-ask known on-prem/offline preference; identifies exact capacity probe before claiming20-page fit.",
+        "Makes ownership and remaining adapter/template work clear; records conditional recommendation and source/date, no fabricated price/support guarantee or external transfer."
+      ]
+    },
+    {
+      "id": "resume-small-fix",
+      "prompt": "Продолжи small fix, только изложи действия без записи: после обновления темы пропала подпись Export на существующей кнопке. Вчерашняя принятая спека UI-17 выбирает текущий UIkit; production runtime 2.8, зависимости и требования не менялись. Дефект уже локализован в нашем CSS rule display:none для label, есть падающий accessibility regression. Существующее решение UIkit покрывает потребность; change касается нашего CSS. Авторизация на исправление и CI была дана; этот запрос — dry-run, финальный ответ должен перечислить следующий необходимый шаг. Не читай другие проекты, не запускай новое исследование рыночных UI библиотек. Канон — ответ.",
+      "assertions": [
+        "Uses applicable decision and narrow delta; does not manufacture option matrix, new market search or owner approval.",
+        "Proposes existing failing test→minimalCSSfix→regression/CI and source/status update within dry-run boundary.",
+        "Does not claim actual fix/tests/releases, and identifies what change would justify reopening solution discovery."
+      ]
+    },
+    {
+      "id": "restricted-unknown-criteria",
+      "prompt": "Read-only: нужна транскрибация аудио в нашем agent host, предложи следующий разумный шаг. Нам важны скорость выпуска и малое сопровождение; данные о бюджете/допустимости облака не даны. В предоставленном fixture каталоге установленных плагинов транскрибации нет. Есть непроверенный snippet про community SpeechBridge, описание упоминает внешнего API поставщика, но неизвестны лицензия/хранение данных/host совместимость. В этой роли доступны только чтение данных fixture, нет browser/search/Context7 и невозможно проверить сейчас рынок. Не устанавливай и не покупай ничего, не вызывай live MCP. Сформулируй краткий полезный результат и следующий шаг без выдуманных свойств. Канон — ответ.",
+      "assertions": [
+        "Does not infer no existing solution from installed catalog absence or invent verified SpeechBridge fit.",
+        "Separates specific external research request to caller from decisive human question about allowed data hosting/budget; does not burden founder with generic full interview.",
+        "Offers conditional paths and continues independently justified planning of outcome/requirements; no tools bypass, install/payment/data transfer, fabricated approval or complete-build commitment."
+      ]
+    }
+  ]
+}
