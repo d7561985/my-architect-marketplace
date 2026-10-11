@@ -4,6 +4,16 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] — 2026-10-11
+
+### Added
+- Targeted requirement-copy inspection and recovery guidance for ambiguous IDs, read-after-write mismatches and migration findings. Discover the remote schema/actions, page a bounded report and consolidate only explicitly selected, fully equal parsed records with a registry copy.
+- Persistent operation IDs, observed snapshot tokens, exact-request recovery after uncertain outcomes, private archived originals and post-operation readback. Written behavior scenarios cover conflicts, unsupported servers, stale pages, retry and read-only boundaries.
+
+### Changed
+- Requirement closure classifies failures before retrying; `successful` without matching readback is not confirmed synchronization. Ordinary work does not require a new global copy audit.
+- Plugin version is never a signal to retry old writes. Conflicting statuses/content, malformed sources and stale recovery state remain explicit; the workflow does not choose the newest copy, treat the registry as a semantic winner or replay a historical bulk plan.
+
 ## [2.2.0] — 2026-10-11
 
 ### Added
