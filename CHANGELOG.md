@@ -4,6 +4,17 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.4.0] — 2026-10-11
+
+### Added
+- Accepted implementation work becomes visible through proportional work reuse/creation, agent enqueue and own claims without a second owner permission round. Existing constraints, read-only scope, historical work and other agents' ownership remain protected.
+- Portable repository workflow review receipt with exact project identity, owner instruction source and hashes of reviewed AGENTS.md/CLAUDE.md. Read-only startup/resume checking and the same explicit skill route for hosts without hooks detect stale generated guidance without re-auditing everything or rewriting user rules automatically.
+- Capability-gated holder-only root/child `update_progress` guidance, preserving stage, claim, wait, review and delivery rules. Unsupported progress remains an explicit unsynchronized board field.
+
+### Fixed
+- `next` uses atomic `claim_child` for coordinators as well as independent workers; legacy task recommendation no longer implies child ownership or a managed `start_task` bypass.
+- Data/capability failures do not become invented owner enqueue gates; no mass activation of historical roots, duplicate microfix epics or claims forged for external agents.
+
 ## [2.3.0] — 2026-10-11
 
 ### Added

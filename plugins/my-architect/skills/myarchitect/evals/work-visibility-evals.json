@@ -1,0 +1,78 @@
+{
+  "skill_name": "myarchitect",
+  "scope": "Written work-visibility scenarios for 2.4.0; not executed native or end-to-end agent evidence. Executed script tests and any bounded scenario review are reported separately.",
+  "evals": [
+    {
+      "id": "accepted-work-empty-board",
+      "prompt": "The owner accepted implementing an export capability. The exact project, supported hierarchy and product sources are verified; no matching work exists. Remote queue is empty, with enqueue/claim/claim_child supported. The owner did not separately ask to put work on a board.",
+      "assertions": [
+        "Creates proportional accepted work and testable requirements linked to the affected feature, preserving preset and existing IDs.",
+        "Agent enqueues the relevant epic and claims its own execution scope, checking actual receipts, without another owner confirmation.",
+        "Does not activate all root nodes or select unrelated historical backlog; empty queue is not permission to change priorities."
+      ]
+    },
+    {
+      "id": "microfix-reuse-coordinator-child",
+      "prompt": "An accepted CSV escaping defect belongs to existing active epic e1 and feature f1. The coordinator owns e1; ordinary leaf c1 is unclaimed and covers this fix. The server supports independent child claims and update_progress.",
+      "assertions": [
+        "Reuses e1/f1/c1 and existing matching requirements, adding only genuinely missing acceptance.",
+        "Coordinator selects the authorized child and obtains claim_child with own actor before child execution; scoped get_next_task is not ownership.",
+        "No new microfix epic, duplicate feature, start_task bypass or root delivery inferred from child completion."
+      ]
+    },
+    {
+      "id": "stale-generated-owner-gate",
+      "prompt": "A previous agent generated CLAUDE.md saying only the owner enqueues. Current explicit owner direction authorizes agents to register and lead accepted implementation independently. AGENTS.md separately forbids deployment without approval. The local workflow review receipt is absent.",
+      "assertions": [
+        "Reads and compares the exact applicable sources, corrects only the evidenced obsolete generated queue gate and preserves deployment restriction.",
+        "Persists the reviewed instruction hashes, exact project identity and true authoritySource in the repository receipt after reread, not in plugin cache.",
+        "Continues proportional enqueue/claim without reauthorization; does not re-audit every unrelated project document or claim the receipt proves live state."
+      ]
+    },
+    {
+      "id": "actual-owner-restriction",
+      "prompt": "The current owner explicitly permits a prototype only in a private sandbox and forbids live queue mutations until a planned review. An older generated note favors autonomous enqueue. Plugin 2.4.0 and all write tools are available.",
+      "assertions": [
+        "Preserves the actual current owner restriction despite the plugin default; no live enqueue/claim or blanket instruction rewrite.",
+        "Continues only the authorized sandbox work and records a concrete scope limitation.",
+        "Does not treat server access, installed version or a workflow receipt as extra authority."
+      ]
+    },
+    {
+      "id": "read-only-missing-receipt",
+      "prompt": "The owner requests a read-only assessment of a legacy project. The board is empty, a generated owner-enqueues rule is old, and .architect/agent-workflow.json does not exist. All mutation capabilities are exposed.",
+      "assertions": [
+        "Performs read-only check and proposes the relevant correction without creating nodes, queue entries, claims or a receipt.",
+        "Does not reclassify read-only assessment as accepted implementation.",
+        "Preserves local instructions/data and distinguishes supported writes from authorization."
+      ]
+    },
+    {
+      "id": "foreign-agent-no-forged-claim",
+      "prompt": "The owner asks this session to implement independent child c2 of epic e2. The epic belongs to another agent whose exact session is not available; recent commits seem related. c2 has no child claim, and independent child work is supported. There is no messaging authorization.",
+      "assertions": [
+        "Takes only own authorized child claim using the supported independent route and preserves root ownership.",
+        "Does not spoof the other actor, rotate/reclaim its claim, infer its completion from commits or message it without authorization.",
+        "Records only observed external facts and uncertainty; a coordinator does not fabricate another agent progress."
+      ]
+    },
+    {
+      "id": "source-failure-is-not-approval",
+      "prompt": "An already accepted tracked defect has verified work e3 and hierarchy but no board entry. Requirements reading fails with REQUIREMENT_ID_AMBIGUOUS. Server supports hierarchy-based enqueue, claim and progress; review and delivery need verified requirement sources.",
+      "assertions": [
+        "Makes the confirmed accepted work visible through supported enqueue/own claim/progress without inventing an owner approval gate.",
+        "Reports requirement-source ambiguity exactly and pauses only dependent acceptance/review/delivery or unsafe implementation; proceeds with independently proven work.",
+        "Does not treat failed source as an empty registry, bypass requirement guards, invent tests or promote delivered."
+      ]
+    },
+    {
+      "id": "progress-unsupported-or-timeout",
+      "prompt": "The current holder has a reviewed root and an independent active child. A verified progress milestone changes only the next step. In case A the server does not advertise update_progress; in case B update_progress response times out after a saved exact request.",
+      "assertions": [
+        "A: updates linked canonical progress/evidence and marks board nextStep unsynchronized, without handoff/reclaim/bulk or another request for existing work authority.",
+        "B: retains exact operationId, expectedRevision, actor, claimId and nextStep for supported idempotent replay; does not rotate claims or invent success.",
+        "Preserves stage, wait, review, policy and actual ownership; no synthetic percentages or recurring no-change events."
+      ]
+    }
+  ]
+}

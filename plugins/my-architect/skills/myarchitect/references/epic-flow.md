@@ -35,7 +35,7 @@ get_epic_flow_capabilities({ pid })
 
 Современные legacy task tools тоже проверяют flow: `EPIC_FLOW_CAPABILITY_UNSUPPORTED`/`EPIC_FLOW_CAPABILITY_UNAVAILABLE` означают ограничение подключения, не разрешение обойти его через `update_node`, bulk, move или full replace. Независимые адресные чтения, разбор источников и авторизованная настройка Trace могут продолжаться. Старый workflow допустим только для подтверждённо unmanaged работы через реально поддерживаемые инструменты; неизвестное состояние не считать unmanaged. Успешный GET не доказывает права записи.
 
-Onboarding — отдельная явная команда `enqueue` для принятого существующего epic/initiative с `nextStep`. Init, просмотр, создание дерева, слово «эпик» и legacy done этого решения не заменяют. Не включай автоматически root или всё дерево. Создание/decomposition работы остаётся в Z/I/B; создание ноды не равно её принятию в очередь или claim.
+Принятое поручение на реализацию уже разрешает агенту выполнить `enqueue` для подходящего существующего либо только что созданного epic/initiative с `nextStep`, затем получить собственный claim: [work-visibility.md](work-visibility.md). Это явная серверная команда агента, а не дополнительная команда/одобрение владельца. Init, read-only просмотр, непринятая идея и legacy done не разрешают активировать всю историю; автоматически root или всё дерево не включай. Создание ноды, enqueue и claim требуют отдельных проверенных server receipts, но не повторных человеческих согласований.
 
 ## 2. Компактный контекст и точечные источники
 
@@ -97,7 +97,7 @@ get_next_task({ pid, scopeEpicId: ownedEpicId, claimId: currentClaimId,
 
 Обязательны все три поля scope/claim/assignee; текущий epic должен быть `in-progress`, без wait/cancel. Выбираются подходящие leaf descendants; вложенные managed epics и чужие/blocked/in-progress дети не входят. `EPIC_FLOW_SCOPE_REQUIRED` с причиной `MISSING_SCOPE`, `UNKNOWN_SCOPE`, `EPIC_WAITING`, `EPIC_NOT_IN_PROGRESS` или `CLAIM_MISMATCH` требует перечитать claim/состояние, а не глобального fallback. `no_eligible_tasks` не равно `all_done` или delivered. Наличие даже только исторических entries не позволяет молча вернуться к общей legacy очереди.
 
-Для параллельных исполнителей внутри одного эпика проверь живые `get_next_child_work` и `get_child_work_claims`:
+Для исполнения отдельного child — в том числе самим coordinator — проверь живые `get_next_child_work` и `get_child_work_claims`:
 
 ```ts
 get_next_child_work({ pid, scopeEpicId, assignee: independentWorker })
@@ -123,7 +123,8 @@ Legacy `start_task`/`complete_task`/`block_task` запрещены для са�
 
 | action.type | Поля / смысл |
 |---|---|
-| `enqueue` | `nodeId, nextStep`; только явно принятое включение существующего epic/initiative. |
+| `enqueue` | `nodeId, nextStep`; агент регистрирует принятое поручение в подходящем epic/initiative без нового owner gate; не активирует непринятый backlog. |
+| `update_progress` | `nodeId, claimId, nextStep`; только текущий holder root либо child claim и только при live capability. Stage, claim, wait, review и policy не меняются. |
 | `reorder` | `nodeIds` — все неотменённые IDs, включая delivered, ровно один раз; не только текущая страница. |
 | `set_wait` | `nodeId, claimId` для занятого эпика; `wait:{kind:'blocked'|'human-decision',reason,responsible,nextStep}`; stage/claim/order сохраняются. |
 | `clear_wait` | `nodeId, claimId` если занят, `reason`; только обычный blocked wait. Human-decision так снять нельзя. |
@@ -136,6 +137,21 @@ Legacy `start_task`/`complete_task`/`block_task` запрещены для са�
 | `update_policy` | Только explicit account UI; полная `policy:{activeLimit,delivery,source,decisionReference}`. Delivery = null либо `{id,criteria:[{id,description}],requiresHuman:false,confirmationMode:'automation'|'account-session'}`. Prepared proposal не означает принятие. Legacy requiresHuman:true читается без reinterpretation; для account assurance нужно явное replacement решение. |
 
 Для queued без claim `set_wait`/`clear_wait`/`cancel` не передают claimId. Summary/reason сохраняются в flow event; ими не заменяют исходное описание эпика. Текущее разрешение на работу/размещение не проси повторно; новый вопрос нужен при неразрешённом смысле или изменении принятого scope/policy. Read-only audit не выполняет ни один action.
+
+### Прогресс без смены владельца или этапа
+
+Используй только если живой `get_epic_flow_capabilities({pid}).capabilities.commands` содержит `update_progress`; версия плагина сама этого не доказывает. Сохрани точный request и отправь от текущего holder:
+
+```ts
+apply_epic_flow_command({ pid, command: {
+  operationId: savedProgressId, expectedRevision: observedFlowRevision, actor: sessionActor,
+  action: { type: 'update_progress', nodeId: ownedWorkId, claimId: currentClaimId, nextStep: verifiedNextStep }
+}})
+```
+
+Для root readback — затронутая `flow.entries`, для child — `flow.childClaims.items`; проверь receipt и точные node/claim/nextStep. `EPIC_CLAIM_MISMATCH`/`EPIC_CLAIM_OWNER_MISMATCH`, `CHILD_CLAIM_MISMATCH`/`CHILD_CLAIM_OWNER_MISMATCH` и `EPIC_CANCELLED` означают, что прежний контекст не даёт обновления; перечитай, не подставляй чужой actor. `EPIC_FLOW_REVISION_CONFLICT` требует обычной reconciliation; timeout — exact replay. Review и wait сохраняются: описать следующий шаг можно, снять блокировку/сменить решение этой командой нельзя. Без активного claim или после delivered не создавай фиктивное владение ради прогресса.
+
+Независимые enqueue/claim/child claim/progress опираются на проверенный work/hierarchy/flow; сбой постороннего requirement source не надо превращать в просьбу владельцу «разрешить очередь». Если текущий сервер отклонил операцию, сохрани точную ошибку и intent, не обещай успех и не обходи guards. Review/delivery по-прежнему требуют проверенных источников и принятой policy. При неподдержанном update_progress сохрани факты/следующий шаг в связанном документе и явно укажи, что board nextStep ещё не синхронизирован.
 
 ## 5. Review, текущие требования и честная поставка
 
