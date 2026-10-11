@@ -24,3 +24,14 @@ Three additional static regression checks failed on these contradictions before 
 ## Outstanding evidence
 
 Native task execution and confirmation that the review corrections resolve the findings remain separate gates. This report does not claim that the written scenarios passed in an installed host, that agents always populate the product map, or that cost decreased. No live project migration, release or installation was performed by these preparation checks.
+
+## Routing clarification — 2026-10-11
+
+The ordinary catalog and migration instructions previously left the boundary between a new work link and filling an inherited unclassified mapping ambiguous. The core now defines that boundary by the origin of the affected delta, with factual source/mapping evidence. Entry and write references share the rule: an inherited orphan mapping requires the migration package; a new authorized delta in an understood mapped scope uses catalog CAS. A genuinely new proposed feature lacking current behavior does not itself trigger migration. Missing capability leaves only dependent mapping pending.
+
+Added three written cases for these branches and corrected older catalog expectations that permitted direct replacement of legacy inventory. These are expectation updates, not rescored historical runs. Earlier frozen candidates and their observed results remain unchanged; no native-agent pass or cost reduction is inferred from this clarification.
+
+- Existing test suite: **88 passed, 0 failed**; executable helper regressions and documentation checks both ran. The static checks establish consistency, not agent decisions.
+- Official `claude plugin validate` passed for marketplace and plugin. All 20 Markdown frontmatters, 19 plugin JSON files and 73 relative links in changed skill Markdown parsed/resolved with the existing local parser.
+- The optional skill-creator Python validator could not run because PyYAML is absent from both available Python runtimes. No dependency was installed; official plugin validation and direct frontmatter parsing above succeeded.
+- Independent read-only review found no remaining actionable route contradiction. Targeted native validation of the corrected candidate is a separate release check; no new model run, installation, release or live-project write was performed for these checks.

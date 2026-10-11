@@ -4,7 +4,7 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
-## [2.0.0] — 2026-10-10
+## [2.0.0] — 2026-10-11
 
 ### Changed
 - Major version: routine sourced classification, placement and design inside an existing authorized scope no longer require blanket owner confirmation or a default STOP. Real unresolved goals, semantic conflicts, material scope/priority/UX choices and missing authority still require an addressed decision; independent work can continue. Commands and agent/design wrappers follow the same rule.
@@ -12,6 +12,9 @@ This project follows [Semantic Versioning](https://semver.org/).
 - Event Storming, WBS and USM are selected for actual flow risk or usefulness. An epic label alone no longer forces a new diagram, extra review or duplicated plan/spec file.
 - TDD/Trace is self-contained, including expected failing behavior, minimal correction, permanent requirement-linked tests, CI and evidence checks. External skills are optional extensions; project-specific requirements are preserved.
 - The skill core links to release history rather than embedding superseded defaults. Updated written scenarios and cross-entry consistency checks are not claims of native-agent success or reduced cost.
+
+### Fixed
+- Clarifies the write-route boundary: new authorized work in a factually understood, mapped scope uses catalog CAS; mapping inherited unclassified/orphan sources requires the migration package even for a small sourced v2 edit. Missing package capability leaves that mapping pending while independent work continues; no alternative writer or repeated routine approval. A new explicitly proposed feature without current behavior does not require re-migration. Written catalog/migration cases follow the same boundary; earlier frozen trials remain unchanged.
 
 ### Preserved
 - Global discovery, nested product areas, aliases, stable feature/work IDs, current/base/proposed and ordinary lifecycle synchronization.

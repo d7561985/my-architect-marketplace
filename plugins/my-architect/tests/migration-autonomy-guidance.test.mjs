@@ -25,5 +25,5 @@ test('adoption distinguishes independent protocols, unknown current and queue fr
 test('written first-session scenarios never count as native proof',()=>{
  const evals=JSON.parse(read('skills/myarchitect/evals/migration-autonomy-evals.json'));
  assert(evals.scope.includes('not executed'));assert.equal(new Set(evals.evals.map(e=>e.id)).size,evals.evals.length);
- for(const name of ['entry-first-no-repair','conflict-is-local','hold-survives-new-ids','unknown-current-active-queue','native-first-session-evidence'])assert(evals.evals.some(e=>e.name===name&&e.prompt&&e.assertions.length>=3),name);
+ for(const name of ['entry-first-no-repair','conflict-is-local','hold-survives-new-ids','unknown-current-active-queue','native-first-session-evidence','inherited-unclassified-no-package','mapped-scope-new-work-no-remigration','new-proposed-feature-without-current'])assert(evals.evals.some(e=>e.name===name&&e.prompt&&e.assertions.length>=3),name);
 });

@@ -55,6 +55,38 @@
         "Score from actual reads/mutations/final state: no lost sources/IDs, no fabricated current, correct independent slice and visible conflict residual.",
         "Separate helper HTTP calls from MCP calls, authenticate through the isolated supported host route, preserve failed attempts and do not claim a synthetic trial proves every live project."
       ]
+    },
+    {
+      "id": 6,
+      "name": "inherited-unclassified-no-package",
+      "prompt": "Fix one authorized caption defect in an existing project. Before this task, feature pf-find already has areaId:null, classification:proposed and impacts:[]; accepted areas and a source unambiguously place it in Workspace > Find. The full catalog GET reports remoteSchemaVersion:2 and replace_product_catalog is available, but migration package tools are absent. The repository test commands and assigned work are known. State and execute only supported actions.",
+      "assertions": [
+        "Recognizes that filling the inherited unclassified placement and missing work mappings is adoption, regardless of the small code task, clear meaning, accepted area or valid schema.",
+        "Does not use replace_product_catalog, raw HTTP/files or another writer to bypass unavailable migration capability; does not require a rejected call when the capability tool is absent.",
+        "Keeps the sourced mapping proposal and exact missing-capability next step pending; preserves existing IDs and unrelated sources.",
+        "Continues the independent authorized code, tests and work records without requesting redundant taxonomy approval or declaring adoption complete."
+      ]
+    },
+    {
+      "id": 7,
+      "name": "mapped-scope-new-work-no-remigration",
+      "prompt": "An existing feature pf-find has an accepted Workspace > Find placement, source-backed mapping decisions, preserved prior impacts and an exact current specification. Fresh addressed reads confirm the affected sources and established mapping. Implement newly authorized work w-caption and add its impact; this work has no impact yet because it was just created. Catalog v2 CAS is supported; migration tools are absent. No old orphan or source mapping is being resolved.",
+      "assertions": [
+        "Uses ordinary catalog CAS for the new work impact after fresh complete catalog and relevant source reads, preserving other content and stable IDs.",
+        "Uses the read sources, prior mapping decisions and existing links as the basis for route choice; catalog revision or accepted labels alone are insufficient.",
+        "Does not require a migration package, a complete-project inventory or another owner confirmation merely because this new work needs its first impact.",
+        "Maintains the precise proposed/current delta, requirements and verification; missing package tools do not block this ordinary route."
+      ]
+    },
+    {
+      "id": 8,
+      "name": "new-proposed-feature-without-current",
+      "prompt": "The owner authorized a new capability in a source-understood product area. Global discovery and addressed source reads find no existing capability or legacy work to map. Create its stable product record, requirements and authorized work link. This new capability is explicitly proposed and has no current spec or delivered behavior. Catalog v2 CAS is supported.",
+      "assertions": [
+        "Treats this newly authorized proposed capability as ordinary lifecycle work, not inherited legacy adoption because current is absent.",
+        "Creates only the supported sourced proposal/work links, preserving unrelated content and IDs; never invents current, available or delivery evidence.",
+        "Does not perform global re-migration or request repeated routine approval; a genuine source/scope conflict would remain a separate addressed decision."
+      ]
     }
   ]
 }
