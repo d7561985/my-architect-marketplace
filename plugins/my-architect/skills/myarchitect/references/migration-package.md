@@ -26,6 +26,7 @@ prepare_migration_package({pid, package:{
   proposals:[{id,sourceRefs,role,featureIds,rationale,status}],
   catalog: ProductCatalogContentV2,
   rationale, unresolved:[{recordKey,reason}], flatReason?,
+  sourceBindings?:[{source,recordKeys,reason}], // только после actual v3 discovery
   serverBackup:{operationId,manifestDigest}
 }})
 ```
@@ -35,6 +36,18 @@ prepare_migration_package({pid, package:{
 `proposals.role`: `product-feature | change | history | constraint | unresolved`; `status`: `proposed | conflict`. `sourceRefs` содержит точные `records[].key`, а не source ID или выдуманный URI. Каждый новый area/feature имеет собственное основание, разрешающееся в inventory. Все старые ID сохраняются. Local-only requirement не добавляется в серверный `requirementIds`, пока поддерживаемый серверный resolver его не знает: происхождение/остаток сохраняются отдельно, новая битая ссылка не является переносом.
 
 Кандидат содержит вложенные `parentId`, primary `areaId`, отдельные aliases/tags и stable IDs. Всё во flat/Unclassified не считается законченной классификацией. Простому продукту допустима обоснованная малая глубина через `flatReason`; это объяснение структуры, не факт поставки продукта. Существующая accepted classification не переносится на изменившуюся смысловую границу автоматически. У pending migration package можно явно предложить target `classification:accepted` для конкретных before/after: это запрашиваемый результат, который агент проверит в порученном scope либо передаст на account review. Prepare и authenticated review не изменяют каталог; accepted попадает в каталог только при apply после принятия exact digest. Если target оставлен proposed, apply не повышает его молча. Старый read-only audit по-прежнему требует proposed для новых/изменённых границ. Lifecycle новой фичи остаётся proposed независимо от принятия таксономии — это не доказательство поставки поведения.
+
+### Старые текстовые ссылки каталога → проверяемые записи
+
+Если `catalog.sources` содержит человеческую ссылку вместо exact recordKey, сначала прочитай её фактический исходник и объявленный inventory целиком. Вызови `get_migration_package_capabilities({pid,protocolVersion:3})`: нужны `schemaVersion:3`, `sourceBindings:'record-keys'` и прежние guards automation/holds. v1/v2 не менялись; unsupported/404/неизвестная v3 не разрешают пробный prepare, удаление поля или обход через raw catalog write. Наличие нового плагина не обновляет уже открытый MCP-процесс.
+
+В optional immutable `sourceBindings:[{source,recordKeys,reason}]` поле `source` — **точный исходный текст** ссылки, `recordKeys` — непустой список точных `records[].key`, `reason` — проверенное основание соответствия. Исходный `catalog.sources` сохраняется: не заменяй текст фиктивным URI и не переписывай исторический источник. В bindings нет default, старый request без поля сохраняет прежний digest/replay. Нельзя переопределять существующий exact recordKey, повторять source или ключи, придумывать отсутствующую запись. Новое намеренное изменение bindings меняет immutable request; неизвестный исход требует чтения того же package ID и exact retry, а не нового package ID.
+
+Однозначное соответствие в уже порученном scope агент устанавливает сам, используя принятое решение и фактически прочитанный источник; дополнительный вопрос владельцу для каждой ссылки не нужен. Если соответствие неоднозначно или исходник недоступен, не выбирай по совпадению заголовка: сохрани конкретный residual/вопрос и продолжай независимую часть. Это привязка происхождения, не доказательство выполнения требования и не новая authority.
+
+Проверяй before **и** after, включая ссылку, удалённую из target, затронутые дочерние области и impacts. Binding не выбирает winning copy: весь объявленный physical inventory сохраняется, проверка включает identity/proposal closure и все объявленные варианты, даже с одинаковым содержимым. Conflicts, unresolved и account holds сохраняются; смена alias, package/feature ID их не отменяет. Серверная проверка недостающих вариантов остаётся по `(kind,id,payloadDigest)` — новая привязка сама по себе не доказывает наличие всех не объявленных идентичных физических копий. Полнота источников и сохранение raw originals остаются отдельной обязанностью.
+
+Перед review дочитай `section:'sourceBindings'`, exact JSON windows при `truncatedFields`, весь соответствующий inventory и свежий `reviewBlockers`. Compact summary не достаточен для смыслового решения. Offline compose сохраняет эти поля после объединения полных inventory, сетевой prepare helper тоже требует actual v3, даже для account mode или пустого `sourceBindings:[]`. Не добавляй пустое поле в старые запросы ради косметики.
 
 ### Полные metadata без переписывания моделью
 
@@ -67,7 +80,7 @@ node <plugin-root>/scripts/prepare-migration-package.mjs prepare \
 
 ```ts
 get_migration_package({pid,packageId,expectedProposalDigest,expectedSnapshotToken,
-  section:'summary'|'reviewHistory'|'sources'|'records'|'reconciliation'|'residual'|'proposals'|
+  section:'summary'|'reviewHistory'|'sourceBindings'|'sources'|'records'|'reconciliation'|'residual'|'proposals'|
           'taxonomyChanges'|'areas'|'features'|'impacts'|'findings'|'auditGaps',
   offset:0,limit:10})
 // при truncatedFields: тот же section и возвращённый detailIndex

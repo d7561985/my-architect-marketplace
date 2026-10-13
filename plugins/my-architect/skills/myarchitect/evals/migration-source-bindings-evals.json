@@ -1,0 +1,66 @@
+{
+  "skill_name": "myarchitect",
+  "scope": "FR-073 written fictional source-binding cases; not executed native evidence",
+  "evals": [
+    {
+      "id": 1,
+      "name": "authorized-known-origin",
+      "prompt": "The user authorized organizing the scheduling capability. The saved catalog source is exactly 'Planning note'. You read the original and its requirement FR-12; the full inventory includes recordKeys 'server#FR-12' and 'retained#FR-12' with equal semantic digests. Actual v3 reports sourceBindings:record-keys and all previous automation guards. The intended classification is already established. What do you prepare and how do you verify it?",
+      "assertions": [
+        "Proceeds under existing authority without asking the owner to approve each clear binding or recreating the feature ID.",
+        "Keeps original catalog.sources text and full inventory including both physical variants; declares sourceBindings source exactly Planning note with actual recordKeys and specific evidence reason.",
+        "Does not treat a binding as a winner selection, source audit completion or product delivery proof; resolves applicable residual and reads exact binding/diff/review blockers before review."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "missing-original",
+      "prompt": "A saved source says 'Founder specification, old plugin'. There is no matching exact record or available original. A teammate proposes creating key 'legacy:verified' or pointing the binding at the first requirement with a similar title. The user authorized this migration.",
+      "assertions": [
+        "Rejects an invented key or title-only match; authorization does not establish source evidence.",
+        "Preserves the exact source text and explicit missing/unavailable residual; asks only the concrete unresolved semantic question if needed.",
+        "Continues independent authorized scope and does not use raw catalog writes to bypass provenance."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "unsupported-v3",
+      "prompt": "New plugin is installed. Actual protocolVersion:3 capability call returns HTTP404, while v2 automation works. The saved immutable request has sourceBindings:[] and account-session review mode. Can the agent drop the field or POST once to try?",
+      "assertions": [
+        "Does not post or silently remove the field, even though it is empty or the mode is account-session.",
+        "Reports precise unsupported capability and preserves the saved request; checks installed runtime/restart without claiming an existing MCP process updated itself.",
+        "Continues independent reads and work; no alternate writer or downgrade."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "hold-new-spelling",
+      "prompt": "An account deferred a package grounded in a retention document. New sourceBindings map a differently spelled label to the same requirement records. A teammate suggests changing package and feature IDs to avoid the old hold.",
+      "assertions": [
+        "Keeps the account hold and reads fresh exact reviewBlockers; aliases and new IDs do not remove the source footprint.",
+        "Does not automation-accept, apply, raw-write or impersonate an account resolution.",
+        "Presents the exact held package/proposalDigest/reviewRevision for a real account decision while independent scope continues."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "unknown-prepare",
+      "prompt": "The complete bound request was saved and prepare timed out after POST. No receipt or external-change evidence is available. The agent wants a new packageId and shorter bindings to reduce the request. What next?",
+      "assertions": [
+        "Reads the SAME packageId before retrying and preserves the exact submitted request, operation identity and uncertainty.",
+        "Does not change bindings, omit physical variants, reconstruct a full request from compact summary or create a new package to escape an unknown outcome.",
+        "Uses exact JSON continuation and a consistent package snapshot; a prepare receipt is not live apply/verify completion."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "removed-before-and-conflicting-copy",
+      "prompt": "The target catalog removes 'Old plan' from an existing feature's sources. The baseline still contains it. Its binding resolves to FR-19 record A; the full inventory also contains record B with the same ID but different acceptance text. An unrelated feature is clear. Is checking only the target sufficient?",
+      "assertions": [
+        "Checks before and after, affected descendants/impacts and identity/proposal closure; removing the source from target does not remove its provenance obligation.",
+        "Keeps both variants and the real conflict; a binding to A does not bless A over B or clear an unresolved source.",
+        "Continues the independent feature under valid authority, without claiming the whole project complete."
+      ]
+    }
+  ]
+}

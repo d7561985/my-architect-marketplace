@@ -4,6 +4,17 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.6.0] — 2026-10-13
+
+### Added
+- Optional immutable migration source bindings relate historical source text to exact inspected inventory records while preserving originals. Preparation requires explicit protocol-v3 capability; old packages, account holds, review decisions and exact replay remain intact.
+- Bounded source-binding and HTML/export behavior scenarios plus executable helper/contract regressions. These are scoped checks, not proof of every agent session or automatic migration.
+
+### Changed
+- Artifact guidance distinguishes saved originals from derived static previews. The updated viewer blocks external resources and navigation; older sandbox-only viewers do not establish network isolation. Verified original references stay outside the iframe; do not weaken policy or silently overwrite source content.
+- Server PNG export supports owning-node hierarchy WBS/USM. Unsupported renderers and detached DSL require a verified specific reference or actual UI export, never substitution with an unrelated whole-project diagram.
+- Discover actual app/MCP support before using new bindings. Installations must refresh their running sessions; plugin updates alone do not update the deployed viewer.
+
 ## [2.5.0] — 2026-10-11
 
 ### Added
