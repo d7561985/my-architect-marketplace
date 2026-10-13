@@ -71,3 +71,21 @@ test('valid immutable bindings do not permit arbitrary remote state text in stdo
  setResponse({replayed:false,package:{schemaVersion:1,rulesVersion:1,pid:'fixture',packageId:request.packageId,state:'mcp_fixture-only-key private source details',request,requestDigest:hash(request),baseline,diff,proposalDigest:hash({request,baseline,diff})}});
  const r=await prepare();assert.equal(r.code,1);assert.equal(JSON.parse(r.stdout).code,'PREPARE_RESPONSE_INVALID');assert(!r.stdout.includes('mcp_fixture'));assert(!r.stdout.includes('private source details'));await assert.rejects(fs.stat(resultFile));
 }));
+
+test('compose preserves explicit textual bindings and every physical variant, then probes actual v3',()=>fixture(async({save,compose,prepare,requests,setCap,requestFile})=>{
+ const p=plan();p.sourceBindings=[{source:'Historical schedule note',recordKeys:['snapshot/FR-2'],reason:'Read exact original and its stable requirement identity'}];await save('plan.json',p);
+ const composed=await compose();assert.equal(composed.code,0,composed.stdout);const saved=JSON.parse(await fs.readFile(requestFile,'utf8'));
+ assert.deepEqual(saved.package.sourceBindings,p.sourceBindings);assert.deepEqual(saved.package.records,inventory().records);assert.equal(requests.length,0);
+ setCap({schemaVersion:3,sourceBindings:'record-keys',pid:'fixture',supported:true,reviewAuthority:'authenticated-principal',reviewModes:['account-session','automation'],automationGuards:{affectedSources:true,accountReviewHolds:true},maxInputBytes:16777216});
+ const prepared=await prepare();assert.equal(prepared.code,0,prepared.stdout);assert.equal(requests[0].url,'/api/projects/fixture/migration-packages/capabilities?protocolVersion=3');assert.deepEqual(JSON.parse(requests[1].body).sourceBindings,p.sourceBindings);
+}));
+test('binding validation rejects invented keys, overrides, repeated sources and empty rationale before output',()=>fixture(async({save,compose,requestFile,requests})=>{
+ for(const binding of [{source:'Note',recordKeys:['missing'],reason:'Read'},{source:'snapshot/FR-2',recordKeys:['export/FR-1'],reason:'Override'},{source:'Note',recordKeys:[],reason:'Empty'},{source:'Note',recordKeys:['snapshot/FR-2','snapshot/FR-2'],reason:'Repeated'},{source:'Note',recordKeys:['snapshot/FR-2'],reason:' '}]){const p=plan();p.sourceBindings=[binding];await save('plan.json',p);assert.equal((await compose()).code,1);await assert.rejects(fs.stat(requestFile));}
+ const p=plan(),binding={source:'Note',recordKeys:['snapshot/FR-2'],reason:'Read'};p.sourceBindings=[binding,binding];await save('plan.json',p);assert.equal((await compose()).code,1);await assert.rejects(fs.stat(requestFile));assert.equal(requests.length,0);
+}));
+test('v2 or unknown v3 cannot silently downgrade a bound request, even account-mode or empty bindings',()=>fixture(async({save,compose,prepare,requests,setCap})=>{
+ const p=plan();delete p.reviewMode;p.sourceBindings=[];await save('plan.json',p);const c=await compose();assert.equal(c.code,0,c.stdout);
+ for(const cap of [{schemaVersion:2,sourceBindings:'record-keys'},{schemaVersion:3},{schemaVersion:4,sourceBindings:'record-keys'}]){
+ setCap({...cap,pid:'fixture',supported:true,reviewAuthority:'authenticated-principal',reviewModes:['account-session','automation'],automationGuards:{affectedSources:true,accountReviewHolds:true},maxInputBytes:16777216});const result=await prepare();assert.equal(result.code,1);assert.equal(JSON.parse(result.stdout).code,'PREPARE_CAPABILITY_UNSUPPORTED');}
+ assert.equal(requests.length,3);assert(requests.every(request=>request.method==='GET'&&request.url.endsWith('?protocolVersion=3')));
+}));
