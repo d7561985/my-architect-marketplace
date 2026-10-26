@@ -4,6 +4,15 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.6.1] — 2026-10-26
+
+### Fixed
+- Separate ordinary child progress from explicit epic acceptance, including legacy epics outside the board. Agents continue authorized enqueue, claims, review and confirmation under the actual policy without an extra owner gate.
+- Inspect historical legacy `done` only within the assigned scope: preserve verified acceptance and unknown evidence, require proof and fresh ownership for corrections, and never bulk-reset or automatically enqueue history. Raw legacy epic `done` alone does not justify issue closure.
+- Keep managed child completion evidence in its release event or document and omit `summary` from completion to preserve the original scope. Progress readers distinguish epic acceptance gaps from ordinary rollup lag; unavailable verifiers do not erase historical confirmations.
+- Read optional MCP `epicCompletion` observations without treating them as delivery readiness. Missing fields and older servers require parent/flow readback; updating the plugin cache does not hot-reload active MCP processes or prove that remote cascade behavior changed.
+- Add permanent guidance regressions and bounded written completion scenarios. These checks are not proof of every agent session or live historical migration.
+
 ## [2.6.0] — 2026-10-13
 
 ### Added
