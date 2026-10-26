@@ -58,6 +58,8 @@ test('legacy acceptance preserves old results and does not fabricate delivery or
   assert.match(flow, /already|уже[\s\S]*done/i);
   assert.match(flow, /доступн[\s\S]*результат[\s\S]*редакци/);
   assert.match(flow, /type[\s\S]*level[\s\S]*preset[\s\S]*префикс/);
+  assert.match(flow, /нормализованному[\s\S]*type[\s\S]*epic[\s\S]*initiative[\s\S]*flow/);
+  assert.match(flow, /level[\s\S]*preset[\s\S]*контекст[\s\S]*не превращают[\s\S]*Feature[\s\S]*Epic/);
 });
 
 test('Workflow A separates managed child completion from legacy summary replacement', () => {
@@ -80,6 +82,7 @@ test('progress readers preserve the ordinary rollup vs epic acceptance distincti
   const auditor = read('agents/progress-auditor.md');
   const command = read('commands/progress.md');
   assert.match(auditor, /status-rollup-lag[\s\S]*ordinary[\s\S]*legacy epic[\s\S]*not automatically drift/);
+  assert.match(auditor, /normalized[\s\S]*semantic type[\s\S]*flow[\s\S]*level[\s\S]*preset[\s\S]*do not turn[\s\S]*Feature[\s\S]*Epic/);
   for (const text of [auditor, command]) {
     assert.match(text, /epic-flow\.md#завершение-декомпозиции-и-явная-приёмка-эпика/);
     assert.match(text, /legacy[\s\S]*acceptance/i);
