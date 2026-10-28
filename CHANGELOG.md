@@ -4,6 +4,12 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.7.0] — 2026-10-28
+
+### Changed
+- Tree depth equals the project's level count. When work needs a deeper level, agents add one with the new MCP tool `add_hierarchy_level` (app/MCP 1.12.0) instead of placing nodes higher or around the limit. Presets are listed with five levels; projects created before app 1.12.0 on four-level presets received the fifth automatically.
+- Documentation-contract regressions for this guidance. They do not prove the behaviour of every agent session; running sessions need a restart to see the new MCP tool.
+
 ## [2.6.1] — 2026-10-26
 
 ### Fixed
