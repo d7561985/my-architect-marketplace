@@ -4,6 +4,14 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.8.0] — 2026-11-09
+
+### Changed
+- An epic is a finite outcome: its "before → after", scope and out-of-scope are fixed when it is created, and its done criterion does not grow with each new request. A standing direction or product capability ("… cycle", "… platform", "… improvements" with no end state) is a catalog area or an initiative, not an epic.
+- Choosing a parent (work visibility, Workflow B, `forming-nodes.md` → Parent) puts work into an open epic only when that epic's fixed outcome needs it. A matching topic or area is not enough; otherwise the work becomes a new epic or separate work. Previously "use the active epic if one exists" let a broadly named open epic absorb every related request.
+- The 6–8 features budget is checked on every addition to an existing epic, not only at creation. Scope grows only by an explicit owner-approved scope change.
+- Documentation-contract regressions for this guidance (`finite-epic-guidance.test.mjs`). They do not prove the behaviour of every agent session.
+
 ## [2.7.0] — 2026-10-28
 
 ### Changed
