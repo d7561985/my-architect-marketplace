@@ -25,7 +25,7 @@ Install the plugin in one place: either in your Claude account, which syncs it i
 
 ## How it connects
 
-The MCP server is `https://my-architect.app/mcp`. You sign in once with your Google account and approve the app on a consent screen; no API key is stored in the plugin or in your environment. You can see and disconnect every connected app in My Architect under **API Keys → Connected apps**. For headless use with an API key, add a separate server with an `Authorization` header as described in the [connection guide](https://my-architect.app/docs/connect-ai-agent/).
+The MCP server is `https://my-architect.app/mcp`. You sign in once with your Google account and approve the app on a consent screen; no API key is stored in the plugin or in your environment. You can see and disconnect every connected app in My Architect under **Connect agents → Connected apps** (account menu). For headless use with an API key, add a separate server with an `Authorization` header as described in the [connection guide](https://my-architect.app/docs/connect-ai-agent/).
 
 ## What runs where
 
