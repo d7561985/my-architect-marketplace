@@ -4,13 +4,20 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [3.0.1] — 2026-11-24
+
+### Fixed
+- The MCP server URL is the literal `https://my-architect.app/mcp`. The `${MY_ARCHITECT_MCP_URL:-…}` form from 3.0.0 is refused by the Anthropic plugin directory ("MCP server URL is not https"), and Claude chat and Cowork do not expand it. For local development add your own server instead.
+- The plugin folder has its own README, a square icon (`.claude-plugin/icon.png`) and `privacyPolicyUrl`, as the directory requires.
+- The README leads with installing the plugin in Claude Desktop, claude.ai and Cowork, where it also syncs into Claude Code.
+
 ## [3.0.0] — 2026-11-24
 
 ### Changed
 - The plugin's MCP server is now the remote endpoint `https://my-architect.app/mcp` (MCP Streamable HTTP) instead of a local `npx @my-architect/mcp` process. The server name and tool names are unchanged, so skills, agents and commands keep working.
 - No API key in env: `/mcp` → **Authenticate** signs in once with OAuth through Google. Claude Code keeps and refreshes the sign-in.
 - **Breaking for key installs:** the plugin no longer reads `MCP_API_KEY`. After updating, authenticate once in `/mcp`. Claude Code turns off OAuth for any server with a fixed `Authorization` header or a headers helper, so the plugin server cannot offer both; for headless use add your own server with `--header` (see README).
-- `MY_ARCHITECT_MCP_URL` overrides the endpoint for local development. `MA_API_URL` and `MCP_API_KEY` remain for the traceability sync script.
+- `MA_API_URL` and `MCP_API_KEY` remain for the traceability sync script.
 - Requires app 1.13.0, which serves `/mcp` and the OAuth authorization server. Running sessions need a restart to pick up the new server definition.
 - Regression tests for the server definition (`remote-mcp-auth.test.mjs`). They do not prove the sign-in in every Claude Code version.
 

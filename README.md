@@ -1,19 +1,20 @@
 # my-architect-marketplace
 
-Official Claude Code plugin marketplace for **[My Architect](https://my-architect.app)** — visual architecture diagrams with AI integration via MCP.
+Official plugin marketplace for **[My Architect](https://my-architect.app)** — visual architecture diagrams with AI integration via MCP. Works in Claude Desktop, claude.ai, Cowork and Claude Code.
 
 Install once and you get:
 - The `myarchitect` skill — Claude proactively tracks deferred items, caveats, and known issues as my_architect backlog nodes, and asks before making ambiguous priority calls.
-- Auto-configured MCP server — `@my-architect/mcp` is wired up automatically; you only supply your API token.
+- The My Architect MCP server (`https://my-architect.app/mcp`) — you sign in once with Google; no API key.
+
+**Claude Desktop, claude.ai, Cowork:** Customize → Plugins → Add → Add marketplace → `d7561985/my-architect-marketplace` → install **my-architect** → on its **Connectors** tab press **Connect**. The plugin then also appears in Claude Code signed in with the same account. The Claude Code-only steps follow below; see [the plugin README](plugins/my-architect/README.md) for details.
 
 ---
 
 ## Prerequisites
 
 1. A My Architect account at [my-architect.app](https://my-architect.app).
-2. An API token from the **API Keys** page (user menu → API Keys).
-3. Claude Code (CLI or IDE extension).
-4. A browser to sign in once. Node.js is not needed for the MCP server any more.
+2. Claude Desktop, claude.ai, Cowork, or Claude Code (CLI or IDE extension).
+3. A browser to sign in once. No API key and no Node.js are needed for the MCP server.
 
 ---
 
@@ -172,7 +173,6 @@ The `my-architect-mcp local-migration` subcommand preserves an explicitly declar
 | Env var | Required | Default | What it controls |
 |---|---|---|---|
 | `MCP_API_KEY` | no | — | API key for the traceability sync script and for a server you add yourself with `--header`; the plugin's server signs in with OAuth |
-| `MY_ARCHITECT_MCP_URL` | no | `https://my-architect.app/mcp` | Remote MCP endpoint — override only for local development (e.g. `http://localhost:3100/mcp`) |
 | `MA_API_URL` | no | `https://my-architect.app` | Backend URL for the traceability sync script (not the MCP server) |
 
 ---
