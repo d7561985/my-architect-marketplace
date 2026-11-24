@@ -29,9 +29,15 @@ The actual product (the My Architect app + the `@my-architect/mcp` server source
    - **minor** (`1.0.0 → 1.1.0`) — new triggers in the skill, new workflows added, new MCP tools surfaced, new skill files added.
    - **major** (`1.0.0 → 2.0.0`) — breaking change in the decision rubric, removed workflows, renamed MCP env vars, anything that could surprise an existing install.
 
-3. **Add a CHANGELOG entry** under a new `## [X.Y.Z] — YYYY-MM-DD` heading. Use today's date. List what changed in `### Added / Changed / Removed / Fixed` subsections.
+3. **Rebuild the directory edition** after any change under `plugins/my-architect`:
+   ```bash
+   node scripts/build-directory-edition.mjs
+   ```
+   `directory/my-architect` is generated — never edit it by hand. `tests/directory-edition.test.mjs` fails in CI when it is stale.
 
-4. **Commit and tag:**
+4. **Add a CHANGELOG entry** under a new `## [X.Y.Z] — YYYY-MM-DD` heading. Use today's date. List what changed in `### Added / Changed / Removed / Fixed` subsections.
+
+5. **Commit and tag:**
    ```bash
    git add -A
    git commit -m "chore: release v<X.Y.Z> — <short summary>"

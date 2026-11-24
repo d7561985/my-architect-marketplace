@@ -4,6 +4,14 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [3.0.2] — 2026-11-24
+
+### Added
+- `directory/my-architect` — the edition submitted to the Anthropic plugin directory, built from `plugins/my-architect` by `node scripts/build-directory-edition.mjs`. The directory accepts hooks, scripts and some frontmatter keys only from Verified organizations, so this edition has the skills, agents, commands and the remote MCP server without them. Agent tool limits and preloaded skills become instructions in the agent text; steps that run `scripts/*.mjs` say they need the full edition. Its README has no key examples.
+- `tests/directory-edition.test.mjs` fails when the edition is stale or holds a file type, frontmatter key or credential read the directory refuses. CI runs it.
+
+The full plugin in this marketplace is unchanged.
+
 ## [3.0.1] — 2026-11-24
 
 ### Fixed
