@@ -1,6 +1,6 @@
 {
   "name": "my-architect",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Skills, agents and the remote My Architect MCP server for planning and delivering work with Claude — in Claude Desktop, claude.ai, Cowork and Claude Code. Sign in once with Google; no API key.",
   "homepage": "https://my-architect.app",
   "license": "MIT",

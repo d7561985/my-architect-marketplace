@@ -229,6 +229,8 @@ This repo is a Claude Code plugin marketplace — a thin distribution layer. The
 plugins/my-architect/
 ├── .claude-plugin/plugin.json           ← plugin manifest + mcpServers config + version
 └── skills/myarchitect/SKILL.md          ← skill source of truth
+directory/my-architect/                  ← generated edition for the Anthropic plugin directory (no hooks or scripts)
+scripts/build-directory-edition.mjs      ← builds it: node scripts/build-directory-edition.mjs [--check]
 CHANGELOG.md                             ← release history (semver)
 README.md                                ← user-facing docs (this file)
 CLAUDE.md                                ← guidance for Claude when editing this repo
