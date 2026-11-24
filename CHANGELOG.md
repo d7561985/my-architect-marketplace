@@ -4,6 +4,16 @@ All notable changes to the `my-architect` plugin are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [3.0.0] — 2026-11-24
+
+### Changed
+- The plugin's MCP server is now the remote endpoint `https://my-architect.app/mcp` (MCP Streamable HTTP) instead of a local `npx @my-architect/mcp` process. The server name and tool names are unchanged, so skills, agents and commands keep working.
+- No API key in env: `/mcp` → **Authenticate** signs in once with OAuth through Google. Claude Code keeps and refreshes the sign-in.
+- **Breaking for key installs:** the plugin no longer reads `MCP_API_KEY`. After updating, authenticate once in `/mcp`. Claude Code turns off OAuth for any server with a fixed `Authorization` header or a headers helper, so the plugin server cannot offer both; for headless use add your own server with `--header` (see README).
+- `MY_ARCHITECT_MCP_URL` overrides the endpoint for local development. `MA_API_URL` and `MCP_API_KEY` remain for the traceability sync script.
+- Requires app 1.13.0, which serves `/mcp` and the OAuth authorization server. Running sessions need a restart to pick up the new server definition.
+- Regression tests for the server definition (`remote-mcp-auth.test.mjs`). They do not prove the sign-in in every Claude Code version.
+
 ## [2.8.0] — 2026-11-09
 
 ### Changed
