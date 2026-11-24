@@ -13,23 +13,13 @@ Install once and you get:
 1. A My Architect account at [my-architect.app](https://my-architect.app).
 2. An API token from the **API Keys** page (user menu → API Keys).
 3. Claude Code (CLI or IDE extension).
-4. Node.js ≥ 20 (for the bundled MCP server).
+4. A browser to sign in once. Node.js is not needed for the MCP server any more.
 
 ---
 
 ## Install
 
-### 1. Set your API token
-
-Export the token in the shell from which you launch Claude Code:
-
-```bash
-export MCP_API_KEY=mcp_YOUR_TOKEN
-```
-
-Make this permanent by adding the line to `~/.zshrc` / `~/.bashrc` / equivalent.
-
-### 2. Add the marketplace and install the plugin
+### 1. Add the marketplace and install the plugin
 
 In Claude Code:
 
@@ -37,6 +27,20 @@ In Claude Code:
 /plugin marketplace add d7561985/my-architect-marketplace
 /plugin install my-architect@my-architect-marketplace
 ```
+
+### 2. Sign in
+
+Run `/mcp`, choose `my-architect` and **Authenticate**. Your browser opens my-architect.app: sign in with Google and press **Allow**. No key to copy or store.
+
+Claude Code keeps the sign-in and refreshes it; you sign in again only after about a month without use or after disconnecting the app in My Architect settings.
+
+Need an API key instead (CI, headless `claude -p` on a machine where nobody can sign in)? Add the server yourself with the key in a header:
+
+```bash
+claude mcp add --transport http my-architect-key https://my-architect.app/mcp --header "Authorization: Bearer $MCP_API_KEY"
+```
+
+The plugin's own server cannot use a key: Claude Code turns off its OAuth sign-in for any server that sends a fixed `Authorization` header.
 
 ### 3. Verify
 
@@ -89,7 +93,7 @@ plugins/my-architect/
         └── SKILL.md    # Architecture-aware design sessions (fork of superpowers:brainstorming)
 ```
 
-**MCP server (auto-configured):** `npx -y @my-architect/mcp@latest` with `MCP_API_KEY` from your shell env and `MA_API_URL=https://my-architect.app`.
+**MCP server (auto-configured):** the remote server `https://my-architect.app/mcp`; Claude Code signs in with OAuth. A My Architect connector you added on claude.ai uses the same URL, so it does not appear twice.
 
 **Commands** (type `/my-architect:<name>`): **init** (install or repair project traceability and verify tests/CI), **feature** (author permitted work with minimal useful decomposition, product links and requirements), **next** (claim an eligible epic, then work within its scope), **progress** (status + routing), **doc** (author/update a node's source-of-truth doc), **reconcile** (sweep draft nodes against the codebase, close what shipped), **design** (address actual design uncertainty within the authorized scope and keep one project canon), **initiative** (evaluate an undecided initiative or record its authorized value case), **bo-review** (read-only Business-Owner review of an epic).
 
@@ -167,17 +171,16 @@ The `my-architect-mcp local-migration` subcommand preserves an explicitly declar
 
 | Env var | Required | Default | What it controls |
 |---|---|---|---|
-| `MCP_API_KEY` | yes (production) | — | Your API token from the API Keys page |
-| `MA_API_URL` | no | `https://my-architect.app` | Backend URL — override only for local development |
-
-To override `MA_API_URL` (e.g. local dev against `http://localhost:3100`), edit your project's `.mcp.json` after installation, or add an env line to your shell rc file.
+| `MCP_API_KEY` | no | — | API key for the traceability sync script and for a server you add yourself with `--header`; the plugin's server signs in with OAuth |
+| `MY_ARCHITECT_MCP_URL` | no | `https://my-architect.app/mcp` | Remote MCP endpoint — override only for local development (e.g. `http://localhost:3100/mcp`) |
+| `MA_API_URL` | no | `https://my-architect.app` | Backend URL for the traceability sync script (not the MCP server) |
 
 ---
 
 ## Troubleshooting
 
-**`/mcp` shows my-architect as disconnected.**
-Check `MCP_API_KEY` is exported in the shell where Claude Code was launched. Restart Claude Code after setting the var — env is read at process start.
+**`/mcp` shows my-architect as needing authentication.**
+Choose it and **Authenticate**, then sign in with Google in the browser and press **Allow**. If you disconnected the app in My Architect settings, authenticate again.
 
 **Plugin install fails with "marketplace not found".**
 Confirm the marketplace is added: `/plugin marketplace list`. Re-add if missing: `/plugin marketplace add d7561985/my-architect-marketplace`.
